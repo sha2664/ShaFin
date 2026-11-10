@@ -1,6 +1,16 @@
-const CACHE_NAME = 'shafin-v12-network-first';
+const CACHE_NAME = 'shafin-v15-real-app';
+const PRECACHE_ASSETS = [
+  './',
+  './index.html',
+  './manifest.json',
+  './logo.png',
+  './logo-192.png'
+];
 
 self.addEventListener('install', (e) => {
+  e.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_ASSETS))
+  );
   self.skipWaiting();
 });
 
@@ -18,15 +28,13 @@ self.addEventListener('activate', (e) => {
   );
 });
 
-// Network-First for HTML/Code so updates appear IMMEDIATELY on commit
+// Network-first strategy with offline cache fallback
 self.addEventListener('fetch', (e) => {
-  // Only handle GET requests
   if (e.request.method !== 'GET') return;
 
   e.respondWith(
     fetch(e.request)
       .then((networkResponse) => {
-        // If successful network response, clone to cache
         if (networkResponse && networkResponse.status === 200) {
           const responseToCache = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
@@ -35,9 +43,6 @@ self.addEventListener('fetch', (e) => {
         }
         return networkResponse;
       })
-      .catch(() => {
-        // Fallback to cache when offline
-        return caches.match(e.request);
-      })
+      .catch(() => caches.match(e.request))
   );
 });
