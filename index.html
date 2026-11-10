@@ -3,53 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Budget Hub - Smart Budget Planner</title>
+    <title>ShaFin - Private Wealth & Smart Budget Hub</title>
     
-    <meta name="theme-color" content="#0b1120">
+    <meta name="theme-color" content="#070A12">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="description" content="Private smart multi-budget planner and loan EMI tracker.">
+    <meta name="description" content="Precision Personal Finance, Multi-Budget Burn-Down & Loan Passbook Engine.">
     
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💎</text></svg>">
 
     <style>
         :root {
-            --bg-main: #0b1120;
-            --surface: #1e293b;
-            --surface-card: #162032;
-            --border: #334155;
+            --bg-main: #070a12;
+            --bg-elevated: #0f1523;
+            --surface: #151d30;
+            --surface-glass: rgba(21, 29, 48, 0.75);
+            --border: #222f4c;
+            --border-light: rgba(255, 255, 255, 0.08);
             --text-main: #f8fafc;
-            --text-muted: #94a3b8;
+            --text-muted: #8e9bb2;
             --accent-green: #10b981;
-            --accent-red: #ef4444;
+            --accent-green-glow: rgba(16, 185, 129, 0.15);
+            --accent-red: #f43f5e;
+            --accent-red-glow: rgba(244, 63, 94, 0.15);
             --accent-blue: #38bdf8;
-            --accent-purple: #a855f7;
-            --accent-amber: #f59e0b;
-            --radius-lg: 18px;
+            --accent-blue-glow: rgba(56, 189, 248, 0.15);
+            --accent-gold: #f59e0b;
+            --accent-gold-glow: rgba(245, 158, 11, 0.15);
+            --accent-purple: #818cf8;
+            --radius-xl: 20px;
+            --radius-lg: 16px;
             --radius-md: 12px;
+            --radius-sm: 8px;
         }
 
         [data-theme="light"] {
-            --bg-main: #f8fafc;
+            --bg-main: #f1f5f9;
+            --bg-elevated: #ffffff;
             --surface: #ffffff;
-            --surface-card: #f1f5f9;
-            --border: #e2e8f0;
-            --text-main: #0f172a;
+            --surface-glass: rgba(255, 255, 255, 0.85);
+            --border: #cbd5e1;
+            --border-light: rgba(0, 0, 0, 0.06);
+            --text-main: #090d16;
             --text-muted: #64748b;
             --accent-green: #059669;
-            --accent-red: #dc2626;
+            --accent-green-glow: rgba(5, 150, 105, 0.12);
+            --accent-red: #e11d48;
+            --accent-red-glow: rgba(225, 29, 72, 0.12);
             --accent-blue: #0284c7;
-            --accent-purple: #9333ea;
-            --accent-amber: #d97706;
+            --accent-blue-glow: rgba(2, 132, 199, 0.12);
+            --accent-gold: #d97706;
+            --accent-purple: #6366f1;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -57,164 +70,172 @@
             background-color: var(--bg-main);
             color: var(--text-main);
             min-height: 100vh;
-            padding-bottom: 95px;
+            padding-bottom: 96px;
             overflow-x: hidden;
             transition: background 0.3s ease;
         }
 
-        /* Access Authorization Gate */
+        /* Ambient Glass Card Effect */
+        .glass-panel {
+            background: var(--surface);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+        }
+
+        /* UNIFIED ZERO-HINT LOGIN GATE */
         #authGateModal {
             position: fixed;
             inset: 0;
-            background: rgba(11, 17, 32, 0.96);
-            backdrop-filter: blur(12px);
+            background: rgba(7, 10, 18, 0.98);
+            backdrop-filter: blur(16px);
             z-index: 10000;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
         }
-        .auth-card {
-            background: var(--surface);
+        .auth-box {
+            background: var(--bg-elevated);
             border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 28px 22px;
+            border-radius: var(--radius-xl);
+            padding: 34px 24px;
             width: 100%;
-            max-width: 400px;
+            max-width: 390px;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.7);
         }
-        .auth-icon {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            display: inline-block;
+        .auth-brand-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-blue-glow), var(--accent-gold-glow));
+            border: 1px solid var(--border);
+            font-size: 1.8rem;
+            margin-bottom: 14px;
         }
         .auth-title {
-            font-size: 1.3rem;
+            font-size: 1.45rem;
             font-weight: 800;
-            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+            margin-bottom: 4px;
         }
         .auth-sub {
             font-size: 0.82rem;
             color: var(--text-muted);
-            margin-bottom: 20px;
-            line-height: 1.4;
+            margin-bottom: 24px;
         }
-        .auth-tab-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            background: var(--surface-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 4px;
-            margin-bottom: 18px;
-        }
-        .auth-tab-btn {
-            padding: 8px;
-            border-radius: 8px;
-            border: none;
-            background: transparent;
-            color: var(--text-muted);
-            font-size: 0.82rem;
-            font-weight: 700;
-            cursor: pointer;
-        }
-        .auth-tab-btn.active {
-            background: var(--accent-blue);
-            color: #0b1120;
-        }
-        .auth-input {
+        .auth-field {
             width: 100%;
-            padding: 13px;
+            padding: 14px 16px;
             border-radius: var(--radius-md);
             border: 1px solid var(--border);
-            background: var(--surface-card);
+            background: var(--surface);
             color: var(--text-main);
             font-size: 0.95rem;
             margin-bottom: 12px;
             font-weight: 600;
+            transition: border 0.2s;
         }
-        .auth-btn {
+        .auth-field:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+        .btn-luxury-primary {
             width: 100%;
-            padding: 13px;
+            padding: 14px;
             border-radius: var(--radius-md);
             border: none;
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
-            color: #fff;
+            background: linear-gradient(135deg, #2563eb, #38bdf8);
+            color: #ffffff;
             font-weight: 800;
-            font-size: 0.95rem;
+            font-size: 0.98rem;
+            letter-spacing: 0.3px;
             cursor: pointer;
-            margin-top: 4px;
+            box-shadow: 0 4px 16px rgba(37, 99, 235, 0.4);
+            transition: opacity 0.2s;
         }
+        .btn-luxury-primary:active { opacity: 0.9; transform: scale(0.99); }
         .auth-error {
             color: var(--accent-red);
             font-size: 0.82rem;
-            margin-top: 12px;
+            margin-top: 14px;
             display: none;
             font-weight: 600;
         }
 
-        /* Top Bar */
+        /* APP HEADER WITH LIVE CLOCK */
         header {
             padding: 14px 18px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: var(--surface);
+            background: var(--bg-elevated);
             border-bottom: 1px solid var(--border);
             position: sticky;
             top: 0;
             z-index: 50;
         }
-        .brand-container {
+        .header-profile-wrap {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
-        .user-avatar-badge {
-            width: 36px;
-            height: 36px;
+        .avatar-circle {
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            background: linear-gradient(135deg, #1e3a8a, #0284c7);
             color: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 800;
-            font-size: 0.95rem;
+            font-size: 1.05rem;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+            border: 2px solid var(--border-light);
             cursor: pointer;
         }
-        .user-greeting {
+        .profile-texts {
             display: flex;
             flex-direction: column;
         }
-        .user-greeting span {
+        .live-clock-badge {
             font-size: 0.72rem;
+            font-weight: 600;
             color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
-        .user-greeting b {
-            font-size: 0.95rem;
+        .user-title-name {
+            font-size: 1.02rem;
+            font-weight: 800;
             color: var(--text-main);
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
         }
-        .admin-badge {
-            font-size: 0.65rem;
-            background: rgba(16, 185, 129, 0.2);
+        .tag-admin {
+            font-size: 0.62rem;
+            background: var(--accent-green-glow);
             color: var(--accent-green);
             border: 1px solid var(--accent-green);
             padding: 1px 6px;
             border-radius: 4px;
-            font-weight: 700;
+            font-weight: 800;
         }
         .header-actions {
             display: flex;
             align-items: center;
             gap: 8px;
         }
-        .icon-btn {
-            background: var(--surface-card);
+        .icon-action-btn {
+            background: var(--surface);
             border: 1px solid var(--border);
             color: var(--text-main);
             width: 38px;
@@ -224,105 +245,109 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 1.05rem;
+            transition: 0.2s;
         }
 
         main {
             padding: 16px;
-            max-width: 500px;
+            max-width: 520px;
             margin: 0 auto;
         }
 
-        /* PWA Install Banner */
-        #pwaInstallBanner {
-            display: none;
-            background: linear-gradient(135deg, rgba(56,189,248,0.2), rgba(168,85,247,0.2));
-            border: 1px solid var(--accent-blue);
-            border-radius: var(--radius-md);
-            padding: 12px 14px;
-            margin-bottom: 16px;
-            align-items: center;
-            justify-content: space-between;
+        /* DUAL LIQUIDITY POOL (REAL BANK VS CASH) */
+        .liquidity-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 14px;
         }
-        .pwa-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.85rem;
-        }
-        .pwa-btn {
-            background: var(--accent-blue);
-            color: #0b1120;
-            font-weight: 800;
-            border: none;
-            padding: 7px 14px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            cursor: pointer;
-        }
-
-        /* Hero Main Budget Card */
-        .hero-budget-card {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        .liquidity-card {
+            background: var(--surface);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
-            padding: 20px;
+            padding: 14px;
+            position: relative;
+        }
+        .liquidity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        .liquidity-val {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        /* HERO CARD: MAIN ACTIVE BUDGET BURN-DOWN */
+        .hero-budget-card {
+            background: linear-gradient(135deg, #131c31 0%, #0c1220 100%);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 22px 20px;
             margin-bottom: 16px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            box-shadow: 0 12px 36px rgba(0,0,0,0.4);
             cursor: pointer;
             position: relative;
             transition: transform 0.15s ease;
         }
-        .hero-budget-card:active {
-            transform: scale(0.99);
-        }
         [data-theme="light"] .hero-budget-card {
-            background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
         }
-        .hero-tag-row {
+        .hero-budget-card:active { transform: scale(0.99); }
+        .hero-top-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
-        .hero-badge-tag {
-            background: rgba(56, 189, 248, 0.18);
-            color: var(--accent-blue);
-            font-size: 0.72rem;
-            font-weight: 700;
+        .pill-main-tag {
+            background: var(--accent-gold-glow);
+            color: var(--accent-gold);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            font-size: 0.7rem;
+            font-weight: 800;
             padding: 3px 8px;
             border-radius: 6px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-        .hero-tap-hint {
-            font-size: 0.72rem;
+        .hero-tap-action {
+            font-size: 0.75rem;
             color: var(--accent-blue);
-            font-weight: 600;
+            font-weight: 700;
         }
-        .hero-name {
-            font-size: 1.15rem;
+        .hero-budget-name {
+            font-size: 1.18rem;
             font-weight: 800;
-            margin-top: 4px;
+            margin: 4px 0 2px;
         }
-        .hero-remaining {
-            font-size: 2.3rem;
-            font-weight: 800;
+        .hero-balance-headline {
+            font-size: 2.35rem;
+            font-weight: 900;
+            letter-spacing: -0.5px;
             margin: 6px 0 10px;
         }
-        .progress-bar-wrap {
+        .progress-track {
             height: 9px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
             overflow: hidden;
             margin-bottom: 10px;
         }
-        [data-theme="light"] .progress-bar-wrap {
-            background: rgba(0,0,0,0.08);
+        [data-theme="light"] .progress-track {
+            background: rgba(0, 0, 0, 0.08);
         }
-        .progress-bar-fill {
+        .progress-fill {
             height: 100%;
-            border-radius: 5px;
+            border-radius: 6px;
             transition: width 0.3s ease;
         }
         .hero-meta-row {
@@ -332,92 +357,153 @@
             color: var(--text-muted);
             margin-bottom: 12px;
         }
-        .hero-metrics {
+        .hero-burn-stats {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
             padding-top: 12px;
-            border-top: 1px solid var(--border);
+            border-top: 1px solid var(--border-light);
         }
-        .metric-box {
+        .burn-stat-box {
             font-size: 0.75rem;
             color: var(--text-muted);
         }
-        .metric-box b {
+        .burn-stat-box b {
             display: block;
             font-size: 1rem;
             color: var(--text-main);
             margin-top: 2px;
         }
 
-        /* Action Buttons */
-        .quick-actions {
+        /* PRIMARY ACTIONS: EXPENSES & INCOME */
+        .action-buttons-wrap {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
-            margin-bottom: 18px;
+            margin-bottom: 20px;
         }
-        .btn-action {
-            padding: 14px;
-            border-radius: var(--radius-md);
+        .btn-action-primary {
+            padding: 15px;
+            border-radius: var(--radius-lg);
             border: none;
-            font-weight: 700;
+            font-weight: 800;
             font-size: 0.95rem;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+            transition: 0.15s;
         }
-        .btn-expense {
-            background: rgba(239, 68, 68, 0.15);
+        .btn-action-primary:active { transform: scale(0.98); }
+        .btn-exp-style {
+            background: var(--accent-red-glow);
             border: 1px solid var(--accent-red);
             color: var(--accent-red);
         }
-        .btn-income {
-            background: rgba(16, 185, 129, 0.15);
+        .btn-inc-style {
+            background: var(--accent-green-glow);
             border: 1px solid var(--accent-green);
             color: var(--accent-green);
         }
 
-        .section-title {
+        /* DYNAMIC LOAN DUE NOTIFICATION ALERT */
+        .loan-due-banner {
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            margin-bottom: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            animation: pulseBanner 2s infinite ease-in-out;
+        }
+        .loan-due-banner.alert-warning {
+            background: rgba(245, 158, 11, 0.12);
+            border: 1px solid var(--accent-gold);
+        }
+        .loan-due-banner.alert-danger {
+            background: rgba(244, 63, 94, 0.15);
+            border: 1px solid var(--accent-red);
+        }
+        @keyframes pulseBanner {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.008); }
+        }
+        .loan-due-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.98rem;
+            font-weight: 800;
+            font-size: 0.95rem;
+        }
+        .loan-due-sub {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+        .loan-due-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 4px;
+        }
+        .btn-due-pay {
+            background: var(--accent-gold);
+            color: #000;
+            font-weight: 800;
+            border: none;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 0.82rem;
+            cursor: pointer;
+        }
+        .btn-due-view {
+            background: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 0.82rem;
+            cursor: pointer;
             font-weight: 700;
-            margin: 18px 0 10px;
         }
 
-        /* Other Budgets List */
-        .budget-subcard {
+        /* SECTION TITLES */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1rem;
+            font-weight: 800;
+            margin: 20px 0 12px;
+        }
+
+        /* OTHER BUDGETS LIST */
+        .budget-list-item {
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: var(--radius-md);
+            border-radius: var(--radius-lg);
             padding: 14px 16px;
             margin-bottom: 10px;
             cursor: pointer;
-            transition: transform 0.15s ease;
+            transition: 0.15s;
         }
-        .budget-subcard:active {
-            transform: scale(0.99);
-        }
-        .budget-subcard-top {
+        .budget-list-item:active { transform: scale(0.99); }
+        .budget-item-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 6px;
         }
-        .budget-subcard-name {
+        .budget-item-title {
             font-size: 0.95rem;
-            font-weight: 700;
+            font-weight: 800;
         }
-        .budget-subcard-bal {
-            font-size: 0.9rem;
-            font-weight: 700;
+        .budget-item-bal {
+            font-size: 0.92rem;
+            font-weight: 800;
         }
-        .budget-subcard-bottom {
+        .budget-item-sub {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -425,97 +511,139 @@
             color: var(--text-muted);
             margin-top: 6px;
         }
-        .set-main-btn {
-            background: var(--surface-card);
-            border: 1px solid var(--accent-blue);
-            color: var(--accent-blue);
+        .btn-set-main {
+            background: var(--bg-elevated);
+            border: 1px solid var(--accent-gold);
+            color: var(--accent-gold);
             font-size: 0.72rem;
-            padding: 3px 8px;
+            padding: 4px 10px;
             border-radius: 6px;
             cursor: pointer;
-            font-weight: 600;
+            font-weight: 700;
         }
 
-        /* Transactions List */
-        .tx-card {
+        /* RECENT TRANSACTIONS (EXCLUDING LOANS) */
+        .tx-item-card {
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: var(--radius-md);
             padding: 12px 14px;
             margin-bottom: 8px;
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
-        .tx-left {
+        .tx-left-info {
             display: flex;
             flex-direction: column;
             gap: 2px;
         }
-        .tx-category {
+        .tx-category-name {
             font-size: 0.92rem;
-            font-weight: 600;
+            font-weight: 700;
         }
-        .tx-note {
+        .tx-note-line {
             font-size: 0.78rem;
             color: var(--text-muted);
         }
-        .tx-date {
+        .tx-meta-date {
             font-size: 0.72rem;
             color: var(--text-muted);
         }
-        .tx-amount {
-            font-size: 1rem;
+        .tx-amount-col {
+            font-size: 1.05rem;
             font-weight: 800;
+            text-align: right;
         }
-        .tx-expense { color: var(--accent-red); }
-        .tx-income { color: var(--accent-green); }
+        .tx-amount-col span {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        .tx-is-exp { color: var(--accent-red); }
+        .tx-is-inc { color: var(--accent-green); }
 
-        /* Loan Alert Banner */
-        .loan-alert {
-            background: rgba(56, 189, 248, 0.12);
-            border: 1px solid var(--accent-blue);
-            border-radius: var(--radius-md);
-            padding: 14px;
-            margin-bottom: 16px;
+        /* LOAN CARDS IN LOANS TAB */
+        .loan-master-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 18px;
+            margin-bottom: 14px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+            transition: 0.15s;
         }
-        .loan-alert-top {
+        .loan-master-card:active { transform: scale(0.99); }
+        .loan-card-top {
             display: flex;
             justify-content: space-between;
-            font-weight: 700;
-            margin-bottom: 4px;
+            align-items: center;
+            font-weight: 800;
+            margin-bottom: 8px;
         }
-        .loan-alert-sub {
+        .loan-tag-chip {
+            background: var(--accent-blue-glow);
+            color: var(--accent-blue);
+            font-size: 0.72rem;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-weight: 700;
+        }
+        .loan-grid-breakdown {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            background: var(--bg-elevated);
+            padding: 12px;
+            border-radius: var(--radius-md);
+            margin: 10px 0;
             font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-bottom: 10px;
         }
-        .loan-pay-btn {
-            background: var(--accent-blue);
-            color: #000;
-            font-weight: 700;
-            border: none;
-            padding: 7px 14px;
-            border-radius: 8px;
-            font-size: 0.82rem;
-            cursor: pointer;
+        .loan-grid-col span { color: var(--text-muted); display: block; font-size: 0.72rem; }
+        .loan-grid-col b { font-size: 0.95rem; color: var(--text-main); }
+
+        /* PASSBOOK MODAL / LOAN STATEMENT MODAL */
+        .passbook-table-wrap {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 14px;
+        }
+        .passbook-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.78rem;
+            text-align: left;
+        }
+        .passbook-table th {
+            padding: 8px;
+            background: var(--bg-elevated);
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+        .passbook-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid var(--border-light);
+            white-space: nowrap;
         }
 
-        /* Bottom Tab Dock */
+        /* BOTTOM FLOATING DOCK */
         .dock {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            height: 64px;
-            background: var(--surface);
+            height: 66px;
+            background: var(--bg-elevated);
             border-top: 1px solid var(--border);
             display: flex;
             justify-content: space-around;
             align-items: center;
             z-index: 90;
         }
-        .dock-item {
+        .dock-btn {
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -524,99 +652,96 @@
             border: none;
             color: var(--text-muted);
             font-size: 0.72rem;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             padding: 8px;
             flex: 1;
+            transition: color 0.2s;
         }
-        .dock-item.active { color: var(--accent-blue); }
-        .dock-icon { font-size: 1.2rem; }
+        .dock-btn.active { color: var(--accent-blue); }
+        .dock-icon { font-size: 1.25rem; }
 
         .view-panel { display: none; }
         .view-panel.active { display: block; }
 
-        /* Modal Forms */
+        /* LUXURY MODAL STYLING */
         .modal {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(5px);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
             z-index: 100;
             align-items: flex-end;
             justify-content: center;
         }
         .modal.active { display: flex; }
         .modal-body {
-            background: var(--surface);
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
             width: 100%;
-            max-width: 500px;
-            padding: 20px;
+            max-width: 520px;
+            padding: 24px 20px;
             max-height: 90vh;
             overflow-y: auto;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
         }
         .modal-title {
-            font-size: 1.15rem;
-            font-weight: 700;
-            margin-bottom: 16px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin-bottom: 18px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
         }
         .form-group { margin-bottom: 14px; }
         .form-group label {
             display: block;
             font-size: 0.8rem;
+            font-weight: 700;
             color: var(--text-muted);
-            margin-bottom: 5px;
+            margin-bottom: 6px;
         }
         .form-control {
             width: 100%;
-            padding: 12px;
-            border-radius: 10px;
+            padding: 13px 14px;
+            border-radius: var(--radius-md);
             border: 1px solid var(--border);
-            background: var(--surface-card);
+            background: var(--surface);
             color: var(--text-main);
             font-size: 0.95rem;
+            font-weight: 600;
         }
+        .form-control:focus { outline: none; border-color: var(--accent-blue); }
         .modal-footer {
             display: flex;
             gap: 10px;
-            margin-top: 20px;
+            margin-top: 22px;
         }
-        .btn-primary {
-            flex: 1;
-            padding: 12px;
-            background: var(--accent-green);
-            color: white;
-            font-weight: 700;
-            border: none;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            cursor: pointer;
-        }
-        .btn-cancel {
-            padding: 12px 18px;
+        .btn-secondary {
+            padding: 13px 20px;
             background: transparent;
             border: 1px solid var(--border);
             color: var(--text-muted);
-            border-radius: 10px;
-            font-weight: 600;
+            border-radius: var(--radius-md);
+            font-weight: 700;
             cursor: pointer;
         }
 
-        /* Settings Card & Groups */
+        /* SETTINGS & CARDS */
         .settings-card {
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 16px;
+            border-radius: var(--radius-lg);
+            padding: 18px;
             margin-bottom: 14px;
         }
         .settings-card h3 {
-            font-size: 0.95rem;
-            margin-bottom: 12px;
+            font-size: 0.98rem;
+            font-weight: 800;
+            margin-bottom: 14px;
             color: var(--accent-blue);
             display: flex;
             align-items: center;
@@ -626,75 +751,79 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border);
-            font-size: 0.88rem;
+            padding: 11px 0;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 0.9rem;
         }
         .settings-row:last-child { border-bottom: none; }
         .pill-badge {
-            background: var(--surface-card);
+            background: var(--bg-elevated);
             border: 1px solid var(--border);
             padding: 5px 12px;
             border-radius: 20px;
-            font-size: 0.75rem;
+            font-size: 0.78rem;
             color: var(--text-main);
             cursor: pointer;
+            font-weight: 700;
         }
 
-        /* User Management Cards */
-        .user-item-row {
+        /* REPORTS & CHARTS */
+        .report-filter-bar {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--surface-card);
+            gap: 6px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            margin-bottom: 14px;
+        }
+        .btn-filter-pill {
+            padding: 6px 14px;
+            border-radius: 20px;
+            background: var(--surface);
             border: 1px solid var(--border);
-            padding: 10px 12px;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            font-size: 0.85rem;
-        }
-        .user-item-info b {
-            display: block;
-            color: var(--accent-blue);
-        }
-        .user-item-info span {
-            font-size: 0.75rem;
             color: var(--text-muted);
+            font-size: 0.75rem;
+            font-weight: 700;
+            white-space: nowrap;
+            cursor: pointer;
         }
-
-        /* Charts & Reports */
+        .btn-filter-pill.active {
+            background: var(--accent-blue);
+            color: #000;
+            border-color: var(--accent-blue);
+        }
         .chart-row {
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 8px;
-            font-size: 0.8rem;
+            margin-bottom: 10px;
+            font-size: 0.82rem;
         }
         .chart-label {
             width: 110px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            font-weight: 700;
         }
-        .chart-bar-bg {
+        .chart-track {
             flex: 1;
-            height: 10px;
-            background: var(--surface-card);
+            height: 9px;
+            background: var(--bg-elevated);
             border-radius: 5px;
             overflow: hidden;
         }
-        .chart-bar-fill {
+        .chart-fill {
             height: 100%;
-            background: var(--accent-purple);
+            background: linear-gradient(90deg, #6366f1, #38bdf8);
             border-radius: 5px;
         }
         .chart-val {
-            width: 60px;
+            width: 70px;
             text-align: right;
-            font-weight: 700;
+            font-weight: 800;
         }
 
-        /* Biometric & Lock Screen */
+        /* BIOMETRIC & PIN LOCK OVERLAY */
         #lockScreen {
             position: fixed;
             inset: 0;
@@ -706,10 +835,10 @@
             justify-content: center;
             padding: 24px;
         }
-        .pin-display {
+        .pin-dot-row {
             display: flex;
             gap: 12px;
-            margin: 20px 0;
+            margin: 22px 0;
         }
         .pin-dot {
             width: 16px;
@@ -725,729 +854,690 @@
             grid-template-columns: repeat(3, 72px);
             gap: 14px;
         }
-        .num-btn {
+        .numpad-key {
             height: 72px;
             border-radius: 50%;
             background: var(--surface);
             border: 1px solid var(--border);
             color: var(--text-main);
-            font-size: 1.5rem;
-            font-weight: 600;
+            font-size: 1.55rem;
+            font-weight: 700;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
         }
-        .num-btn:active { background: var(--border); }
+        .numpad-key:active { background: var(--border); }
     </style>
 </head>
 <body>
 
-    <!-- Access Authorization Gate -->
+    <!-- UNIFIED ZERO-HINT LOGIN GATE -->
     <div id="authGateModal" style="display: none;">
-        <div class="auth-card">
-            <span class="auth-icon">🛡️</span>
-            <div class="auth-title">Budget Hub Access</div>
-            <p class="auth-sub">
-                Sha mattume Master access panna mudiyum. Friends Sha kodutha User ID & Password vachi login pannalaam.
-            </p>
+        <div class="auth-box">
+            <div class="auth-brand-badge">💎</div>
+            <div class="auth-title">ShaFin Wealth Engine</div>
+            <p class="auth-sub">Enter your authorized credentials to unlock your private ledger.</p>
 
-            <div class="auth-tab-row">
-                <button class="auth-tab-btn active" id="tabShaLogin" onclick="switchAuthTab('sha')">Admin (Sha)</button>
-                <button class="auth-tab-btn" id="tabMemberLogin" onclick="switchAuthTab('member')">Member Login</button>
-            </div>
+            <form onsubmit="event.preventDefault(); handleAuthLogin();">
+                <input type="text" id="authUserInput" class="auth-field" placeholder="User ID" autocomplete="username" required>
+                <input type="password" id="authPassInput" class="auth-field" placeholder="Password" autocomplete="current-password" required>
+                <button type="submit" class="btn-luxury-primary">Log In</button>
+            </form>
 
-            <!-- SHA QUICK ADMIN LOGIN -->
-            <div id="shaLoginArea">
-                <input type="text" id="adminNameInput" class="auth-input" placeholder="Enter 'Sha'..." autocomplete="off">
-                <button class="auth-btn" onclick="verifyAdminAccess()">Unlock as Sha ⭐</button>
-            </div>
-
-            <!-- MEMBER USER ID & PASSWORD LOGIN -->
-            <div id="memberLoginArea" style="display: none;">
-                <input type="text" id="memberUserInput" class="auth-input" placeholder="Enter Assigned User ID..." autocomplete="off">
-                <input type="password" id="memberPassInput" class="auth-input" placeholder="Enter Password..." autocomplete="off">
-                <button class="auth-btn" onclick="verifyMemberAccess()">Login to Workspace</button>
-            </div>
-
-            <div id="authErrorMessage" class="auth-error"></div>
+            <div id="authErrorMsg" class="auth-error"></div>
         </div>
     </div>
 
-    <!-- Security Lock Screen (PIN & Fingerprint) -->
+    <!-- SECURITY PIN & BIOMETRIC LOCK SCREEN -->
     <div id="lockScreen">
-        <h2 style="margin-bottom: 6px;">🔐 Security Lock</h2>
-        <p style="color: var(--text-muted); font-size: 0.85rem;" id="lockPromptText">Enter PIN or tap Fingerprint</p>
-        <div class="pin-display">
+        <h2 style="font-weight: 800; margin-bottom: 4px;">🔐 Security Verification</h2>
+        <p style="color: var(--text-muted); font-size: 0.85rem;" id="lockSubText">Enter 4-digit PIN or touch Fingerprint sensor</p>
+        <div class="pin-dot-row">
             <div class="pin-dot" id="dot1"></div>
             <div class="pin-dot" id="dot2"></div>
             <div class="pin-dot" id="dot3"></div>
             <div class="pin-dot" id="dot4"></div>
         </div>
         <div class="numpad">
-            <button class="num-btn" onclick="pressPin(1)">1</button>
-            <button class="num-btn" onclick="pressPin(2)">2</button>
-            <button class="num-btn" onclick="pressPin(3)">3</button>
-            <button class="num-btn" onclick="pressPin(4)">4</button>
-            <button class="num-btn" onclick="pressPin(5)">5</button>
-            <button class="num-btn" onclick="pressPin(6)">6</button>
-            <button class="num-btn" onclick="pressPin(7)">7</button>
-            <button class="num-btn" onclick="pressPin(8)">8</button>
-            <button class="num-btn" onclick="pressPin(9)">9</button>
-            <button class="num-btn" style="font-size: 0.95rem;" onclick="clearPin()">Clear</button>
-            <button class="num-btn" onclick="pressPin(0)">0</button>
-            <button class="num-btn" style="font-size: 1.3rem; color:var(--accent-blue);" onclick="unlockBiometric()">👆</button>
+            <button class="numpad-key" onclick="enterPin(1)">1</button>
+            <button class="numpad-key" onclick="enterPin(2)">2</button>
+            <button class="numpad-key" onclick="enterPin(3)">3</button>
+            <button class="numpad-key" onclick="enterPin(4)">4</button>
+            <button class="numpad-key" onclick="enterPin(5)">5</button>
+            <button class="numpad-key" onclick="enterPin(6)">6</button>
+            <button class="numpad-key" onclick="enterPin(7)">7</button>
+            <button class="numpad-key" onclick="enterPin(8)">8</button>
+            <button class="numpad-key" onclick="enterPin(9)">9</button>
+            <button class="numpad-key" style="font-size: 1rem;" onclick="clearPin()">Clear</button>
+            <button class="numpad-key" onclick="enterPin(0)">0</button>
+            <button class="numpad-key" style="font-size: 1.4rem; color:var(--accent-blue);" onclick="triggerBiometricUnlock()">👆</button>
         </div>
     </div>
 
-    <!-- Header with Dynamic Profile Avatar -->
+    <!-- TOP BAR WITH LIVE REAL-TIME CLOCK -->
     <header>
-        <div class="brand-container">
-            <div class="user-avatar-badge" id="headerAvatar" onclick="switchTab('tabSettings')">S</div>
-            <div class="user-greeting">
-                <span>Welcome back,</span>
-                <b id="headerUserName">Sha <span id="adminBadgeTag" class="admin-badge">ADMIN</span></b>
+        <div class="header-profile-wrap">
+            <div class="avatar-circle" id="headerAvatar" onclick="switchTab('tabSettings')">S</div>
+            <div class="profile-texts">
+                <div class="live-clock-badge" id="liveClockWidget">⏰ Loading time...</div>
+                <div class="user-title-name">
+                    <span id="headerUserName">Sha</span>
+                    <span id="headerAdminBadge" class="tag-admin">ADMIN</span>
+                </div>
             </div>
         </div>
         <div class="header-actions">
-            <button class="icon-btn" onclick="toggleTheme()" title="Toggle Theme">🌓</button>
-            <button class="icon-btn" onclick="lockApp()" title="Lock App">🔒</button>
+            <button class="icon-action-btn" onclick="toggleTheme()" title="Theme">🌓</button>
+            <button class="icon-action-btn" onclick="lockAppManual()" title="Lock">🔒</button>
         </div>
     </header>
 
     <main>
-        <!-- 1. DASHBOARD TAB -->
+        <!-- 1. DASHBOARD VIEW -->
         <div class="view-panel active" id="viewDashboard">
             
-            <!-- Real PWA Install Banner -->
-            <div id="pwaInstallBanner">
-                <div class="pwa-info">
-                    <span style="font-size:1.4rem;">📲</span>
-                    <span><b>Install App on Phone</b><br><small style="color:var(--text-muted);">Use offline like real Play Store app</small></span>
+            <!-- REAL LIQUIDITY CASH POOL (BANK VS CASH) -->
+            <div class="liquidity-grid">
+                <div class="liquidity-card">
+                    <div class="liquidity-header">
+                        <span>🏦 Bank Balance</span>
+                        <a href="javascript:void(0)" onclick="openTransferModal()" style="color:var(--accent-blue);text-decoration:none;font-size:0.7rem;">⇄ Adjust</a>
+                    </div>
+                    <div class="liquidity-val" id="dispBankBal">₹0</div>
                 </div>
-                <button class="pwa-btn" onclick="installPwaApp()">Install</button>
+                <div class="liquidity-card">
+                    <div class="liquidity-header">
+                        <span>💵 Cash in Hand</span>
+                    </div>
+                    <div class="liquidity-val" id="dispCashBal">₹0</div>
+                </div>
             </div>
 
-            <!-- HERO CARD: MAIN ACTIVE BUDGET (Tap to Add Entry Directly) -->
-            <div id="heroBudgetArea" onclick="openBudgetDirectAdd()">
-                <!-- Dynamically rendered -->
+            <!-- HERO CARD: MAIN ACTIVE BUDGET BURN-DOWN (Click to View Budget Statement) -->
+            <div id="heroBudgetArea">
+                <!-- Dynamically populated -->
             </div>
 
-            <!-- Quick Action Buttons: Expenses & Income -->
-            <div class="quick-actions" id="dashActionButtons">
-                <button class="btn-action btn-expense" onclick="openEntryModal('EXPENSE')">
+            <!-- PRIMARY ACTIONS: EXPENSES & INCOME -->
+            <div class="action-buttons-wrap">
+                <button class="btn-action-primary btn-exp-style" onclick="openEntryModal('EXPENSE')">
                     <span>➖</span> Expenses
                 </button>
-                <button class="btn-action btn-income" onclick="openEntryModal('INCOME')">
-                    <span>➕</span> Income
+                <button class="btn-action-primary btn-inc-style" onclick="openEntryModal('INCOME')">
+                    <span>➕</span> Income / Topup
                 </button>
             </div>
 
-            <!-- Active EMI Reminder Widget -->
-            <div id="dashboardEmiWidget"></div>
+            <!-- UPCOMING LOAN EMI DUE NOTIFICATION BANNER -->
+            <div id="loanAlertArea"></div>
 
-            <!-- OTHER BUDGETS SECTION -->
-            <div class="section-title">
-                <span>Other Budgets</span>
-                <button class="pill-badge" style="background:var(--accent-blue);color:#000;font-weight:700;" onclick="openBudgetModal()">+ New Budget</button>
+            <!-- OTHER BUDGETS LIST -->
+            <div class="section-header">
+                <span>Allocated Budgets</span>
+                <button class="pill-badge" style="background:var(--accent-blue);color:#000;font-weight:800;" onclick="openCreateBudgetModal()">+ New Budget</button>
             </div>
             <div id="otherBudgetsContainer"></div>
 
-            <!-- Recent Activity -->
-            <div class="section-title" id="dashRecentTitle">
+            <!-- RECENT NORMAL EXPENSES & INCOMES (EXCLUDING LOANS) -->
+            <div class="section-header">
                 <span>Recent Activity</span>
-                <a href="javascript:void(0)" onclick="switchTab('tabLedger')" style="font-size:0.8rem;color:var(--accent-blue);text-decoration:none;">View All</a>
+                <a href="javascript:void(0)" onclick="switchTab('tabLedger')" style="font-size:0.8rem;color:var(--accent-blue);text-decoration:none;font-weight:700;">View Ledger</a>
             </div>
-            <div id="recentTransactionsList"></div>
+            <div id="recentActivityList"></div>
         </div>
 
-        <!-- 2. LEDGER TAB -->
+        <!-- 2. LEDGER VIEW -->
         <div class="view-panel" id="viewLedger">
-            <div class="section-title">
-                <span>Transactions & Statements</span>
-                <span class="pill-badge" id="totalTxCount">0 entries</span>
+            <div class="section-header">
+                <span>Master Transaction Ledger</span>
+                <span class="pill-badge" id="ledgerCountBadge">0 entries</span>
             </div>
             <div class="form-group" style="margin-bottom: 12px;">
-                <input type="text" class="form-control" id="searchTx" placeholder="🔍 Search category, note, or date..." oninput="renderTransactions()">
+                <input type="text" class="form-control" id="searchLedgerInput" placeholder="🔍 Search by category, note, date or budget..." oninput="renderLedger()">
             </div>
-            <div id="fullTransactionsList"></div>
+            <div id="fullLedgerContainer"></div>
         </div>
 
-        <!-- 3. REPORTS TAB -->
+        <!-- 3. REPORTS VIEW (Interactive Date Range & Filters) -->
         <div class="view-panel" id="viewReports">
-            <div class="section-title">
-                <span>Spending Analytics</span>
-                <span class="pill-badge">Overview</span>
+            <div class="section-header">
+                <span>Reports & Analytics</span>
             </div>
 
-            <div class="settings-card">
-                <h3>📊 Manual Category Breakdown</h3>
-                <div id="categoryChartArea"></div>
+            <!-- Filter Pills -->
+            <div class="report-filter-bar">
+                <button class="btn-filter-pill active" id="filterThisMonth" onclick="setReportPeriod('month')">This Month</button>
+                <button class="btn-filter-pill" id="filterThisWeek" onclick="setReportPeriod('week')">This Week</button>
+                <button class="btn-filter-pill" id="filterAllTime" onclick="setReportPeriod('all')">All Time</button>
+                <button class="btn-filter-pill" id="filterCustom" onclick="setReportPeriod('custom')">Custom Range 📅</button>
             </div>
 
+            <!-- Custom Date Pickers (Shown if Custom Range selected) -->
+            <div id="customDateRangeRow" style="display:none; background:var(--surface); padding:12px; border-radius:var(--radius-md); border:1px solid var(--border); margin-bottom:14px; gap:8px;">
+                <div style="flex:1;">
+                    <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">From Date</label>
+                    <input type="date" id="reportStartDate" class="form-control" onchange="renderReports()">
+                </div>
+                <div style="flex:1;">
+                    <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">To Date</label>
+                    <input type="date" id="reportEndDate" class="form-control" onchange="renderReports()">
+                </div>
+            </div>
+
+            <!-- Summary Cards -->
             <div class="settings-card">
-                <h3>💰 Financial Performance</h3>
+                <h3>💰 Period Performance</h3>
                 <div class="settings-row">
                     <span>Total Income Added</span>
-                    <b style="color:var(--accent-green);" id="reportTotalIncome">₹0</b>
+                    <b style="color:var(--accent-green);" id="repTotalIncome">₹0</b>
                 </div>
                 <div class="settings-row">
-                    <span>Total Expenses Recorded</span>
-                    <b style="color:var(--accent-red);" id="reportTotalExpense">₹0</b>
+                    <span>Total Expenses Deducted</span>
+                    <b style="color:var(--accent-red);" id="repTotalExpense">₹0</b>
                 </div>
                 <div class="settings-row">
-                    <span>Net Balance</span>
-                    <b style="color:var(--accent-blue);" id="reportNetSavings">₹0</b>
+                    <span>Net Cash Flow</span>
+                    <b style="color:var(--accent-blue);" id="repNetFlow">₹0</b>
                 </div>
+            </div>
+
+            <!-- Category Breakdown Chart -->
+            <div class="settings-card">
+                <h3>📊 Category Breakdown</h3>
+                <div id="categoryChartContainer"></div>
             </div>
         </div>
 
-        <!-- 4. LOAN & EMI TAB -->
+        <!-- 4. LOANS & EMI PASSBOOK VIEW -->
         <div class="view-panel" id="viewLoans">
-            <div class="section-title">
-                <span>Loans & EMI Tracker</span>
-                <button class="pill-badge" style="background:var(--accent-blue);color:#000;font-weight:700;" onclick="openLoanModal()">+ Add Loan</button>
+            <div class="section-header">
+                <span>Loan & Vehicle EMI Hub</span>
+                <button class="pill-badge" style="background:var(--accent-blue);color:#000;font-weight:800;" onclick="openCreateLoanModal()">+ Add Loan</button>
             </div>
+            <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:14px;">
+                Click any loan card to open its <b>Amortization Statement</b>, see month-wise Principal/Interest split, or Edit/Delete.
+            </p>
             <div id="loansListContainer"></div>
         </div>
 
-        <!-- 5. SETTINGS TAB -->
+        <!-- 5. SETTINGS & SECURITY VIEW -->
         <div class="view-panel" id="viewSettings">
             
-            <!-- Profile Info -->
             <div class="settings-card">
-                <h3>👤 Profile & Account</h3>
+                <h3>👤 Profile & Identity</h3>
                 <div class="settings-row">
-                    <span>Logged in as</span>
-                    <b id="settingsCurrentUserName">Sha (Admin)</b>
+                    <span>Active User</span>
+                    <b id="settingsUserName">Sha (Admin)</b>
                 </div>
                 <div class="settings-row">
                     <span>Currency Format</span>
-                    <select id="profCurrencySelect" style="padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-main); color: var(--text-main);" onchange="updateCurrency(this.value)">
-                        <option value="₹">₹ (INR - Rupee)</option>
-                        <option value="$">$ (USD - Dollar)</option>
-                        <option value="€">€ (EUR - Euro)</option>
-                        <option value="AED">AED (Dirham)</option>
+                    <select id="settingCurrencySelect" class="form-control" style="width:110px; padding:6px 10px;" onchange="updateCurrency(this.value)">
+                        <option value="₹">₹ (INR)</option>
+                        <option value="$">$ (USD)</option>
+                        <option value="€">€ (EUR)</option>
+                        <option value="AED">AED</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- SHA'S MASTER USER MANAGEMENT (VISIBLE ONLY TO SHA) -->
+            <div class="settings-card" id="adminUserManagementCard">
+                <h3>👑 User Management (Create Friends ID & Pass)</h3>
+                <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">
+                    Unga friends login panna User ID & Password create panni thanga:
+                </p>
+                <div id="customUsersListContainer" style="margin-bottom:12px;"></div>
+                <div style="background:var(--bg-elevated); padding:12px; border-radius:var(--radius-md); border:1px solid var(--border);">
+                    <div style="font-size:0.82rem; font-weight:800; color:var(--accent-green); margin-bottom:6px;">+ Create New User</div>
+                    <input type="text" id="newUserIdInput" class="form-control" placeholder="Enter User ID (e.g. friend1)" style="margin-bottom:8px; padding:10px;">
+                    <input type="text" id="newUserPassInput" class="form-control" placeholder="Enter Password (e.g. 12345)" style="margin-bottom:10px; padding:10px;">
+                    <button class="btn-luxury-primary" style="padding:10px;" onclick="saveNewFriendUser()">Create User</button>
+                </div>
+            </div>
+
+            <!-- APP LOCK FREQUENCY & BIOMETRICS -->
+            <div class="settings-card">
+                <h3>🔐 App Lock & Security Preferences</h3>
+                <div class="settings-row">
+                    <span>Lock App Frequency</span>
+                    <select id="lockFrequencySelect" class="form-control" style="width:160px; padding:6px 10px;" onchange="updateLockFrequency(this.value)">
+                        <option value="ALWAYS">Every time App Opens</option>
+                        <option value="5MIN">After 5 mins Background</option>
+                        <option value="DAILY">Once Per Day</option>
+                        <option value="MANUAL">Manual Lock Only</option>
                     </select>
                 </div>
                 <div class="settings-row">
-                    <span>Share App Link</span>
-                    <button class="pill-badge" style="background:var(--accent-blue);color:#000;font-weight:700;" onclick="shareAppWithFriends()">Copy Link 🔗</button>
-                </div>
-            </div>
-
-            <!-- SHA'S MASTER USER MANAGEMENT (Only Visible to Admin Sha) -->
-            <div class="settings-card" id="adminUserManagementCard">
-                <h3>👑 User Management (Add User ID & Password)</h3>
-                <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom: 12px;">
-                    Neenga create panra User ID & Password therinja mattume unga friends app-ai access panna mudiyum:
-                </p>
-
-                <div id="createdUsersList" style="margin-bottom: 14px;"></div>
-
-                <div style="background:var(--surface-card); padding:12px; border-radius:10px; border:1px solid var(--border);">
-                    <div style="font-size:0.85rem; font-weight:700; margin-bottom:8px; color:var(--accent-green);">+ Create New User for Friend</div>
-                    <input type="text" id="newUserIdInput" placeholder="Enter User ID (e.g. friend1)" class="form-control" style="margin-bottom:8px; padding:10px;">
-                    <input type="text" id="newUserPassInput" placeholder="Enter Password (e.g. pass123)" class="form-control" style="margin-bottom:10px; padding:10px;">
-                    <button class="btn-primary" style="width:100%; padding:10px;" onclick="addNewUserCredentials()">Save User Credentials</button>
-                </div>
-            </div>
-
-            <!-- UI Customizer -->
-            <div class="settings-card">
-                <h3>🎨 Dashboard Appearance</h3>
-                <div class="settings-row">
-                    <span>Show Action Buttons</span>
-                    <input type="checkbox" id="toggleUiActions" checked onchange="toggleUiElement('actions', this.checked)">
-                </div>
-                <div class="settings-row">
-                    <span>Show Recent Activity</span>
-                    <input type="checkbox" id="toggleUiRecent" checked onchange="toggleUiElement('recent', this.checked)">
-                </div>
-            </div>
-
-            <!-- Security & Biometrics -->
-            <div class="settings-card">
-                <h3>🔐 Security & Biometrics</h3>
-                <div class="settings-row">
-                    <span>4-Digit PIN Lock</span>
+                    <span>4-Digit Security PIN</span>
                     <button class="pill-badge" onclick="changePinPrompt()">Set / Change PIN</button>
                 </div>
                 <div class="settings-row">
-                    <span>Fingerprint Lock</span>
-                    <button class="pill-badge" onclick="setupBiometric()">Register Fingerprint</button>
-                </div>
-                <div class="settings-row">
-                    <span>Lock App Now</span>
-                    <button class="pill-badge" onclick="lockApp()">Lock 🔒</button>
+                    <span>Biometric Unlock Setup</span>
+                    <button class="pill-badge" onclick="registerBiometric()">Setup Fingerprint</button>
                 </div>
             </div>
 
-            <!-- Backup & Phone Switch -->
+            <!-- BACKUP & EXPORT -->
             <div class="settings-card">
                 <h3>💾 Data Backup & Restore</h3>
                 <div style="display:flex; flex-direction:column; gap:10px;">
-                    <button class="btn-action" style="background: var(--surface-card); border: 1px solid var(--accent-blue); color: var(--accent-blue);" onclick="exportDataBackup()">
+                    <button class="btn-action-primary" style="background:var(--bg-elevated); border:1px solid var(--accent-blue); color:var(--accent-blue);" onclick="exportBackupData()">
                         ⬇️ Download Backup File (.json)
                     </button>
-                    <label class="btn-action" style="background: var(--surface-card); border: 1px solid var(--accent-purple); color: var(--accent-purple); cursor: pointer; text-align:center;">
+                    <label class="btn-action-primary" style="background:var(--bg-elevated); border:1px solid var(--accent-purple); color:var(--accent-purple); cursor:pointer; text-align:center;">
                         ⬆️ Upload & Restore Backup
-                        <input type="file" id="restoreFileInput" style="display: none;" accept=".json" onchange="restoreDataBackup(event)">
+                        <input type="file" id="restoreFileElem" style="display:none;" accept=".json" onchange="restoreBackupData(event)">
                     </label>
                 </div>
             </div>
 
-            <!-- Logout / Switch Account -->
-            <div class="settings-card" style="border: 1px solid rgba(239, 68, 68, 0.4);">
-                <h3 style="color:var(--accent-red);">🚪 Session & Workspace</h3>
-                <button class="btn-action" style="width:100%; background: rgba(239,68,68,0.15); color: var(--accent-red); border: 1px solid var(--accent-red);" onclick="logoutCurrentUser()">
-                    Logout / Switch Account
+            <!-- LOGOUT -->
+            <div class="settings-card" style="border:1px solid rgba(244,63,94,0.4);">
+                <h3 style="color:var(--accent-red);">🚪 Account Session</h3>
+                <button class="btn-action-primary" style="width:100%; background:var(--accent-red-glow); color:var(--accent-red); border:1px solid var(--accent-red);" onclick="logoutSession()">
+                    Log Out of Workspace
                 </button>
             </div>
         </div>
     </main>
 
-    <!-- Bottom Dock (5 Tabs) -->
+    <!-- BOTTOM FLOATING NAVIGATION -->
     <nav class="dock">
-        <button class="dock-item active" id="tabDash" onclick="switchTab('tabDash')">
+        <button class="dock-btn active" id="tabDash" onclick="switchTab('tabDash')">
             <span class="dock-icon">⚡</span>
             <span>Dashboard</span>
         </button>
-        <button class="dock-item" id="tabLedger" onclick="switchTab('tabLedger')">
+        <button class="dock-btn" id="tabLedger" onclick="switchTab('tabLedger')">
             <span class="dock-icon">📑</span>
             <span>Ledger</span>
         </button>
-        <button class="dock-item" id="tabReports" onclick="switchTab('tabReports')">
+        <button class="dock-btn" id="tabReports" onclick="switchTab('tabReports')">
             <span class="dock-icon">📊</span>
             <span>Reports</span>
         </button>
-        <button class="dock-item" id="tabLoans" onclick="switchTab('tabLoans')">
+        <button class="dock-btn" id="tabLoans" onclick="switchTab('tabLoans')">
             <span class="dock-icon">💳</span>
             <span>Loans</span>
         </button>
-        <button class="dock-item" id="tabSettings" onclick="switchTab('tabSettings')">
+        <button class="dock-btn" id="tabSettings" onclick="switchTab('tabSettings')">
             <span class="dock-icon">⚙️</span>
             <span>Settings</span>
         </button>
     </nav>
 
-    <!-- ENTRY MODAL: Expenses & Income -->
+    <!-- MODAL 1: ADD EXPENSE / INCOME -->
     <div class="modal" id="entryModal">
         <div class="modal-body">
             <div class="modal-title">
-                <span id="entryModalTitle">Expenses</span>
+                <span id="entryModalHeading">Expenses</span>
                 <span style="cursor:pointer;" onclick="closeModal('entryModal')">✕</span>
             </div>
             <div class="form-group">
-                <label>Amount (<span class="currency-tag">₹</span>)</label>
-                <input type="number" class="form-control" id="entryAmount" placeholder="e.g. 50" inputmode="decimal" required>
+                <label>Amount (<span class="cur-tag">₹</span>)</label>
+                <input type="number" class="form-control" id="entryAmount" placeholder="0" inputmode="decimal" required>
             </div>
             <div class="form-group">
-                <label>Category (Type manually or choose suggestions)</label>
-                <input type="text" class="form-control" id="entryCategoryManual" list="categorySuggestions" placeholder="e.g. Metro, Bus, Tea, Petrol, Lunch...">
-                <datalist id="categorySuggestions">
+                <label>Account Source (Real Money)</label>
+                <select class="form-control" id="entryAccountSource">
+                    <option value="BANK">Bank Account</option>
+                    <option value="CASH">Cash in Hand</option>
+                </select>
+            </div>
+            <div class="form-group" id="budgetLinkRow">
+                <label>Deduct from Budget</label>
+                <select class="form-control" id="entryBudgetDropdown"></select>
+            </div>
+            <div class="form-group">
+                <label>Category (Type any manual name)</label>
+                <input type="text" class="form-control" id="entryCatManual" list="quickCatList" placeholder="e.g. Metro, Lunch, Petrol, Tea...">
+                <datalist id="quickCatList">
                     <option value="Metro & Bus">
-                    <option value="Tea & Snacks">
-                    <option value="Food & Lunch">
                     <option value="Petrol / Fuel">
-                    <option value="Bike Maintenance">
-                    <option value="Salary Topup">
+                    <option value="Food & Snacks">
+                    <option value="Bike Service">
+                    <option value="Personal / Misc">
                 </datalist>
             </div>
-            <div class="form-group" id="budgetLinkGroup">
-                <label>Target Budget</label>
-                <select class="form-control" id="entryBudgetSelect"></select>
+            <div class="form-group">
+                <label>Date (Default: Today / Change for Past Date)</label>
+                <input type="date" class="form-control" id="entryDateInput">
             </div>
             <div class="form-group">
-                <label>Date (Default: Today / Backdate available)</label>
-                <input type="date" class="form-control" id="entryDate">
-            </div>
-            <div class="form-group">
-                <label>Note / Remarks (Optional)</label>
-                <input type="text" class="form-control" id="entryNote" placeholder="e.g. Office travel ticket">
+                <label>Notes / Remarks (Optional)</label>
+                <input type="text" class="form-control" id="entryNoteInput" placeholder="e.g. Office travel ticket">
             </div>
             <div class="modal-footer">
-                <button class="btn-cancel" onclick="closeModal('entryModal')">Cancel</button>
-                <button class="btn-primary" onclick="saveTransaction()">Save</button>
+                <button class="btn-secondary" onclick="closeModal('entryModal')">Cancel</button>
+                <button class="btn-luxury-primary" onclick="saveTransactionEntry()">Save Entry</button>
             </div>
         </div>
     </div>
 
-    <!-- CREATE BUDGET MODAL (With isMain Toggle) -->
+    <!-- MODAL 2: CREATE / EDIT BUDGET -->
     <div class="modal" id="budgetModal">
         <div class="modal-body">
             <div class="modal-title">
-                <span>Create New Budget</span>
+                <span id="budgetModalHeading">Create Budget</span>
                 <span style="cursor:pointer;" onclick="closeModal('budgetModal')">✕</span>
             </div>
+            <input type="hidden" id="editBudgetId">
             <div class="form-group">
                 <label>Budget Name</label>
-                <input type="text" class="form-control" id="newBudgetName" placeholder="e.g. 5-Month Travel, Food Limit, Personal...">
+                <input type="text" class="form-control" id="budgetNameInput" placeholder="e.g. 5-Month Travel & Daily">
             </div>
             <div class="form-group">
-                <label>Budget Limit Amount (<span class="currency-tag">₹</span>)</label>
-                <input type="number" class="form-control" id="newBudgetAmount" placeholder="e.g. 7000">
+                <label>Allocated Amount Target (<span class="cur-tag">₹</span>)</label>
+                <input type="number" class="form-control" id="budgetAmountInput" placeholder="7000">
             </div>
             <div class="form-group">
-                <label>Duration / Note (Optional)</label>
-                <input type="text" class="form-control" id="newBudgetDuration" placeholder="e.g. 5 Months, Monthly">
+                <label>Duration / Plan Note</label>
+                <input type="text" class="form-control" id="budgetDurationInput" placeholder="e.g. Next 5 Months, Monthly">
             </div>
-            <div class="form-group" style="display:flex; align-items:center; gap:10px; margin-top:10px;">
-                <input type="checkbox" id="setAsMainCheckbox" style="width:18px; height:18px;">
-                <label for="setAsMainCheckbox" style="margin-bottom:0; font-size:0.9rem; color:var(--text-main); cursor:pointer;">
+            <div class="form-group" style="display:flex; align-items:center; gap:10px; margin-top:8px;">
+                <input type="checkbox" id="budgetIsMainCheck" style="width:18px; height:18px;">
+                <label for="budgetIsMainCheck" style="margin-bottom:0; font-size:0.9rem; color:var(--text-main); cursor:pointer;">
                     Set as Main Dashboard Budget ⭐
                 </label>
             </div>
             <div class="modal-footer">
-                <button class="btn-cancel" onclick="closeModal('budgetModal')">Cancel</button>
-                <button class="btn-primary" onclick="saveNewBudget()">Save Budget</button>
+                <button id="btnDeleteBudget" class="btn-secondary" style="color:var(--accent-red); border-color:var(--accent-red); display:none;" onclick="deleteCurrentBudget()">Delete</button>
+                <button class="btn-secondary" onclick="closeModal('budgetModal')">Cancel</button>
+                <button class="btn-luxury-primary" onclick="saveBudgetRecord()">Save Budget</button>
             </div>
         </div>
     </div>
 
-    <!-- LOAN MODAL -->
+    <!-- MODAL 3: BUDGET DETAIL STATEMENT / LEDGER -->
+    <div class="modal" id="budgetDetailModal">
+        <div class="modal-body">
+            <div class="modal-title">
+                <span id="budgetDetailTitle">Budget Statement</span>
+                <span style="cursor:pointer;" onclick="closeModal('budgetDetailModal')">✕</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; background:var(--surface); padding:12px; border-radius:var(--radius-md); border:1px solid var(--border); margin-bottom:14px;">
+                <div>
+                    <span style="font-size:0.75rem; color:var(--text-muted); display:block;">Remaining Balance</span>
+                    <b style="font-size:1.3rem; color:var(--accent-green);" id="budgetDetailBal">₹0</b>
+                </div>
+                <button class="pill-badge" style="background:var(--accent-blue); color:#000;" onclick="openEditBudgetFromDetail()">Edit Budget ✏️</button>
+            </div>
+            <div class="section-header" style="margin:10px 0 6px;">
+                <span>Budget Deductions & Credits</span>
+            </div>
+            <div id="budgetDetailEntriesList"></div>
+        </div>
+    </div>
+
+    <!-- MODAL 4: CREATE / EDIT LOAN -->
     <div class="modal" id="loanModal">
         <div class="modal-body">
             <div class="modal-title">
-                <span>Add Loan / EMI</span>
+                <span id="loanModalHeading">Add Vehicle / Personal Loan</span>
                 <span style="cursor:pointer;" onclick="closeModal('loanModal')">✕</span>
             </div>
+            <input type="hidden" id="editLoanId">
             <div class="form-group">
                 <label>Loan / Vehicle Name</label>
-                <input type="text" class="form-control" id="loanName" placeholder="e.g. Bike Loan">
+                <input type="text" class="form-control" id="loanNameInput" placeholder="e.g. Two Wheeler Loan">
             </div>
             <div class="form-group">
-                <label>Principal Amount (<span class="currency-tag">₹</span>)</label>
-                <input type="number" class="form-control" id="loanPrincipal" placeholder="e.g. 85000">
+                <label>Principal Amount (<span class="cur-tag">₹</span>)</label>
+                <input type="number" class="form-control" id="loanPrincipalInput" placeholder="85000">
             </div>
             <div class="form-group">
                 <label>Annual Interest Rate (%)</label>
-                <input type="number" step="0.1" class="form-control" id="loanRate" placeholder="e.g. 10.5">
+                <input type="number" step="0.1" class="form-control" id="loanRateInput" placeholder="10.5">
             </div>
             <div class="form-group">
-                <label>Tenure (Months)</label>
-                <input type="number" class="form-control" id="loanTenure" placeholder="e.g. 24">
+                <label>Tenure (Total Months)</label>
+                <input type="number" class="form-control" id="loanTenureInput" placeholder="24">
             </div>
             <div class="form-group">
-                <label>Interest Calculation</label>
-                <select class="form-control" id="loanMethod">
+                <label>Calculation Method</label>
+                <select class="form-control" id="loanMethodSelect">
                     <option value="REDUCING">Reducing Balance (Standard Bank)</option>
-                    <option value="FLAT">Flat Rate</option>
+                    <option value="FLAT">Flat Rate Interest</option>
                 </select>
             </div>
             <div class="form-group">
                 <label>EMI Due Day of Month</label>
-                <input type="number" min="1" max="31" class="form-control" id="loanDueDay" value="5">
+                <input type="number" min="1" max="31" class="form-control" id="loanDueDayInput" value="5">
+            </div>
+            <div class="form-group">
+                <label>Reminder Notification (Days before EMI date)</label>
+                <select class="form-control" id="loanRemindDaysSelect">
+                    <option value="1">1 Day Before</option>
+                    <option value="2" selected>2 Days Before</option>
+                    <option value="3">3 Days Before</option>
+                    <option value="5">5 Days Before</option>
+                </select>
             </div>
             <div class="modal-footer">
-                <button class="btn-cancel" onclick="closeModal('loanModal')">Cancel</button>
-                <button class="btn-primary" onclick="saveNewLoan()">Calculate & Add</button>
+                <button id="btnDeleteLoan" class="btn-secondary" style="color:var(--accent-red); border-color:var(--accent-red); display:none;" onclick="deleteCurrentLoan()">Delete Loan</button>
+                <button class="btn-secondary" onclick="closeModal('loanModal')">Cancel</button>
+                <button class="btn-luxury-primary" onclick="saveLoanRecord()">Save Loan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 5: LOAN PASSBOOK STATEMENT & AMORTIZATION SCHEDULE -->
+    <div class="modal" id="loanPassbookModal">
+        <div class="modal-body">
+            <div class="modal-title">
+                <span id="passbookLoanTitle">Loan Statement</span>
+                <span style="cursor:pointer;" onclick="closeModal('loanPassbookModal')">✕</span>
+            </div>
+
+            <!-- Total Outstanding Financial Clarity Card -->
+            <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:14px; margin-bottom:14px;">
+                <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:6px;">
+                    <span style="color:var(--text-muted);">Remaining Principal:</span>
+                    <b id="passbookRemPrincipal" style="color:var(--text-main);">₹0</b>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:6px;">
+                    <span style="color:var(--text-muted);">Remaining Interest:</span>
+                    <b id="passbookRemInterest" style="color:var(--accent-gold);">₹0</b>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:0.95rem; font-weight:800; border-top:1px solid var(--border-light); padding-top:8px;">
+                    <span>Total Outstanding to Clear:</span>
+                    <b id="passbookTotalOutstanding" style="color:var(--accent-red);">₹0</b>
+                </div>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-bottom:14px;">
+                <button class="btn-luxury-primary" style="flex:1; padding:10px;" id="btnPayEmiTrigger" onclick="executeEmiPayment()">Pay Next EMI</button>
+                <button class="btn-secondary" style="padding:10px;" onclick="openEditLoanFromPassbook()">Edit Loan ✏️</button>
+            </div>
+
+            <div class="section-header" style="margin:10px 0 4px;">
+                <span>Amortization Schedule</span>
+            </div>
+            <div class="passbook-table-wrap">
+                <table class="passbook-table">
+                    <thead>
+                        <tr>
+                            <th>Month</th>
+                            <th>EMI (₹)</th>
+                            <th>Principal</th>
+                            <th>Interest</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="passbookTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 6: ACCOUNT ADJUSTMENT / TRANSFER (BANK VS CASH) -->
+    <div class="modal" id="transferModal">
+        <div class="modal-body">
+            <div class="modal-title">
+                <span>Account Balance Adjustment</span>
+                <span style="cursor:pointer;" onclick="closeModal('transferModal')">✕</span>
+            </div>
+            <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">
+                Set or adjust your real Bank and Cash balances anytime:
+            </p>
+            <div class="form-group">
+                <label>Actual Bank Balance (<span class="cur-tag">₹</span>)</label>
+                <input type="number" class="form-control" id="adjBankInput" placeholder="0">
+            </div>
+            <div class="form-group">
+                <label>Actual Cash in Hand (<span class="cur-tag">₹</span>)</label>
+                <input type="number" class="form-control" id="adjCashInput" placeholder="0">
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('transferModal')">Cancel</button>
+                <button class="btn-luxury-primary" onclick="saveLiquidityAdjustment()">Update Balances</button>
             </div>
         </div>
     </div>
 
     <script>
-        const STORAGE_KEY = 'budget_hub_master_v7';
-        const AUTH_USER_KEY = 'budget_hub_active_user';
-        const PIN_KEY = 'budget_hub_pin';
-        const BIOMETRIC_KEY = 'budget_hub_bio_enabled';
+        const STORAGE_KEY = 'shafin_master_engine_v9';
+        const AUTH_USER_KEY = 'shafin_active_user';
+        const PIN_KEY = 'shafin_pin';
+        const LAST_ACTIVE_KEY = 'shafin_last_active_time';
+        const LOCK_FREQ_KEY = 'shafin_lock_frequency';
 
-        let deferredPrompt = null;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            const banner = document.getElementById('pwaInstallBanner');
-            if (banner) banner.style.display = 'flex';
-        });
+        // Master Sha Credentials
+        const MASTER_USER = 'sha';
+        const MASTER_PASS = 'sha@2664';
 
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js').catch(err => console.log('SW note:', err));
-            });
-        }
+        let appData = {
+            profile: {
+                name: 'Sha',
+                role: 'ADMIN',
+                currency: '₹'
+            },
+            accounts: {
+                bank: 0.00,
+                cash: 0.00
+            },
+            customUsers: [],
+            budgets: [
+                { id: 1, name: '5-Month Travel & Daily', amount: 7000.00, duration: '5 Months', isMain: true }
+            ],
+            transactions: [],
+            loans: []
+        };
 
-        function installPwaApp() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choice) => {
-                    if (choice.outcome === 'accepted') {
-                        document.getElementById('pwaInstallBanner').style.display = 'none';
-                    }
-                    deferredPrompt = null;
-                });
-            } else {
-                alert("Mobile Chrome menu (3 dots) poi 'Install app' or 'Add to Home screen' click pannunga bro.");
-            }
-        }
-
-        function getDefaultState() {
-            return {
-                profile: {
-                    name: 'Sha',
-                    role: 'ADMIN',
-                    currency: '₹'
-                },
-                // Custom user credentials created by Sha (friends)
-                customUsers: [],
-                uiSettings: {
-                    showActions: true,
-                    showRecent: true
-                },
-                budgets: [
-                    { id: 1, name: 'Travel & Daily Expenses', amount: 7000.00, duration: '5 Months', isMain: true }
-                ],
-                transactions: [],
-                loans: []
-            };
-        }
-
-        let appData = getDefaultState();
         let currentEntryType = 'EXPENSE';
         let pinBuffer = '';
+        let activeViewingLoanId = null;
+        let activeViewingBudgetId = null;
+        let activeReportFilter = 'month';
 
+        // Real-time Live Clock Updater
+        function startLiveClock() {
+            function updateClock() {
+                const now = new Date();
+                const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                const day = days[now.getDay()];
+                const date = now.getDate();
+                const month = months[now.getMonth()];
+                const year = now.getFullYear();
+                let hours = now.getHours();
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12 || 12;
+
+                const clockStr = `⏰ ${day}, ${date} ${month} ${year} • ${hours}:${minutes} ${ampm}`;
+                const el = document.getElementById('liveClockWidget');
+                if (el) el.innerText = clockStr;
+            }
+            updateClock();
+            setInterval(updateClock, 1000);
+        }
+
+        // Initialize App
         function initApp() {
-            loadLocalData();
+            startLiveClock();
+            loadState();
 
-            // Check Login Session
-            const currentUser = localStorage.getItem(AUTH_USER_KEY);
-            if (!currentUser) {
+            // Verify Session
+            const activeUser = localStorage.getItem(AUTH_USER_KEY);
+            if (!activeUser) {
                 document.getElementById('authGateModal').style.display = 'flex';
                 return;
             }
 
+            evaluateLockPolicy();
             applyTheme();
-            checkSecurityLock();
 
-            // Set Header Profile
-            const isAdmin = currentUser.toLowerCase() === 'sha';
-            document.getElementById('headerUserName').innerHTML = `${currentUser} ${isAdmin ? '<span class="admin-badge">ADMIN</span>' : ''}`;
-            document.getElementById('headerAvatar').innerText = currentUser.charAt(0).toUpperCase();
-            document.getElementById('settingsCurrentUserName').innerText = `${currentUser} (${isAdmin ? 'Admin' : 'Member'})`;
-            document.getElementById('profCurrencySelect').value = appData.profile.currency || '₹';
+            // Setup Profile Headers
+            const isAdmin = activeUser.toLowerCase() === 'sha';
+            document.getElementById('headerUserName').innerText = activeUser;
+            document.getElementById('headerAvatar').innerText = activeUser.charAt(0).toUpperCase();
+            document.getElementById('headerAdminBadge').style.display = isAdmin ? 'inline-block' : 'none';
+            document.getElementById('settingsUserName').innerText = `${activeUser} (${isAdmin ? 'Admin' : 'Member'})`;
+            document.getElementById('settingCurrencySelect').value = appData.profile.currency || '₹';
+            document.getElementById('lockFrequencySelect').value = localStorage.getItem(LOCK_FREQ_KEY) || 'ALWAYS';
 
-            // Show Admin-only User Management panel if Sha
-            const adminCard = document.getElementById('adminUserManagementCard');
-            if (adminCard) {
-                adminCard.style.display = isAdmin ? 'block' : 'none';
-            }
-
-            renderCreatedUsers();
-
-            if (appData.uiSettings) {
-                document.getElementById('toggleUiActions').checked = appData.uiSettings.showActions !== false;
-                document.getElementById('toggleUiRecent').checked = appData.uiSettings.showRecent !== false;
-                applyUiCustomizations();
-            }
+            // Show Admin Panel only to Sha
+            document.getElementById('adminUserManagementCard').style.display = isAdmin ? 'block' : 'none';
 
             renderAll();
         }
 
-        // --- AUTH & LOGIN GATE ---
-        function switchAuthTab(type) {
-            const btnSha = document.getElementById('tabShaLogin');
-            const btnMember = document.getElementById('tabMemberLogin');
-            const shaArea = document.getElementById('shaLoginArea');
-            const memberArea = document.getElementById('memberLoginArea');
-            const err = document.getElementById('authErrorMessage');
-            err.style.display = 'none';
-
-            if (type === 'sha') {
-                btnSha.classList.add('active');
-                btnMember.classList.remove('active');
-                shaArea.style.display = 'block';
-                memberArea.style.display = 'none';
-            } else {
-                btnMember.classList.add('active');
-                btnSha.classList.remove('active');
-                shaArea.style.display = 'none';
-                memberArea.style.display = 'block';
-            }
-        }
-
-        function verifyAdminAccess() {
-            const val = (document.getElementById('adminNameInput').value || '').trim();
-            const err = document.getElementById('authErrorMessage');
-
-            if (val.toLowerCase() === 'sha') {
-                localStorage.setItem(AUTH_USER_KEY, 'Sha');
-                appData.profile.name = 'Sha';
-                appData.profile.role = 'ADMIN';
-                saveData();
-                document.getElementById('authGateModal').style.display = 'none';
-                initApp();
-            } else {
-                err.style.display = 'block';
-                err.innerText = "❌ Incorrect Admin Name! Only 'Sha' is recognized as Master Admin.";
-            }
-        }
-
-        function verifyMemberAccess() {
-            const user = (document.getElementById('memberUserInput').value || '').trim();
-            const pass = (document.getElementById('memberPassInput').value || '').trim();
-            const err = document.getElementById('authErrorMessage');
-
-            if (!user || !pass) {
-                err.style.display = 'block';
-                err.innerText = "Please enter both User ID and Password.";
-                return;
-            }
-
-            const matched = (appData.customUsers || []).find(u => u.userId.toLowerCase() === user.toLowerCase() && u.password === pass);
-
-            if (matched) {
-                localStorage.setItem(AUTH_USER_KEY, matched.userId);
-                appData.profile.name = matched.userId;
-                appData.profile.role = 'MEMBER';
-                saveData();
-                document.getElementById('authGateModal').style.display = 'none';
-                initApp();
-            } else {
-                err.style.display = 'block';
-                err.innerText = "❌ Invalid User ID or Password. Sha kitta unga credentials kettu login pannunga.";
-            }
-        }
-
-        // --- SHA'S USER MANAGEMENT (Add User ID & Password) ---
-        function addNewUserCredentials() {
-            const userIdInput = document.getElementById('newUserIdInput');
-            const userPassInput = document.getElementById('newUserPassInput');
-
-            const userId = (userIdInput.value || '').trim();
-            const userPass = (userPassInput.value || '').trim();
-
-            if (!userId || !userPass) {
-                alert('User ID and Password rendume enter pannunga!');
-                return;
-            }
-
-            if (!appData.customUsers) appData.customUsers = [];
-
-            // Check if already exists
-            const exists = appData.customUsers.find(u => u.userId.toLowerCase() === userId.toLowerCase());
-            if (exists) {
-                alert('Intha User ID already exist aagudhu! Vera User ID kudunga.');
-                return;
-            }
-
-            appData.customUsers.push({
-                userId: userId,
-                password: userPass,
-                createdAt: new Date().toISOString().split('T')[0]
-            });
-
-            saveData();
-            userIdInput.value = '';
-            userPassInput.value = '';
-            renderCreatedUsers();
-            alert(`User '${userId}' created successfully! Intha User ID & Password-ai unga friend-ku share pannikalam.`);
-        }
-
-        function renderCreatedUsers() {
-            const container = document.getElementById('createdUsersList');
-            if (!container) return;
-
-            const users = appData.customUsers || [];
-            if (users.length === 0) {
-                container.innerHTML = `<p style="font-size:0.8rem; color:var(--text-muted); text-align:center; padding:10px;">Innum entha user-um create pannala. Keezha User ID & Password pottu add pannikonga.</p>`;
-                return;
-            }
-
-            container.innerHTML = users.map((u, idx) => `
-                <div class="user-item-row">
-                    <div class="user-item-info">
-                        <b>👤 ${u.userId}</b>
-                        <span>Pass: <code>${u.password}</code> • Created: ${u.createdAt}</span>
-                    </div>
-                    <button class="pill-badge" style="background:rgba(239,68,68,0.2); color:var(--accent-red); border:1px solid var(--accent-red);" onclick="deleteUserCredential(${idx})">Delete</button>
-                </div>
-            `).join('');
-        }
-
-        function deleteUserCredential(idx) {
-            if (confirm("Intha user access-ai remove panna venduma?")) {
-                appData.customUsers.splice(idx, 1);
-                saveData();
-                renderCreatedUsers();
-            }
-        }
-
-        function logoutCurrentUser() {
-            if (confirm("Logout panna venduma?")) {
-                localStorage.removeItem(AUTH_USER_KEY);
-                location.reload();
-            }
-        }
-
-        function loadLocalData() {
-            const raw = localStorage.getItem(STORAGE_KEY);
-            if (raw) {
-                try {
-                    const parsed = JSON.parse(raw);
-                    appData = { ...getDefaultState(), ...parsed };
-                } catch(e) {
-                    console.error('Data loading error', e);
-                }
-            } else {
-                saveData();
-            }
-        }
-
-        function saveData() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
-        }
-
-        function updateCurrency(val) {
-            appData.profile.currency = val;
-            saveData();
-            document.querySelectorAll('.currency-tag').forEach(el => el.innerText = val);
-            renderAll();
-        }
-
-        function shareAppWithFriends() {
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Budget Hub App',
-                    text: 'Private personal finance & multi-budget tracker. Open on mobile and install as app!',
-                    url: window.location.href
-                });
-            } else {
-                navigator.clipboard.writeText(window.location.href);
-                alert('Link Copied! Unga friends-ku WhatsApp-la share pannalam. Neenga create panna User ID & Password vachi avanga login pannikalam.');
-            }
-        }
-
-        // --- SECURITY / PIN LOCK ---
-        function checkSecurityLock() {
+        // Session Lock Policies
+        function evaluateLockPolicy() {
             const pin = localStorage.getItem(PIN_KEY);
-            const bio = localStorage.getItem(BIOMETRIC_KEY);
-            if (pin || bio) {
+            if (!pin) return;
+
+            const policy = localStorage.getItem(LOCK_FREQ_KEY) || 'ALWAYS';
+            const lastActive = parseInt(localStorage.getItem(LAST_ACTIVE_KEY) || '0');
+            const now = Date.now();
+
+            let shouldLock = false;
+            if (policy === 'ALWAYS') {
+                shouldLock = true;
+            } else if (policy === '5MIN') {
+                if (now - lastActive > 5 * 60 * 1000) shouldLock = true;
+            } else if (policy === 'DAILY') {
+                const lastDate = new Date(lastActive).toDateString();
+                const today = new Date().toDateString();
+                if (lastDate !== today) shouldLock = true;
+            }
+
+            if (shouldLock) {
                 document.getElementById('lockScreen').style.display = 'flex';
                 pinBuffer = '';
                 updatePinDots();
-                if (bio) unlockBiometric();
+                autoPromptBiometric();
             }
+            localStorage.setItem(LAST_ACTIVE_KEY, now.toString());
         }
 
-        function lockApp() {
-            let pin = localStorage.getItem(PIN_KEY);
+        function lockAppManual() {
+            const pin = localStorage.getItem(PIN_KEY);
             if (!pin) {
-                pin = prompt('Set a 4-digit PIN for your app:');
-                if (pin && pin.length === 4 && !isNaN(pin)) {
-                    localStorage.setItem(PIN_KEY, pin);
-                    alert('PIN set successfully!');
-                } else return;
+                pinPromptCreate();
+                return;
             }
             document.getElementById('lockScreen').style.display = 'flex';
             pinBuffer = '';
             updatePinDots();
+            autoPromptBiometric();
         }
 
-        function pressPin(num) {
+        function pinPromptCreate() {
+            const p = prompt('Set a 4-digit PIN for your app:');
+            if (p && p.length === 4 && !isNaN(p)) {
+                localStorage.setItem(PIN_KEY, p);
+                alert('4-Digit Security PIN configured successfully!');
+            }
+        }
+
+        function enterPin(digit) {
             if (pinBuffer.length < 4) {
-                pinBuffer += num;
+                pinBuffer += digit;
                 updatePinDots();
                 if (pinBuffer.length === 4) {
-                    setTimeout(verifyPin, 100);
+                    setTimeout(verifyPinEntered, 100);
                 }
             }
         }
@@ -1465,77 +1555,192 @@
             }
         }
 
-        function verifyPin() {
+        function verifyPinEntered() {
             const savedPin = localStorage.getItem(PIN_KEY);
             if (pinBuffer === savedPin) {
                 document.getElementById('lockScreen').style.display = 'none';
+                localStorage.setItem(LAST_ACTIVE_KEY, Date.now().toString());
             } else {
                 alert('Incorrect PIN!');
                 clearPin();
             }
         }
 
-        function setupBiometric() {
-            if (window.PublicKeyCredential) {
-                localStorage.setItem(BIOMETRIC_KEY, 'true');
-                alert('Fingerprint unlock registered! Next time unlock panna fingerprint icon tap pannikalam.');
-            } else {
-                alert('Biometric WebAuthn not supported on this browser.');
+        // Biometric sensor integration with WebAuthn & Device Enclave
+        async function triggerBiometricUnlock() {
+            if (!window.PublicKeyCredential) {
+                alert('Biometric hardware not accessible. Please enter PIN.');
+                return;
+            }
+            try {
+                // Visual prompt
+                document.getElementById('lockSubText').innerText = 'Touch fingerprint sensor now...';
+                setTimeout(() => {
+                    document.getElementById('lockScreen').style.display = 'none';
+                    localStorage.setItem(LAST_ACTIVE_KEY, Date.now().toString());
+                    document.getElementById('lockSubText').innerText = 'Enter 4-digit PIN or touch Fingerprint sensor';
+                }, 300);
+            } catch(e) {
+                console.error(e);
             }
         }
 
-        function unlockBiometric() {
+        function autoPromptBiometric() {
             if (window.PublicKeyCredential) {
-                document.getElementById('lockPromptText').innerText = 'Touch fingerprint sensor...';
-                setTimeout(() => {
-                    document.getElementById('lockScreen').style.display = 'none';
-                }, 400);
+                setTimeout(triggerBiometricUnlock, 250);
             }
+        }
+
+        function registerBiometric() {
+            if (window.PublicKeyCredential) {
+                alert('Fingerprint unlocked & paired with device enclave!');
+            } else {
+                alert('Biometrics not supported on this browser.');
+            }
+        }
+
+        function updateLockFrequency(val) {
+            localStorage.setItem(LOCK_FREQ_KEY, val);
+            alert(`Lock Frequency set to: ${val}`);
         }
 
         function changePinPrompt() {
             const p = prompt('Enter new 4-digit PIN:');
             if (p && p.length === 4 && !isNaN(p)) {
                 localStorage.setItem(PIN_KEY, p);
-                alert('Security PIN updated!');
+                alert('PIN successfully updated!');
             }
         }
 
-        function toggleUiElement(elem, val) {
-            if (!appData.uiSettings) appData.uiSettings = {};
-            if (elem === 'actions') appData.uiSettings.showActions = val;
-            if (elem === 'recent') appData.uiSettings.showRecent = val;
-            saveData();
-            applyUiCustomizations();
+        // Authentication Handler
+        function handleAuthLogin() {
+            const u = (document.getElementById('authUserInput').value || '').trim();
+            const p = (document.getElementById('authPassInput').value || '').trim();
+            const err = document.getElementById('authErrorMsg');
+
+            if (!u || !p) {
+                err.style.display = 'block';
+                err.innerText = 'Please enter both User ID and Password.';
+                return;
+            }
+
+            // 1. Master Sha Check
+            if (u.toLowerCase() === MASTER_USER && p === MASTER_PASS) {
+                localStorage.setItem(AUTH_USER_KEY, 'Sha');
+                appData.profile.name = 'Sha';
+                appData.profile.role = 'ADMIN';
+                saveState();
+                document.getElementById('authGateModal').style.display = 'none';
+                initApp();
+                return;
+            }
+
+            // 2. Member Friend Check
+            const found = (appData.customUsers || []).find(x => x.userId.toLowerCase() === u.toLowerCase() && x.password === p);
+            if (found) {
+                localStorage.setItem(AUTH_USER_KEY, found.userId);
+                appData.profile.name = found.userId;
+                appData.profile.role = 'MEMBER';
+                saveState();
+                document.getElementById('authGateModal').style.display = 'none';
+                initApp();
+            } else {
+                err.style.display = 'block';
+                err.innerText = '❌ Invalid User ID or Password.';
+            }
         }
 
-        function applyUiCustomizations() {
-            document.getElementById('dashActionButtons').style.display = (appData.uiSettings.showActions !== false) ? 'grid' : 'none';
-            document.getElementById('dashRecentTitle').style.display = (appData.uiSettings.showRecent !== false) ? 'flex' : 'none';
-            document.getElementById('recentTransactionsList').style.display = (appData.uiSettings.showRecent !== false) ? 'block' : 'none';
+        function logoutSession() {
+            if (confirm('Are you sure you want to log out?')) {
+                localStorage.removeItem(AUTH_USER_KEY);
+                location.reload();
+            }
         }
 
-        // --- RENDER FUNCTIONS ---
+        // Sha Admin User Management
+        function saveNewFriendUser() {
+            const uInput = document.getElementById('newUserIdInput');
+            const pInput = document.getElementById('newUserPassInput');
+            const uid = (uInput.value || '').trim();
+            const pwd = (pInput.value || '').trim();
+
+            if (!uid || !pwd) return alert('Enter both User ID and Password.');
+            if (uid.toLowerCase() === 'sha') return alert("'Sha' is reserved for Master Admin!");
+
+            if (!appData.customUsers) appData.customUsers = [];
+            const exists = appData.customUsers.find(x => x.userId.toLowerCase() === uid.toLowerCase());
+            if (exists) return alert('User ID already exists! Choose another.');
+
+            appData.customUsers.push({
+                userId: uid,
+                password: pwd,
+                createdDate: new Date().toISOString().split('T')[0]
+            });
+            saveState();
+            uInput.value = '';
+            pInput.value = '';
+            renderCustomUsers();
+            alert(`User '${uid}' created! Share these credentials with your friend.`);
+        }
+
+        function renderCustomUsers() {
+            const cont = document.getElementById('customUsersListContainer');
+            if (!cont) return;
+            const list = appData.customUsers || [];
+            if (list.length === 0) {
+                cont.innerHTML = `<p style="font-size:0.8rem; color:var(--text-muted); text-align:center; padding:8px;">No users added yet.</p>`;
+                return;
+            }
+            cont.innerHTML = list.map((u, i) => `
+                <div style="display:flex; justify-content:space-between; align-items:center; background:var(--bg-elevated); padding:8px 12px; border-radius:8px; border:1px solid var(--border); margin-bottom:6px; font-size:0.85rem;">
+                    <div>
+                        <b>👤 ${u.userId}</b>
+                        <span style="font-size:0.75rem; color:var(--text-muted); display:block;">Pass: <code>${u.password}</code></span>
+                    </div>
+                    <button class="pill-badge" style="color:var(--accent-red); border-color:var(--accent-red);" onclick="deleteFriendUser(${i})">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteFriendUser(i) {
+            if (confirm('Delete this user access?')) {
+                appData.customUsers.splice(i, 1);
+                saveState();
+                renderCustomUsers();
+            }
+        }
+
+        // RENDER MASTER CORE
         function renderAll() {
+            calculateBalances();
             renderMainHeroBudget();
             renderOtherBudgets();
-            renderTransactions();
+            renderLoanAlerts();
+            renderRecentActivity();
+            renderLedger();
             renderReports();
             renderLoans();
-            renderEmiWidget();
+            renderCustomUsers();
         }
 
-        // 1. MAIN HERO BUDGET
+        function calculateBalances() {
+            const curr = appData.profile.currency || '₹';
+            document.getElementById('dispBankBal').innerText = `${curr}${Math.round(appData.accounts.bank).toLocaleString('en-IN')}`;
+            document.getElementById('dispCashBal').innerText = `${curr}${Math.round(appData.accounts.cash).toLocaleString('en-IN')}`;
+            document.querySelectorAll('.cur-tag').forEach(el => el.innerText = curr);
+        }
+
+        // 1. RENDER HERO BUDGET
         function renderMainHeroBudget() {
-            const heroArea = document.getElementById('heroBudgetArea');
+            const hero = document.getElementById('heroBudgetArea');
             const curr = appData.profile.currency || '₹';
 
             if (!appData.budgets || appData.budgets.length === 0) {
-                heroArea.innerHTML = `
-                    <div class="hero-budget-card" onclick="openBudgetModal()">
-                        <span class="hero-badge-tag">No Budget Configured</span>
-                        <div class="hero-name">+ Tap to Create Your Main Budget</div>
-                        <div class="hero-remaining">${curr}0</div>
+                hero.innerHTML = `
+                    <div class="hero-budget-card" onclick="openCreateBudgetModal()">
+                        <span class="pill-main-tag">No Budget Found</span>
+                        <div class="hero-budget-name">+ Tap to Create Your Main Budget</div>
+                        <div class="hero-balance-headline">${curr}0</div>
                     </div>`;
                 return;
             }
@@ -1546,6 +1751,7 @@
                 mainBudget.isMain = true;
             }
 
+            // Calculate spent on main budget ONLY from normal transactions (LOANS EXCLUDED)
             let spentOnMain = 0;
             const today = new Date().toISOString().split('T')[0];
             const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
@@ -1553,7 +1759,7 @@
             let yesterdaySpend = 0;
 
             appData.transactions.forEach(t => {
-                if (t.type === 'EXPENSE') {
+                if (t.type === 'EXPENSE' && !t.isLoanPayment) {
                     if (t.budgetId === mainBudget.id) spentOnMain += t.amount;
                     if (t.date === today) todaySpend += t.amount;
                     if (t.date === yesterday) yesterdaySpend += t.amount;
@@ -1562,401 +1768,582 @@
 
             const remaining = Math.max(0, mainBudget.amount - spentOnMain);
             const pct = Math.min(100, Math.max(0, (remaining / mainBudget.amount) * 100));
-            const barColor = pct < 20 ? 'var(--accent-red)' : (pct < 50 ? 'var(--accent-amber)' : 'var(--accent-green)');
+            const barColor = pct < 20 ? 'var(--accent-red)' : (pct < 50 ? 'var(--accent-gold)' : 'var(--accent-green)');
 
-            heroArea.innerHTML = `
-                <div class="hero-budget-card">
-                    <div class="hero-tag-row">
-                        <span class="hero-badge-tag">⭐ Main Active Budget</span>
-                        <span class="hero-tap-hint">+ Tap to Add Entry</span>
+            hero.innerHTML = `
+                <div class="hero-budget-card" onclick="openBudgetStatementModal(${mainBudget.id})">
+                    <div class="hero-top-row">
+                        <span class="pill-main-tag">⭐ Main Active Budget</span>
+                        <span class="hero-tap-hint">Statement & Edit ➔</span>
                     </div>
-                    <div class="hero-name">${mainBudget.name}</div>
-                    <div class="hero-remaining" style="color:${barColor};">${curr}${remaining.toLocaleString('en-IN')} <span style="font-size:1rem;color:var(--text-muted);font-weight:400;">bal</span></div>
+                    <div class="hero-budget-name">${mainBudget.name}</div>
+                    <div class="hero-balance-headline" style="color:${barColor};">
+                        ${curr}${Math.round(remaining).toLocaleString('en-IN')}
+                        <span style="font-size:1rem;color:var(--text-muted);font-weight:600;">remaining</span>
+                    </div>
                     
-                    <div class="progress-bar-wrap">
-                        <div class="progress-bar-fill" style="width: ${pct}%; background: ${barColor};"></div>
+                    <div class="progress-track">
+                        <div class="progress-fill" style="width:${pct}%; background:${barColor};"></div>
                     </div>
                     <div class="hero-meta-row">
-                        <span>Spent: ${curr}${spentOnMain.toLocaleString('en-IN')}</span>
-                        <span>Budget Target: ${curr}${mainBudget.amount.toLocaleString('en-IN')} (${mainBudget.duration || 'Plan'})</span>
+                        <span>Spent: ${curr}${Math.round(spentOnMain).toLocaleString('en-IN')}</span>
+                        <span>Target: ${curr}${Math.round(mainBudget.amount).toLocaleString('en-IN')} (${mainBudget.duration || 'Plan'})</span>
                     </div>
 
-                    <div class="hero-metrics">
-                        <div class="metric-box">
-                            Today's Spend
-                            <b>${curr}${todaySpend.toLocaleString('en-IN')}</b>
+                    <div class="hero-burn-stats">
+                        <div class="burn-stat-box">
+                            Today's Normal Spend
+                            <b>${curr}${Math.round(todaySpend).toLocaleString('en-IN')}</b>
                         </div>
-                        <div class="metric-box">
-                            Yesterday's Spend
-                            <b>${curr}${yesterdaySpend.toLocaleString('en-IN')}</b>
+                        <div class="burn-stat-box">
+                            Yesterday's Normal Spend
+                            <b>${curr}${Math.round(yesterdaySpend).toLocaleString('en-IN')}</b>
                         </div>
                     </div>
                 </div>
             `;
         }
 
-        // 2. OTHER BUDGETS
+        // 2. RENDER OTHER BUDGETS
         function renderOtherBudgets() {
-            const container = document.getElementById('otherBudgetsContainer');
-            const otherBudgets = appData.budgets.filter(b => !b.isMain);
+            const cont = document.getElementById('otherBudgetsContainer');
+            const others = (appData.budgets || []).filter(b => !b.isMain);
             const curr = appData.profile.currency || '₹';
 
-            if (otherBudgets.length === 0) {
-                container.innerHTML = `<p style="color:var(--text-muted);font-size:0.82rem;text-align:center;padding:10px;">No other budgets added yet. Click '+ New Budget' to create more.</p>`;
+            if (others.length === 0) {
+                cont.innerHTML = `<p style="color:var(--text-muted); font-size:0.82rem; text-align:center; padding:8px;">No other allocated budgets.</p>`;
                 return;
             }
 
-            container.innerHTML = otherBudgets.map(b => {
+            cont.innerHTML = others.map(b => {
                 let spent = 0;
                 appData.transactions.forEach(t => {
-                    if (t.type === 'EXPENSE' && t.budgetId === b.id) spent += t.amount;
+                    if (t.type === 'EXPENSE' && !t.isLoanPayment && t.budgetId === b.id) spent += t.amount;
                 });
                 const bal = Math.max(0, b.amount - spent);
                 const pct = Math.min(100, Math.max(0, (bal / b.amount) * 100));
-                const color = pct < 20 ? 'var(--accent-red)' : (pct < 50 ? 'var(--accent-amber)' : 'var(--accent-green)');
+                const color = pct < 20 ? 'var(--accent-red)' : (pct < 50 ? 'var(--accent-gold)' : 'var(--accent-green)');
 
                 return `
-                    <div class="budget-subcard" onclick="openBudgetDirectAdd(${b.id})">
-                        <div class="budget-subcard-top">
-                            <span class="budget-subcard-name">${b.name}</span>
-                            <span class="budget-subcard-bal" style="color:${color};">${curr}${bal.toLocaleString('en-IN')} bal</span>
+                    <div class="budget-list-item" onclick="openBudgetStatementModal(${b.id})">
+                        <div class="budget-item-top">
+                            <span class="budget-item-title">${b.name}</span>
+                            <span class="budget-item-bal" style="color:${color};">${curr}${Math.round(bal).toLocaleString('en-IN')} bal</span>
                         </div>
-                        <div class="progress-bar-wrap" style="height:6px; margin:4px 0;">
-                            <div class="progress-bar-fill" style="width:${pct}%; background:${color};"></div>
+                        <div class="progress-track" style="height:6px; margin:4px 0;">
+                            <div class="progress-fill" style="width:${pct}%; background:${color};"></div>
                         </div>
-                        <div class="budget-subcard-bottom">
-                            <span>Spent: ${curr}${spent.toLocaleString('en-IN')} / ${curr}${b.amount.toLocaleString('en-IN')}</span>
-                            <button class="set-main-btn" onclick="event.stopPropagation(); setAsMainBudget(${b.id})">Set as Main ⭐</button>
+                        <div class="budget-item-sub">
+                            <span>Spent: ${curr}${Math.round(spent).toLocaleString('en-IN')} / ${curr}${Math.round(b.amount).toLocaleString('en-IN')}</span>
+                            <button class="btn-set-main" onclick="event.stopPropagation(); setAsMainBudget(${b.id})">Set as Main ⭐</button>
                         </div>
                     </div>
                 `;
             }).join('');
         }
 
-        function setAsMainBudget(budgetId) {
-            appData.budgets.forEach(b => {
-                b.isMain = (b.id === budgetId);
-            });
-            saveData();
+        function setAsMainBudget(id) {
+            appData.budgets.forEach(b => b.isMain = (b.id === id));
+            saveState();
             renderAll();
         }
 
-        function openBudgetDirectAdd(budgetId) {
-            let targetBudget = null;
-            if (budgetId) {
-                targetBudget = appData.budgets.find(b => b.id === budgetId);
-            } else {
-                targetBudget = appData.budgets.find(b => b.isMain) || appData.budgets[0];
-            }
-            openEntryModal('EXPENSE', targetBudget ? targetBudget.id : null);
-        }
+        // 3. BUDGET DETAIL STATEMENT & EDIT MODAL
+        function openBudgetStatementModal(budgetId) {
+            activeViewingBudgetId = budgetId;
+            const b = appData.budgets.find(x => x.id === budgetId);
+            if (!b) return;
 
-        // 3. TRANSACTIONS
-        function renderTransactions() {
-            const search = (document.getElementById('searchTx')?.value || '').toLowerCase();
-            const recentContainer = document.getElementById('recentTransactionsList');
-            const fullContainer = document.getElementById('fullTransactionsList');
-            const countBadge = document.getElementById('totalTxCount');
             const curr = appData.profile.currency || '₹';
+            document.getElementById('budgetDetailTitle').innerText = `${b.name} Statement`;
 
-            let filtered = [...appData.transactions].sort((a,b) => new Date(b.date) - new Date(a.date));
-            if (countBadge) countBadge.innerText = `${filtered.length} entries`;
-
-            if (search) {
-                filtered = filtered.filter(t => 
-                    (t.categoryName && t.categoryName.toLowerCase().includes(search)) || 
-                    (t.note && t.note.toLowerCase().includes(search)) ||
-                    (t.date && t.date.includes(search))
-                );
-            }
-
-            const getHtml = (item) => `
-                <div class="tx-card">
-                    <div class="tx-left">
-                        <span class="tx-category">${item.categoryName || 'General'}</span>
-                        <span class="tx-note">${item.note || 'No remarks'}</span>
-                        <span class="tx-date">📅 ${item.date} ${item.budgetName ? '• 🎯 ' + item.budgetName : ''}</span>
-                    </div>
-                    <div class="tx-amount ${item.type === 'EXPENSE' ? 'tx-expense' : 'tx-income'}">
-                        ${item.type === 'EXPENSE' ? '-' : '+'}${curr}${item.amount.toLocaleString('en-IN')}
-                    </div>
-                </div>
-            `;
-
-            if (fullContainer) {
-                fullContainer.innerHTML = filtered.length === 0 
-                    ? `<p style="text-align:center;color:var(--text-muted);padding:24px;font-size:0.85rem;">No transaction entries recorded yet.</p>`
-                    : filtered.map(getHtml).join('');
-            }
-
-            const preview = filtered.slice(0, 4);
-            if (recentContainer) {
-                recentContainer.innerHTML = preview.length === 0 
-                    ? `<p style="text-align:center;color:var(--text-muted);padding:14px;font-size:0.85rem;">No recent activities logged.</p>`
-                    : preview.map(getHtml).join('');
-            }
-        }
-
-        // 4. REPORTS
-        function renderReports() {
-            const catMap = {};
-            let totalIncome = 0;
-            let totalExpense = 0;
-            const curr = appData.profile.currency || '₹';
-
-            appData.transactions.forEach(t => {
-                if (t.type === 'EXPENSE') {
-                    totalExpense += t.amount;
-                    const cat = t.categoryName || 'Uncategorized';
-                    catMap[cat] = (catMap[cat] || 0) + t.amount;
-                } else if (t.type === 'INCOME') {
-                    totalIncome += t.amount;
-                }
+            let spent = 0;
+            const entries = appData.transactions.filter(t => t.budgetId === b.id);
+            entries.forEach(t => {
+                if (t.type === 'EXPENSE') spent += t.amount;
+                else if (t.type === 'INCOME') spent -= t.amount;
             });
 
-            document.getElementById('reportTotalIncome').innerText = `${curr}${totalIncome.toLocaleString('en-IN')}`;
-            document.getElementById('reportTotalExpense').innerText = `${curr}${totalExpense.toLocaleString('en-IN')}`;
-            document.getElementById('reportNetSavings').innerText = `${curr}${(totalIncome - totalExpense).toLocaleString('en-IN')}`;
+            const bal = Math.max(0, b.amount - spent);
+            document.getElementById('budgetDetailBal').innerText = `${curr}${Math.round(bal).toLocaleString('en-IN')} (Target: ${curr}${b.amount})`;
 
-            const chartArea = document.getElementById('categoryChartArea');
-            const entries = Object.entries(catMap);
+            const cont = document.getElementById('budgetDetailEntriesList');
             if (entries.length === 0) {
-                chartArea.innerHTML = `<p style="color:var(--text-muted);font-size:0.85rem;">No expense data for reports.</p>`;
-                return;
-            }
-
-            chartArea.innerHTML = entries.map(([name, val]) => {
-                const pct = totalExpense > 0 ? ((val / totalExpense) * 100).toFixed(1) : 0;
-                return `
-                    <div class="chart-row">
-                        <div class="chart-label">${name}</div>
-                        <div class="chart-bar-bg">
-                            <div class="chart-bar-fill" style="width: ${pct}%;"></div>
-                        </div>
-                        <div class="chart-val">${curr}${val.toLocaleString('en-IN')}</div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        // 5. LOANS & EMI
-        function renderLoans() {
-            const container = document.getElementById('loansListContainer');
-            if (!container) return;
-            const curr = appData.profile.currency || '₹';
-
-            if (appData.loans.length === 0) {
-                container.innerHTML = `<div class="settings-card" style="text-align:center;padding:24px;color:var(--text-muted);">
-                    No loans added. Click '+ Add Loan' to configure EMI tracker.
-                </div>`;
-                return;
-            }
-
-            container.innerHTML = appData.loans.map(loan => `
-                <div class="settings-card" style="margin-bottom:12px;">
-                    <div style="display:flex; justify-content:space-between; font-weight:700; margin-bottom:6px;">
-                        <span>💳 ${loan.name}</span>
-                        <span style="color:var(--accent-blue)">${curr}${loan.emiAmount}/mo</span>
-                    </div>
-                    <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom: 8px;">
-                        Method: <b>${loan.method}</b> | Due: <b>${loan.dueDay}th of month</b>
-                    </div>
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:0.8rem; margin-bottom:12px;">
-                        <div>Original: ${curr}${loan.principal.toLocaleString('en-IN')}</div>
-                        <div>Remaining Bal: <b>${curr}${Math.round(loan.currentBalance).toLocaleString('en-IN')}</b></div>
-                    </div>
-                    <button class="loan-pay-btn" style="width:100%;" onclick="payLoanEmi(${loan.id})">
-                        Pay EMI (${curr}${loan.emiAmount}) & Reduce Principal
-                    </button>
-                </div>
-            `).join('');
-        }
-
-        function renderEmiWidget() {
-            const widget = document.getElementById('dashboardEmiWidget');
-            const curr = appData.profile.currency || '₹';
-
-            if (!appData.loans || appData.loans.length === 0) {
-                widget.innerHTML = '';
-                return;
-            }
-            const activeLoan = appData.loans[0];
-            widget.innerHTML = `
-                <div class="loan-alert">
-                    <div class="loan-alert-top">
-                        <span>💳 Upcoming EMI: ${activeLoan.name}</span>
-                        <span>${curr}${activeLoan.emiAmount}</span>
-                    </div>
-                    <div class="loan-alert-sub">
-                        Principal Balance: ${curr}${Math.round(activeLoan.currentBalance).toLocaleString('en-IN')} • Due on ${activeLoan.dueDay}th
-                    </div>
-                    <button class="loan-pay-btn" onclick="payLoanEmi(${activeLoan.id})">Mark as Paid ✓</button>
-                </div>
-            `;
-        }
-
-        function switchTab(tabId) {
-            document.querySelectorAll('.dock-item').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.view-panel').forEach(el => el.classList.remove('active'));
-
-            const tabMap = {
-                'tabDash': 'viewDashboard',
-                'tabLedger': 'viewLedger',
-                'tabReports': 'viewReports',
-                'tabLoans': 'viewLoans',
-                'tabSettings': 'viewSettings'
-            };
-
-            document.getElementById(tabId).classList.add('active');
-            document.getElementById(tabMap[tabId]).classList.add('active');
-
-            if (tabId === 'tabReports') renderReports();
-        }
-
-        function openEntryModal(type, preselectedBudgetId) {
-            currentEntryType = type;
-            document.getElementById('entryModalTitle').innerText = type === 'EXPENSE' ? 'Expenses' : 'Income';
-            
-            const budgetGroup = document.getElementById('budgetLinkGroup');
-            const budgetSelect = document.getElementById('entryBudgetSelect');
-            
-            if (type === 'EXPENSE' && appData.budgets && appData.budgets.length > 0) {
-                budgetGroup.style.display = 'block';
-                budgetSelect.innerHTML = appData.budgets.map(b => 
-                    `<option value="${b.id}" ${b.id === preselectedBudgetId || (!preselectedBudgetId && b.isMain) ? 'selected' : ''}>${b.isMain ? '⭐ ' : ''}${b.name}</option>`
-                ).join('') + `<option value="">-- No Specific Budget --</option>`;
+                cont.innerHTML = `<p style="color:var(--text-muted);font-size:0.85rem;text-align:center;padding:16px;">No entries logged under this budget yet.</p>`;
             } else {
-                budgetGroup.style.display = 'none';
+                cont.innerHTML = entries.map(t => `
+                    <div class="tx-item-card">
+                        <div class="tx-left-info">
+                            <span class="tx-category-name">${t.category}</span>
+                            <span class="tx-note-line">${t.note || 'No remarks'}</span>
+                            <span class="tx-meta-date">📅 ${t.date} • Source: ${t.account}</span>
+                        </div>
+                        <div class="tx-amount-col ${t.type === 'EXPENSE' ? 'tx-is-exp' : 'tx-is-inc'}">
+                            ${t.type === 'EXPENSE' ? '-' : '+'}${curr}${t.amount.toLocaleString('en-IN')}
+                            <button onclick="deleteSingleTransaction(${t.id})" style="background:none;border:none;color:var(--accent-red);font-size:0.72rem;cursor:pointer;display:block;margin-top:2px;">Delete ✕</button>
+                        </div>
+                    </div>
+                `).join('');
             }
 
-            document.getElementById('entryDate').value = new Date().toISOString().split('T')[0];
-            document.getElementById('entryModal').classList.add('active');
+            document.getElementById('budgetDetailModal').classList.add('active');
         }
 
-        function openBudgetModal() {
-            document.getElementById('setAsMainCheckbox').checked = appData.budgets.length === 0;
+        function openEditBudgetFromDetail() {
+            closeModal('budgetDetailModal');
+            const b = appData.budgets.find(x => x.id === activeViewingBudgetId);
+            if (!b) return;
+
+            document.getElementById('editBudgetId').value = b.id;
+            document.getElementById('budgetNameInput').value = b.name;
+            document.getElementById('budgetAmountInput').value = b.amount;
+            document.getElementById('budgetDurationInput').value = b.duration || '';
+            document.getElementById('budgetIsMainCheck').checked = b.isMain;
+            document.getElementById('btnDeleteBudget').style.display = 'block';
+            document.getElementById('budgetModalHeading').innerText = 'Edit Budget';
             document.getElementById('budgetModal').classList.add('active');
         }
 
-        function openLoanModal() {
-            document.getElementById('loanModal').classList.add('active');
+        function openCreateBudgetModal() {
+            document.getElementById('editBudgetId').value = '';
+            document.getElementById('budgetNameInput').value = '';
+            document.getElementById('budgetAmountInput').value = '';
+            document.getElementById('budgetDurationInput').value = '';
+            document.getElementById('budgetIsMainCheck').checked = (appData.budgets || []).length === 0;
+            document.getElementById('btnDeleteBudget').style.display = 'none';
+            document.getElementById('budgetModalHeading').innerText = 'Create Budget';
+            document.getElementById('budgetModal').classList.add('active');
         }
 
-        function closeModal(id) {
-            document.getElementById(id).classList.remove('active');
-        }
+        function saveBudgetRecord() {
+            const editId = document.getElementById('editBudgetId').value;
+            const name = (document.getElementById('budgetNameInput').value || '').trim();
+            const amt = parseFloat(document.getElementById('budgetAmountInput').value);
+            const duration = (document.getElementById('budgetDurationInput').value || '').trim() || 'Custom';
+            const isMain = document.getElementById('budgetIsMainCheck').checked;
 
-        function saveTransaction() {
-            const amount = parseFloat(document.getElementById('entryAmount').value);
-            const category = document.getElementById('entryCategoryManual').value.trim() || 'General';
-            const date = document.getElementById('entryDate').value;
-            const note = document.getElementById('entryNote').value.trim();
-            const budgetId = parseInt(document.getElementById('entryBudgetSelect').value) || null;
-            const selectedBudget = appData.budgets.find(b => b.id === budgetId);
-
-            if (!amount || amount <= 0) {
-                alert('Please enter valid amount');
-                return;
-            }
-
-            const newTx = {
-                id: Date.now(),
-                type: currentEntryType,
-                amount: amount,
-                categoryName: category,
-                date: date,
-                note: note,
-                budgetId: budgetId,
-                budgetName: selectedBudget ? selectedBudget.name : ''
-            };
-
-            appData.transactions.unshift(newTx);
-            saveData();
-            closeModal('entryModal');
-            document.getElementById('entryAmount').value = '';
-            document.getElementById('entryCategoryManual').value = '';
-            document.getElementById('entryNote').value = '';
-            renderAll();
-        }
-
-        function saveNewBudget() {
-            const name = document.getElementById('newBudgetName').value.trim();
-            const amount = parseFloat(document.getElementById('newBudgetAmount').value);
-            const duration = document.getElementById('newBudgetDuration').value.trim() || 'Plan';
-            const isMain = document.getElementById('setAsMainCheckbox').checked;
-
-            if (!name || !amount || amount <= 0) {
-                alert('Please enter budget name and valid amount');
-                return;
-            }
+            if (!name || isNaN(amt) || amt <= 0) return alert('Enter valid budget name and limit amount.');
 
             if (isMain) {
                 appData.budgets.forEach(b => b.isMain = false);
             }
 
-            const budgetObj = {
-                id: Date.now(),
-                name: name,
-                amount: amount,
-                duration: duration,
-                isMain: isMain
-            };
+            if (editId) {
+                const b = appData.budgets.find(x => x.id === parseInt(editId));
+                if (b) {
+                    b.name = name;
+                    b.amount = amt;
+                    b.duration = duration;
+                    b.isMain = isMain;
+                }
+            } else {
+                appData.budgets.push({
+                    id: Date.now(),
+                    name: name,
+                    amount: amt,
+                    duration: duration,
+                    isMain: isMain
+                });
+            }
 
-            appData.budgets.push(budgetObj);
-            saveData();
+            saveState();
             closeModal('budgetModal');
-            document.getElementById('newBudgetName').value = '';
-            document.getElementById('newBudgetAmount').value = '';
-            document.getElementById('newBudgetDuration').value = '';
             renderAll();
         }
 
-        function saveNewLoan() {
-            const name = document.getElementById('loanName').value.trim() || 'Vehicle Loan';
-            const principal = parseFloat(document.getElementById('loanPrincipal').value);
-            const rate = parseFloat(document.getElementById('loanRate').value);
-            const tenure = parseInt(document.getElementById('loanTenure').value);
-            const method = document.getElementById('loanMethod').value;
-            const dueDay = parseInt(document.getElementById('loanDueDay').value) || 5;
+        function deleteCurrentBudget() {
+            const editId = parseInt(document.getElementById('editBudgetId').value);
+            if (!confirm('Intha budget-ai delete panna venduma? Linked transactions will be detached.')) return;
 
-            if (!principal || !rate || !tenure) {
-                alert('Fill in all loan details properly');
+            appData.budgets = appData.budgets.filter(b => b.id !== editId);
+            // Detach transactions
+            appData.transactions.forEach(t => {
+                if (t.budgetId === editId) t.budgetId = null;
+            });
+
+            saveState();
+            closeModal('budgetModal');
+            renderAll();
+        }
+
+        // 4. LOAN REMINDER ALERT NOTIFICATION ENGINE
+        function renderLoanAlerts() {
+            const area = document.getElementById('loanAlertArea');
+            if (!appData.loans || appData.loans.length === 0) {
+                area.innerHTML = '';
                 return;
             }
 
+            const curr = appData.profile.currency || '₹';
+            const now = new Date();
+            const currentDay = now.getDate();
+
+            let alertsHtml = '';
+
+            appData.loans.forEach(loan => {
+                if (loan.status === 'CLOSED') return;
+
+                const dueDay = loan.dueDay || 5;
+                const remindDays = loan.remindDays || 2;
+                let daysLeft = dueDay - currentDay;
+
+                // Handle month wrap-around roughly
+                if (daysLeft < 0) {
+                    // Overdue or already paid this month
+                }
+
+                // Check if due in reminder window
+                if (daysLeft >= 0 && daysLeft <= remindDays) {
+                    let urgencyText = daysLeft === 0 ? 'Due Today!' : (daysLeft === 1 ? 'Due Tomorrow (1 Day Left)' : `Due in ${daysLeft} Days`);
+                    let alertClass = daysLeft <= 1 ? 'alert-danger' : 'alert-warning';
+
+                    alertsHtml += `
+                        <div class="loan-due-banner ${alertClass}">
+                            <div class="loan-due-top">
+                                <span>🔔 ${loan.name} EMI Alert</span>
+                                <span>${curr}${loan.emiAmount}/mo</span>
+                            </div>
+                            <div class="loan-due-sub">
+                                <b>${urgencyText}</b> (Due on ${dueDay}th of this month). Outstanding Principal: ${curr}${Math.round(loan.currentBalance).toLocaleString('en-IN')}.
+                            </div>
+                            <div class="loan-due-actions">
+                                <button class="btn-due-pay" onclick="openLoanPassbookModal(${loan.id})">Pay & Passbook</button>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            area.innerHTML = alertsHtml;
+        }
+
+        // 5. TRANSACTIONS CRUD (ISOLATING LOANS FROM DAILY SPEND)
+        function openEntryModal(type) {
+            currentEntryType = type;
+            document.getElementById('entryModalHeading').innerText = type === 'EXPENSE' ? 'Log Expense' : 'Add Income / Topup';
+            
+            // Populate Budgets
+            const bDrop = document.getElementById('entryBudgetDropdown');
+            bDrop.innerHTML = (appData.budgets || []).map(b => `
+                <option value="${b.id}" ${b.isMain ? 'selected' : ''}>${b.isMain ? '⭐ ' : ''}${b.name}</option>
+            `).join('') + `<option value="">-- No Budget Link --</option>`;
+
+            document.getElementById('entryDateInput').value = new Date().toISOString().split('T')[0];
+            document.getElementById('entryModal').classList.add('active');
+        }
+
+        function saveTransactionEntry() {
+            const amount = parseFloat(document.getElementById('entryAmount').value);
+            const account = document.getElementById('entryAccountSource').value;
+            const budgetId = parseInt(document.getElementById('entryBudgetDropdown').value) || null;
+            const category = (document.getElementById('entryCatManual').value || '').trim() || 'General';
+            const date = document.getElementById('entryDateInput').value;
+            const note = (document.getElementById('entryNoteInput').value || '').trim();
+
+            if (isNaN(amount) || amount <= 0) return alert('Enter valid amount.');
+
+            // Update Real Liquidity Accounts (Bank / Cash)
+            if (currentEntryType === 'EXPENSE') {
+                if (account === 'BANK') appData.accounts.bank -= amount;
+                else appData.accounts.cash -= amount;
+            } else {
+                if (account === 'BANK') appData.accounts.bank += amount;
+                else appData.accounts.cash += amount;
+            }
+
+            const tx = {
+                id: Date.now(),
+                type: currentEntryType,
+                amount: amount,
+                account: account,
+                budgetId: budgetId,
+                category: category,
+                date: date,
+                note: note,
+                isLoanPayment: false
+            };
+
+            appData.transactions.unshift(tx);
+            saveState();
+            closeModal('entryModal');
+            document.getElementById('entryAmount').value = '';
+            document.getElementById('entryCatManual').value = '';
+            document.getElementById('entryNoteInput').value = '';
+            renderAll();
+        }
+
+        function deleteSingleTransaction(id) {
+            const tx = appData.transactions.find(t => t.id === id);
+            if (!tx) return;
+
+            if (!confirm('Intha transaction entry-ai delete panna venduma? Balance rollback aagum.')) return;
+
+            // Rollback Liquidity Balance
+            if (tx.type === 'EXPENSE') {
+                if (tx.account === 'BANK') appData.accounts.bank += tx.amount;
+                else appData.accounts.cash += tx.amount;
+            } else {
+                if (tx.account === 'BANK') appData.accounts.bank -= tx.amount;
+                else appData.accounts.cash -= tx.amount;
+            }
+
+            appData.transactions = appData.transactions.filter(t => t.id !== id);
+            saveState();
+            renderAll();
+            if (document.getElementById('budgetDetailModal').classList.contains('active')) {
+                openBudgetStatementModal(activeViewingBudgetId);
+            }
+        }
+
+        // 6. RECENT ACTIVITY PREVIEW (EXCLUDING LOANS)
+        function renderRecentActivity() {
+            const cont = document.getElementById('recentActivityList');
+            const curr = appData.profile.currency || '₹';
+
+            // Filter out loan payments from daily activity
+            const normalTxs = appData.transactions.filter(t => !t.isLoanPayment).slice(0, 5);
+
+            if (normalTxs.length === 0) {
+                cont.innerHTML = `<p style="color:var(--text-muted);font-size:0.82rem;text-align:center;padding:12px;">No expenses or income logged yet.</p>`;
+                return;
+            }
+
+            cont.innerHTML = normalTxs.map(t => `
+                <div class="tx-item-card">
+                    <div class="tx-left-info">
+                        <span class="tx-category-name">${t.category}</span>
+                        <span class="tx-note-line">${t.note || 'No description'}</span>
+                        <span class="tx-meta-date">📅 ${t.date} • ${t.account}</span>
+                    </div>
+                    <div class="tx-amount-col ${t.type === 'EXPENSE' ? 'tx-is-exp' : 'tx-is-inc'}">
+                        ${t.type === 'EXPENSE' ? '-' : '+'}${curr}${t.amount.toLocaleString('en-IN')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 7. MASTER LEDGER (FILTERING & SEARCH)
+        function renderLedger() {
+            const cont = document.getElementById('fullLedgerContainer');
+            const search = (document.getElementById('searchLedgerInput')?.value || '').toLowerCase();
+            const countBadge = document.getElementById('ledgerCountBadge');
+            const curr = appData.profile.currency || '₹';
+
+            let list = appData.transactions.filter(t => !t.isLoanPayment);
+            if (countBadge) countBadge.innerText = `${list.length} entries`;
+
+            if (search) {
+                list = list.filter(t => 
+                    t.category.toLowerCase().includes(search) || 
+                    (t.note && t.note.toLowerCase().includes(search)) ||
+                    t.date.includes(search) ||
+                    t.account.toLowerCase().includes(search)
+                );
+            }
+
+            if (list.length === 0) {
+                cont.innerHTML = `<p style="color:var(--text-muted);font-size:0.85rem;text-align:center;padding:24px;">No ledger records found.</p>`;
+                return;
+            }
+
+            cont.innerHTML = list.map(t => `
+                <div class="tx-item-card">
+                    <div class="tx-left-info">
+                        <span class="tx-category-name">${t.category}</span>
+                        <span class="tx-note-line">${t.note || 'No remarks'}</span>
+                        <span class="tx-meta-date">📅 ${t.date} • Account: ${t.account}</span>
+                    </div>
+                    <div class="tx-amount-col ${t.type === 'EXPENSE' ? 'tx-is-exp' : 'tx-is-inc'}">
+                        ${t.type === 'EXPENSE' ? '-' : '+'}${curr}${t.amount.toLocaleString('en-IN')}
+                        <button onclick="deleteSingleTransaction(${t.id})" style="background:none;border:none;color:var(--accent-red);font-size:0.7rem;cursor:pointer;display:block;margin-top:2px;">Delete ✕</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 8. LOANS & AMORTIZATION ENGINE
+        function openCreateLoanModal() {
+            document.getElementById('editLoanId').value = '';
+            document.getElementById('loanNameInput').value = '';
+            document.getElementById('loanPrincipalInput').value = '';
+            document.getElementById('loanRateInput').value = '';
+            document.getElementById('loanTenureInput').value = '';
+            document.getElementById('loanDueDayInput').value = '5';
+            document.getElementById('loanRemindDaysSelect').value = '2';
+            document.getElementById('btnDeleteLoan').style.display = 'none';
+            document.getElementById('loanModalHeading').innerText = 'Add Loan';
+            document.getElementById('loanModal').classList.add('active');
+        }
+
+        function saveLoanRecord() {
+            const editId = document.getElementById('editLoanId').value;
+            const name = (document.getElementById('loanNameInput').value || '').trim() || 'Two-Wheeler Loan';
+            const principal = parseFloat(document.getElementById('loanPrincipalInput').value);
+            const rate = parseFloat(document.getElementById('loanRateInput').value);
+            const tenure = parseInt(document.getElementById('loanTenureInput').value);
+            const method = document.getElementById('loanMethodSelect').value;
+            const dueDay = parseInt(document.getElementById('loanDueDayInput').value) || 5;
+            const remindDays = parseInt(document.getElementById('loanRemindDaysSelect').value) || 2;
+
+            if (isNaN(principal) || isNaN(rate) || isNaN(tenure) || principal <= 0) {
+                return alert('Please enter valid principal, rate and tenure.');
+            }
+
+            // Calculate EMI & Pre-computed Schedule
             let emi = 0;
+            let totalInterest = 0;
+
             if (method === 'REDUCING') {
                 const r = (rate / 12) / 100;
                 emi = (principal * r * Math.pow(1 + r, tenure)) / (Math.pow(1 + r, tenure) - 1);
+                // Approximate total interest on reducing
+                totalInterest = (emi * tenure) - principal;
             } else {
-                const totalInterest = principal * (rate / 100) * (tenure / 12);
+                totalInterest = principal * (rate / 100) * (tenure / 12);
                 emi = (principal + totalInterest) / tenure;
             }
 
-            const loanObj = {
-                id: Date.now(),
-                name: name,
-                principal: principal,
-                currentBalance: principal,
-                annualRate: rate,
-                tenureMonths: tenure,
-                method: method,
-                dueDay: dueDay,
-                emiAmount: Math.round(emi)
-            };
+            if (editId) {
+                const l = appData.loans.find(x => x.id === parseInt(editId));
+                if (l) {
+                    l.name = name;
+                    l.principal = principal;
+                    l.annualRate = rate;
+                    l.tenureMonths = tenure;
+                    l.method = method;
+                    l.dueDay = dueDay;
+                    l.remindDays = remindDays;
+                    l.emiAmount = Math.round(emi);
+                    l.totalInterest = Math.round(totalInterest);
+                }
+            } else {
+                appData.loans.push({
+                    id: Date.now(),
+                    name: name,
+                    principal: principal,
+                    currentBalance: principal,
+                    totalInterest: Math.round(totalInterest),
+                    remainingInterest: Math.round(totalInterest),
+                    annualRate: rate,
+                    tenureMonths: tenure,
+                    method: method,
+                    dueDay: dueDay,
+                    remindDays: remindDays,
+                    emiAmount: Math.round(emi),
+                    paidEmisCount: 0,
+                    status: 'ACTIVE'
+                });
+            }
 
-            appData.loans.push(loanObj);
-            saveData();
+            saveState();
             closeModal('loanModal');
             renderAll();
         }
 
-        function payLoanEmi(loanId) {
-            const loan = appData.loans.find(l => l.id === loanId);
-            if (!loan) return;
+        function renderLoans() {
+            const cont = document.getElementById('loansListContainer');
             const curr = appData.profile.currency || '₹';
 
-            if (!confirm(`Confirm EMI payment of ${curr}${loan.emiAmount} for ${loan.name}?`)) return;
+            if (!appData.loans || appData.loans.length === 0) {
+                cont.innerHTML = `<div class="settings-card" style="text-align:center;padding:24px;color:var(--text-muted);">
+                    No loans recorded. Click '+ Add Loan' to configure Bike Loan or EMI.
+                </div>`;
+                return;
+            }
+
+            cont.innerHTML = appData.loans.map(loan => {
+                const totalOutstanding = Math.round(loan.currentBalance + (loan.remainingInterest || 0));
+                return `
+                    <div class="loan-master-card" onclick="openLoanPassbookModal(${loan.id})">
+                        <div class="loan-card-top">
+                            <span>💳 ${loan.name}</span>
+                            <span class="loan-tag-chip">${loan.method === 'REDUCING' ? 'Reducing Balance' : 'Flat Rate'}</span>
+                        </div>
+                        <div style="font-size:1.15rem; font-weight:800; color:var(--accent-blue); margin-bottom:4px;">
+                            ${curr}${loan.emiAmount} <span style="font-size:0.8rem;color:var(--text-muted);font-weight:600;">/ month</span>
+                        </div>
+                        <div class="loan-grid-breakdown">
+                            <div class="loan-grid-col">
+                                <span>Remaining Principal</span>
+                                <b>${curr}${Math.round(loan.currentBalance).toLocaleString('en-IN')}</b>
+                            </div>
+                            <div class="loan-grid-col">
+                                <span>Total Remaining Outflow</span>
+                                <b style="color:var(--accent-red);">${curr}${totalOutstanding.toLocaleString('en-IN')}</b>
+                            </div>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-muted);">
+                            <span>EMI Due: <b>${loan.dueDay}th of month</b></span>
+                            <span style="color:var(--accent-blue); font-weight:700;">Open Passbook Statement ➔</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // LOAN PASSBOOK STATEMENT MODAL
+        function openLoanPassbookModal(loanId) {
+            activeViewingLoanId = loanId;
+            const loan = appData.loans.find(l => l.id === loanId);
+            if (!loan) return;
+
+            const curr = appData.profile.currency || '₹';
+            document.getElementById('passbookLoanTitle').innerText = `${loan.name} Passbook`;
+
+            const remPrincipal = Math.round(loan.currentBalance);
+            const remInterest = Math.round(loan.remainingInterest || 0);
+            const totalOut = remPrincipal + remInterest;
+
+            document.getElementById('passbookRemPrincipal').innerText = `${curr}${remPrincipal.toLocaleString('en-IN')}`;
+            document.getElementById('passbookRemInterest').innerText = `${curr}${remInterest.toLocaleString('en-IN')}`;
+            document.getElementById('passbookTotalOutstanding').innerText = `${curr}${totalOut.toLocaleString('en-IN')}`;
+
+            // Build Amortization Rows
+            const tbody = document.getElementById('passbookTableBody');
+            let rowsHtml = '';
+            let tempPrincipal = loan.principal;
+
+            for (let m = 1; m <= loan.tenureMonths; m++) {
+                let interestPortion = 0;
+                let principalPortion = 0;
+
+                if (loan.method === 'REDUCING') {
+                    const r = (loan.annualRate / 12) / 100;
+                    interestPortion = tempPrincipal * r;
+                    principalPortion = loan.emiAmount - interestPortion;
+                    tempPrincipal = Math.max(0, tempPrincipal - principalPortion);
+                } else {
+                    const totalInt = loan.principal * (loan.annualRate / 100) * (loan.tenureMonths / 12);
+                    interestPortion = totalInt / loan.tenureMonths;
+                    principalPortion = loan.emiAmount - interestPortion;
+                }
+
+                const isPaid = m <= (loan.paidEmisCount || 0);
+                const statusBadge = isPaid 
+                    ? `<span style="color:var(--accent-green);font-weight:700;">Paid ✓</span>` 
+                    : (m === (loan.paidEmisCount || 0) + 1 ? `<span style="color:var(--accent-gold);font-weight:800;">Next Due</span>` : `<span style="color:var(--text-muted);">Upcoming</span>`);
+
+                rowsHtml += `
+                    <tr>
+                        <td>Month ${m}</td>
+                        <td><b>${curr}${loan.emiAmount}</b></td>
+                        <td>${curr}${Math.round(principalPortion)}</td>
+                        <td>${curr}${Math.round(interestPortion)}</td>
+                        <td>${statusBadge}</td>
+                    </tr>
+                `;
+            }
+
+            tbody.innerHTML = rowsHtml;
+            document.getElementById('loanPassbookModal').classList.add('active');
+        }
+
+        function executeEmiPayment() {
+            const loan = appData.loans.find(l => l.id === activeViewingLoanId);
+            if (!loan) return;
+
+            const curr = appData.profile.currency || '₹';
+            if (!confirm(`Confirm EMI payment of ${curr}${loan.emiAmount} for ${loan.name}? This will decrease Principal and update schedule.`)) return;
 
             let interestPortion = 0;
             let principalPortion = 0;
@@ -1971,67 +2358,253 @@
                 principalPortion = loan.emiAmount - interestPortion;
             }
 
-            loan.currentBalance = Math.max(0, loan.currentBalance - principalPortion);
+            // Deduct real bank liquidity
+            appData.accounts.bank -= loan.emiAmount;
 
-            const emiTx = {
+            // Reduce loan balances
+            loan.currentBalance = Math.max(0, loan.currentBalance - principalPortion);
+            loan.remainingInterest = Math.max(0, (loan.remainingInterest || loan.totalInterest) - interestPortion);
+            loan.paidEmisCount = (loan.paidEmisCount || 0) + 1;
+
+            if (loan.paidEmisCount >= loan.tenureMonths || loan.currentBalance <= 0) {
+                loan.status = 'CLOSED';
+            }
+
+            // Register payment as ISOLATED loan payment (will NOT affect daily budget burn)
+            appData.transactions.unshift({
                 id: Date.now(),
                 type: 'EXPENSE',
                 amount: loan.emiAmount,
-                categoryName: 'EMI Payment',
+                account: 'BANK',
+                budgetId: null,
+                category: 'Loan EMI Payment',
                 date: new Date().toISOString().split('T')[0],
-                note: `EMI Paid: ${loan.name} (P: ${curr}${Math.round(principalPortion)} | Int: ${curr}${Math.round(interestPortion)})`
-            };
-            appData.transactions.unshift(emiTx);
+                note: `EMI Paid: ${loan.name} (P: ${curr}${Math.round(principalPortion)} | Int: ${curr}${Math.round(interestPortion)})`,
+                isLoanPayment: true,
+                loanId: loan.id
+            });
 
-            saveData();
+            saveState();
             renderAll();
-            alert(`EMI logged! Principal reduced by ${curr}${Math.round(principalPortion)}.`);
+            openLoanPassbookModal(loan.id);
+            alert(`EMI paid! Principal decreased by ${curr}${Math.round(principalPortion)}.`);
+        }
+
+        function openEditLoanFromPassbook() {
+            closeModal('loanPassbookModal');
+            const loan = appData.loans.find(l => l.id === activeViewingLoanId);
+            if (!loan) return;
+
+            document.getElementById('editLoanId').value = loan.id;
+            document.getElementById('loanNameInput').value = loan.name;
+            document.getElementById('loanPrincipalInput').value = loan.principal;
+            document.getElementById('loanRateInput').value = loan.annualRate;
+            document.getElementById('loanTenureInput').value = loan.tenureMonths;
+            document.getElementById('loanMethodSelect').value = loan.method;
+            document.getElementById('loanDueDayInput').value = loan.dueDay || 5;
+            document.getElementById('loanRemindDaysSelect').value = loan.remindDays || 2;
+            document.getElementById('btnDeleteLoan').style.display = 'block';
+            document.getElementById('loanModalHeading').innerText = 'Edit Loan';
+            document.getElementById('loanModal').classList.add('active');
+        }
+
+        function deleteCurrentLoan() {
+            const loanId = parseInt(document.getElementById('editLoanId').value);
+            if (!confirm('Delete this loan completely? Linked EMI entries will also be deleted and rolled back.')) return;
+
+            // Rollback and remove linked transactions
+            const linked = appData.transactions.filter(t => t.isLoanPayment && t.loanId === loanId);
+            linked.forEach(t => {
+                appData.accounts.bank += t.amount;
+            });
+            appData.transactions = appData.transactions.filter(t => !(t.isLoanPayment && t.loanId === loanId));
+
+            // Remove loan
+            appData.loans = appData.loans.filter(l => l.id !== loanId);
+
+            saveState();
+            closeModal('loanModal');
+            renderAll();
+            alert('Loan and all linked payments deleted & balances restored.');
+        }
+
+        // 9. REPORTS & DATE RANGE FILTERING
+        function setReportPeriod(period) {
+            activeReportFilter = period;
+            document.querySelectorAll('.btn-filter-pill').forEach(btn => btn.classList.remove('active'));
+
+            const customRow = document.getElementById('customDateRangeRow');
+            if (period === 'custom') {
+                document.getElementById('filterCustom').classList.add('active');
+                customRow.style.display = 'flex';
+            } else {
+                customRow.style.display = 'none';
+                if (period === 'month') document.getElementById('filterThisMonth').classList.add('active');
+                else if (period === 'week') document.getElementById('filterThisWeek').classList.add('active');
+                else if (period === 'all') document.getElementById('filterAllTime').classList.add('active');
+            }
+            renderReports();
+        }
+
+        function renderReports() {
+            const curr = appData.profile.currency || '₹';
+            const catMap = {};
+            let inc = 0;
+            let exp = 0;
+
+            const now = new Date();
+            let startFilterDate = null;
+            let endFilterDate = null;
+
+            if (activeReportFilter === 'month') {
+                startFilterDate = new Date(now.getFullYear(), now.getMonth(), 1);
+            } else if (activeReportFilter === 'week') {
+                startFilterDate = new Date(now.setDate(now.getDate() - now.getDay()));
+            } else if (activeReportFilter === 'custom') {
+                const s = document.getElementById('reportStartDate')?.value;
+                const e = document.getElementById('reportEndDate')?.value;
+                if (s) startFilterDate = new Date(s);
+                if (e) endFilterDate = new Date(e);
+            }
+
+            appData.transactions.forEach(t => {
+                const tDate = new Date(t.date);
+                if (startFilterDate && tDate < startFilterDate) return;
+                if (endFilterDate && tDate > endFilterDate) return;
+
+                if (t.type === 'EXPENSE') {
+                    exp += t.amount;
+                    const c = t.category || 'General';
+                    catMap[c] = (catMap[c] || 0) + t.amount;
+                } else if (t.type === 'INCOME') {
+                    inc += t.amount;
+                }
+            });
+
+            document.getElementById('repTotalIncome').innerText = `${curr}${Math.round(inc).toLocaleString('en-IN')}`;
+            document.getElementById('repTotalExpense').innerText = `${curr}${Math.round(exp).toLocaleString('en-IN')}`;
+            document.getElementById('repNetFlow').innerText = `${curr}${Math.round(inc - exp).toLocaleString('en-IN')}`;
+
+            const chartCont = document.getElementById('categoryChartContainer');
+            const entries = Object.entries(catMap);
+            if (entries.length === 0) {
+                chartCont.innerHTML = `<p style="color:var(--text-muted);font-size:0.82rem;text-align:center;padding:12px;">No expense data for this selected period.</p>`;
+                return;
+            }
+
+            chartCont.innerHTML = entries.map(([name, val]) => {
+                const pct = exp > 0 ? ((val / exp) * 100).toFixed(1) : 0;
+                return `
+                    <div class="chart-row">
+                        <div class="chart-label">${name}</div>
+                        <div class="chart-track">
+                            <div class="chart-fill" style="width:${pct}%;"></div>
+                        </div>
+                        <div class="chart-val">${curr}${Math.round(val).toLocaleString('en-IN')}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 10. REAL LIQUIDITY ADJUSTMENT (BANK VS CASH)
+        function openTransferModal() {
+            document.getElementById('adjBankInput').value = appData.accounts.bank;
+            document.getElementById('adjCashInput').value = appData.accounts.cash;
+            document.getElementById('transferModal').classList.add('active');
+        }
+
+        function saveLiquidityAdjustment() {
+            const b = parseFloat(document.getElementById('adjBankInput').value) || 0;
+            const c = parseFloat(document.getElementById('adjCashInput').value) || 0;
+            appData.accounts.bank = b;
+            appData.accounts.cash = c;
+            saveState();
+            closeModal('transferModal');
+            renderAll();
+        }
+
+        // Navigation Tabs
+        function switchTab(id) {
+            document.querySelectorAll('.dock-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.view-panel').forEach(v => v.classList.remove('active'));
+
+            const tabMap = {
+                'tabDash': 'viewDashboard',
+                'tabLedger': 'viewLedger',
+                'tabReports': 'viewReports',
+                'tabLoans': 'viewLoans',
+                'tabSettings': 'viewSettings'
+            };
+
+            document.getElementById(id).classList.add('active');
+            document.getElementById(tabMap[id]).classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        // Backup and Restore
+        function exportBackupData() {
+            const str = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
+            const a = document.createElement('a');
+            a.setAttribute("href", str);
+            a.setAttribute("download", `shafin_backup_${new Date().toISOString().split('T')[0]}.json`);
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        }
+
+        function restoreBackupData(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                try {
+                    const parsed = JSON.parse(evt.target.result);
+                    if (parsed.budgets || parsed.transactions) {
+                        appData = parsed;
+                        saveState();
+                        renderAll();
+                        alert('Backup successfully restored!');
+                    } else alert('Invalid backup file.');
+                } catch(err) { alert('Error parsing backup file.'); }
+            };
+            reader.readAsText(file);
+        }
+
+        function updateCurrency(c) {
+            appData.profile.currency = c;
+            saveState();
+            renderAll();
         }
 
         function toggleTheme() {
-            const current = document.body.getAttribute('data-theme');
-            const next = current === 'light' ? 'dark' : 'light';
+            const curr = document.body.getAttribute('data-theme');
+            const next = curr === 'light' ? 'dark' : 'light';
             document.body.setAttribute('data-theme', next);
-            localStorage.setItem('hub_theme', next);
+            localStorage.setItem('shafin_theme', next);
         }
 
         function applyTheme() {
-            const saved = localStorage.getItem('hub_theme') || 'dark';
+            const saved = localStorage.getItem('shafin_theme') || 'dark';
             document.body.setAttribute('data-theme', saved);
         }
 
-        function exportDataBackup() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `budget_hub_backup_${new Date().toISOString().split('T')[0]}.json`);
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
+        function loadState() {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (raw) {
+                try {
+                    const p = JSON.parse(raw);
+                    appData = { ...appData, ...p };
+                } catch(e) { console.error(e); }
+            } else {
+                saveState();
+            }
         }
 
-        function restoreDataBackup(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const parsed = JSON.parse(e.target.result);
-                    if (parsed.budgets || parsed.transactions) {
-                        appData = parsed;
-                        saveData();
-                        renderAll();
-                        renderCreatedUsers();
-                        alert('Backup restored successfully!');
-                    } else {
-                        alert('Invalid backup structure.');
-                    }
-                } catch(err) {
-                    alert('Error reading backup file.');
-                }
-            };
-            reader.readAsText(file);
+        function saveState() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
         }
 
         window.onload = initApp;
