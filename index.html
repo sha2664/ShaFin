@@ -1811,10 +1811,13 @@
             const container = document.getElementById('loanScheduleList');
             const curr = appData.profile.currency || '₹';
 
-            // Generate Amortization Ledger
+            // Initialize paidInstallments list if not present
+            if (!loan.paidInstallments) loan.paidInstallments = [];
+
             let balance = loan.principal;
             const r = (loan.annualRate / 12) / 100;
             let rowsHtml = '';
+            let cumulativePaidPrincipal = 0;
 
             for (let m = 1; m <= loan.tenureMonths; m++) {
                 let interestComponent = 0;
@@ -1831,25 +1834,55 @@
 
                 balance = Math.max(0, balance - principalComponent);
 
+                const isPaid = loan.paidInstallments.includes(m);
+                if (isPaid) cumulativePaidPrincipal += principalComponent;
+
+                const textStyle = isPaid ? 'text-decoration: line-through; opacity: 0.6;' : '';
+                const rowBg = isPaid ? 'background: rgba(16, 185, 129, 0.08);' : 'background: var(--surface-1);';
+
                 rowsHtml += `
-                    <div style="display:flex; justify-content:space-between; align-items:center; background:var(--surface-1); border-bottom:1px solid var(--border-subtle); padding:10px 12px; font-size:0.8rem;">
-                        <div>
-                            <b>Month ${m}</b>
-                            <span style="color:var(--text-dim); display:block;">P: ${curr}${Math.round(principalComponent)} | Int: ${curr}${Math.round(interestComponent)}</span>
+                    <div style="display:flex; justify-content:space-between; align-items:center; ${rowBg} border-bottom:1px solid var(--border-subtle); padding:12px; font-size:0.82rem;">
+                        <div style="${textStyle}">
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                <b>Month ${m}</b>
+                                ${isPaid ? '<span style="background:var(--emerald); color:#000; font-size:0.65rem; padding:1px 6px; border-radius:4px; font-weight:800; text-decoration:none;">PAID ✓</span>' : ''}
+                            </div>
+                            <span style="color:var(--text-dim); display:block; margin-top:2px;">
+                                Principal: ${curr}${Math.round(principalComponent).toLocaleString('en-IN')} | Interest: ${curr}${Math.round(interestComponent).toLocaleString('en-IN')}
+                            </span>
+                            <span style="color:var(--cyan); font-size:0.75rem; display:block;">Bal after month: ${curr}${Math.round(balance).toLocaleString('en-IN')}</span>
                         </div>
                         <div style="text-align:right;">
-                            <span style="color:var(--cyan); font-weight:700;">EMI: ${curr}${loan.emiAmount}</span>
-                            <span style="display:block; font-size:0.75rem; color:var(--text-dim);">Closing Bal: ${curr}${Math.round(balance)}</span>
+                            <span style="font-weight:800; font-size:0.95rem; color:var(--text-high); display:block; ${textStyle}">
+                                ${curr}${loan.emiAmount.toLocaleString('en-IN')}
+                            </span>
+                            ${isPaid 
+                                ? `<button class="chip-btn" style="color:var(--rose); border-color:rgba(244,63,94,0.3); margin-top:4px;" onclick="toggleLoanInstallmentPaid(${loan.id}, ${m}, false)">Undo ↺</button>`
+                                : `<button class="chip-btn" style="background:var(--emerald-glow); color:var(--emerald); border-color:var(--emerald); margin-top:4px;" onclick="toggleLoanInstallmentPaid(${loan.id}, ${m}, true)">Mark Paid ✓</button>`
+                            }
                         </div>
                     </div>
                 `;
             }
 
+            const actualRemainingBal = Math.max(0, loan.principal - cumulativePaidPrincipal);
+
             container.innerHTML = `
+                <div style="background:var(--surface-2); padding:12px; border-radius:var(--radius-lg); margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <span style="font-size:0.75rem; color:var(--text-dim);">Live Remaining Principal</span>
+                        <div style="font-size:1.3rem; font-weight:900; color:var(--amber);">${curr}${Math.round(actualRemainingBal).toLocaleString('en-IN')}</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <span style="font-size:0.75rem; color:var(--text-dim);">Paid Installments</span>
+                        <div style="font-size:1.1rem; font-weight:800; color:var(--emerald);">${loan.paidInstallments.length} / ${loan.tenureMonths}</div>
+                    </div>
+                </div>
+
                 <div style="background:var(--surface-1); border:1px solid var(--border-subtle); border-radius:var(--radius-lg); overflow:hidden; margin-bottom:14px;">
                     <div style="background:var(--surface-2); padding:10px 12px; font-weight:800; font-size:0.85rem; display:flex; justify-content:space-between;">
-                        <span>Installment Breakdown</span>
-                        <span>Principal vs Interest</span>
+                        <span>Installment Schedule</span>
+                        <span>Action</span>
                     </div>
                     ${rowsHtml}
                 </div>
@@ -1947,6 +1980,80 @@
         }
 
         // ================= LOAN EMI PAY ENGINE (ISOLATED STATEMENT) =================
+        
+        function toggleLoanInstallmentPaid(loanId, monthNumber, shouldMarkPaid) {
+            const loan = appData.loans.find(l => l.id === loanId);
+            if (!loan) return;
+            if (!loan.paidInstallments) loan.paidInstallments = [];
+            const curr = appData.profile.currency || '₹';
+
+            if (shouldMarkPaid) {
+                const accChoice = confirm(`Month ${monthNumber} EMI (${curr}${loan.emiAmount}) kattiyacha?\n\nOK kudutha BANK account-la deduct aagum.\nCancel kudutha CASH account-la deduct aagum.`) ? 'BANK' : 'CASH';
+
+                if (!loan.paidInstallments.includes(monthNumber)) {
+                    loan.paidInstallments.push(monthNumber);
+                    loan.paidInstallments.sort((a,b) => a - b);
+                }
+
+                // Deduct from holding account
+                if (accChoice === 'BANK') appData.accounts.bank -= loan.emiAmount;
+                else appData.accounts.cash -= loan.emiAmount;
+
+                // Recalculate remaining balance
+                recalculateLoanBalance(loan);
+
+                // Add to transactions (isolated as loan payment)
+                appData.transactions.unshift({
+                    id: Date.now(),
+                    type: 'EXPENSE',
+                    amount: loan.emiAmount,
+                    account: accChoice,
+                    categoryName: `EMI Month ${monthNumber}: ${loan.name}`,
+                    date: new Date().toISOString().split('T')[0],
+                    note: `Month ${monthNumber} Installment Paid`,
+                    budgetId: null,
+                    isLoanPayment: true
+                });
+
+            } else {
+                // Undo
+                if (confirm(`Month ${monthNumber} payment-ai Undo panna venduma?`)) {
+                    loan.paidInstallments = loan.paidInstallments.filter(m => m !== monthNumber);
+                    recalculateLoanBalance(loan);
+                }
+            }
+
+            saveDatabase();
+            renderAll();
+            openLoanStatement(loanId);
+        }
+
+        function recalculateLoanBalance(loan) {
+            let balance = loan.principal;
+            const r = (loan.annualRate / 12) / 100;
+            let cumulativePaidPrincipal = 0;
+
+            for (let m = 1; m <= loan.tenureMonths; m++) {
+                let interestComponent = 0;
+                let principalComponent = 0;
+
+                if (loan.method === 'REDUCING') {
+                    interestComponent = balance * r;
+                    principalComponent = loan.emiAmount - interestComponent;
+                } else {
+                    const totalInt = loan.principal * (loan.annualRate / 100) * (loan.tenureMonths / 12);
+                    interestComponent = totalInt / loan.tenureMonths;
+                    principalComponent = loan.emiAmount - interestComponent;
+                }
+
+                balance = Math.max(0, balance - principalComponent);
+                if (loan.paidInstallments && loan.paidInstallments.includes(m)) {
+                    cumulativePaidPrincipal += principalComponent;
+                }
+            }
+            loan.currentBalance = Math.max(0, loan.principal - cumulativePaidPrincipal);
+        }
+
         function payLoanEmiDirect(loanId) {
             const loan = appData.loans.find(l => l.id === loanId);
             if (!loan) return;
