@@ -1,0 +1,2040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Budget Hub - Smart Budget Planner</title>
+    
+    <meta name="theme-color" content="#0b1120">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="description" content="Private smart multi-budget planner and loan EMI tracker.">
+    
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+
+    <style>
+        :root {
+            --bg-main: #0b1120;
+            --surface: #1e293b;
+            --surface-card: #162032;
+            --border: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-blue: #38bdf8;
+            --accent-purple: #a855f7;
+            --accent-amber: #f59e0b;
+            --radius-lg: 18px;
+            --radius-md: 12px;
+        }
+
+        [data-theme="light"] {
+            --bg-main: #f8fafc;
+            --surface: #ffffff;
+            --surface-card: #f1f5f9;
+            --border: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --accent-green: #059669;
+            --accent-red: #dc2626;
+            --accent-blue: #0284c7;
+            --accent-purple: #9333ea;
+            --accent-amber: #d97706;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding-bottom: 95px;
+            overflow-x: hidden;
+            transition: background 0.3s ease;
+        }
+
+        /* Access Authorization Gate */
+        #authGateModal {
+            position: fixed;
+            inset: 0;
+            background: rgba(11, 17, 32, 0.96);
+            backdrop-filter: blur(12px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .auth-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 28px 22px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        }
+        .auth-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+        .auth-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+        .auth-sub {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+        .auth-tab-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 4px;
+            margin-bottom: 18px;
+        }
+        .auth-tab-btn {
+            padding: 8px;
+            border-radius: 8px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .auth-tab-btn.active {
+            background: var(--accent-blue);
+            color: #0b1120;
+        }
+        .auth-input {
+            width: 100%;
+            padding: 13px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            background: var(--surface-card);
+            color: var(--text-main);
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .auth-btn {
+            width: 100%;
+            padding: 13px;
+            border-radius: var(--radius-md);
+            border: none;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            color: #fff;
+            font-weight: 800;
+            font-size: 0.95rem;
+            cursor: pointer;
+            margin-top: 4px;
+        }
+        .auth-error {
+            color: var(--accent-red);
+            font-size: 0.82rem;
+            margin-top: 12px;
+            display: none;
+            font-weight: 600;
+        }
+
+        /* Top Bar */
+        header {
+            padding: 14px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .user-avatar-badge {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+        .user-greeting {
+            display: flex;
+            flex-direction: column;
+        }
+        .user-greeting span {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+        .user-greeting b {
+            font-size: 0.95rem;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .admin-badge {
+            font-size: 0.65rem;
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--accent-green);
+            border: 1px solid var(--accent-green);
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .icon-btn {
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        main {
+            padding: 16px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* PWA Install Banner */
+        #pwaInstallBanner {
+            display: none;
+            background: linear-gradient(135deg, rgba(56,189,248,0.2), rgba(168,85,247,0.2));
+            border: 1px solid var(--accent-blue);
+            border-radius: var(--radius-md);
+            padding: 12px 14px;
+            margin-bottom: 16px;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .pwa-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+        }
+        .pwa-btn {
+            background: var(--accent-blue);
+            color: #0b1120;
+            font-weight: 800;
+            border: none;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        /* Hero Main Budget Card */
+        .hero-budget-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.15s ease;
+        }
+        .hero-budget-card:active {
+            transform: scale(0.99);
+        }
+        [data-theme="light"] .hero-budget-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+        }
+        .hero-tag-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        .hero-badge-tag {
+            background: rgba(56, 189, 248, 0.18);
+            color: var(--accent-blue);
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .hero-tap-hint {
+            font-size: 0.72rem;
+            color: var(--accent-blue);
+            font-weight: 600;
+        }
+        .hero-name {
+            font-size: 1.15rem;
+            font-weight: 800;
+            margin-top: 4px;
+        }
+        .hero-remaining {
+            font-size: 2.3rem;
+            font-weight: 800;
+            margin: 6px 0 10px;
+        }
+        .progress-bar-wrap {
+            height: 9px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        [data-theme="light"] .progress-bar-wrap {
+            background: rgba(0,0,0,0.08);
+        }
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.3s ease;
+        }
+        .hero-meta-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+        .hero-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+        .metric-box {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        .metric-box b {
+            display: block;
+            font-size: 1rem;
+            color: var(--text-main);
+            margin-top: 2px;
+        }
+
+        /* Action Buttons */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+        .btn-action {
+            padding: 14px;
+            border-radius: var(--radius-md);
+            border: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .btn-expense {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid var(--accent-red);
+            color: var(--accent-red);
+        }
+        .btn-income {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.98rem;
+            font-weight: 700;
+            margin: 18px 0 10px;
+        }
+
+        /* Other Budgets List */
+        .budget-subcard {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: transform 0.15s ease;
+        }
+        .budget-subcard:active {
+            transform: scale(0.99);
+        }
+        .budget-subcard-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        .budget-subcard-name {
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+        .budget-subcard-bal {
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+        .budget-subcard-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+        .set-main-btn {
+            background: var(--surface-card);
+            border: 1px solid var(--accent-blue);
+            color: var(--accent-blue);
+            font-size: 0.72rem;
+            padding: 3px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* Transactions List */
+        .tx-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .tx-left {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .tx-category {
+            font-size: 0.92rem;
+            font-weight: 600;
+        }
+        .tx-note {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+        .tx-date {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+        .tx-amount {
+            font-size: 1rem;
+            font-weight: 800;
+        }
+        .tx-expense { color: var(--accent-red); }
+        .tx-income { color: var(--accent-green); }
+
+        /* Loan Alert Banner */
+        .loan-alert {
+            background: rgba(56, 189, 248, 0.12);
+            border: 1px solid var(--accent-blue);
+            border-radius: var(--radius-md);
+            padding: 14px;
+            margin-bottom: 16px;
+        }
+        .loan-alert-top {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .loan-alert-sub {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+        .loan-pay-btn {
+            background: var(--accent-blue);
+            color: #000;
+            font-weight: 700;
+            border: none;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            cursor: pointer;
+        }
+
+        /* Bottom Tab Dock */
+        .dock {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 90;
+        }
+        .dock-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.72rem;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 8px;
+            flex: 1;
+        }
+        .dock-item.active { color: var(--accent-blue); }
+        .dock-icon { font-size: 1.2rem; }
+
+        .view-panel { display: none; }
+        .view-panel.active { display: block; }
+
+        /* Modal Forms */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(5px);
+            z-index: 100;
+            align-items: flex-end;
+            justify-content: center;
+        }
+        .modal.active { display: flex; }
+        .modal-body {
+            background: var(--surface);
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .form-group { margin-bottom: 14px; }
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--surface-card);
+            color: var(--text-main);
+            font-size: 0.95rem;
+        }
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .btn-primary {
+            flex: 1;
+            padding: 12px;
+            background: var(--accent-green);
+            color: white;
+            font-weight: 700;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+        .btn-cancel {
+            padding: 12px 18px;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Settings Card & Groups */
+        .settings-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin-bottom: 14px;
+        }
+        .settings-card h3 {
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+            color: var(--accent-blue);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .settings-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.88rem;
+        }
+        .settings-row:last-child { border-bottom: none; }
+        .pill-badge {
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: var(--text-main);
+            cursor: pointer;
+        }
+
+        /* User Management Cards */
+        .user-item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            padding: 10px 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+        }
+        .user-item-info b {
+            display: block;
+            color: var(--accent-blue);
+        }
+        .user-item-info span {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Charts & Reports */
+        .chart-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 0.8rem;
+        }
+        .chart-label {
+            width: 110px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .chart-bar-bg {
+            flex: 1;
+            height: 10px;
+            background: var(--surface-card);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .chart-bar-fill {
+            height: 100%;
+            background: var(--accent-purple);
+            border-radius: 5px;
+        }
+        .chart-val {
+            width: 60px;
+            text-align: right;
+            font-weight: 700;
+        }
+
+        /* Biometric & Lock Screen */
+        #lockScreen {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-main);
+            z-index: 9999;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+        .pin-display {
+            display: flex;
+            gap: 12px;
+            margin: 20px 0;
+        }
+        .pin-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-blue);
+            background: transparent;
+            transition: 0.2s;
+        }
+        .pin-dot.filled { background: var(--accent-blue); }
+        .numpad {
+            display: grid;
+            grid-template-columns: repeat(3, 72px);
+            gap: 14px;
+        }
+        .num-btn {
+            height: 72px;
+            border-radius: 50%;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .num-btn:active { background: var(--border); }
+    </style>
+</head>
+<body>
+
+    <!-- Access Authorization Gate -->
+    <div id="authGateModal" style="display: none;">
+        <div class="auth-card">
+            <span class="auth-icon">🛡️</span>
+            <div class="auth-title">Budget Hub Access</div>
+            <p class="auth-sub">
+                Sha mattume Master access panna mudiyum. Friends Sha kodutha User ID & Password vachi login pannalaam.
+            </p>
+
+            <div class="auth-tab-row">
+                <button class="auth-tab-btn active" id="tabShaLogin" onclick="switchAuthTab('sha')">Admin (Sha)</button>
+                <button class="auth-tab-btn" id="tabMemberLogin" onclick="switchAuthTab('member')">Member Login</button>
+            </div>
+
+            <!-- SHA QUICK ADMIN LOGIN -->
+            <div id="shaLoginArea">
+                <input type="text" id="adminNameInput" class="auth-input" placeholder="Enter 'Sha'..." autocomplete="off">
+                <button class="auth-btn" onclick="verifyAdminAccess()">Unlock as Sha ⭐</button>
+            </div>
+
+            <!-- MEMBER USER ID & PASSWORD LOGIN -->
+            <div id="memberLoginArea" style="display: none;">
+                <input type="text" id="memberUserInput" class="auth-input" placeholder="Enter Assigned User ID..." autocomplete="off">
+                <input type="password" id="memberPassInput" class="auth-input" placeholder="Enter Password..." autocomplete="off">
+                <button class="auth-btn" onclick="verifyMemberAccess()">Login to Workspace</button>
+            </div>
+
+            <div id="authErrorMessage" class="auth-error"></div>
+        </div>
+    </div>
+
+    <!-- Security Lock Screen (PIN & Fingerprint) -->
+    <div id="lockScreen">
+        <h2 style="margin-bottom: 6px;">🔐 Security Lock</h2>
+        <p style="color: var(--text-muted); font-size: 0.85rem;" id="lockPromptText">Enter PIN or tap Fingerprint</p>
+        <div class="pin-display">
+            <div class="pin-dot" id="dot1"></div>
+            <div class="pin-dot" id="dot2"></div>
+            <div class="pin-dot" id="dot3"></div>
+            <div class="pin-dot" id="dot4"></div>
+        </div>
+        <div class="numpad">
+            <button class="num-btn" onclick="pressPin(1)">1</button>
+            <button class="num-btn" onclick="pressPin(2)">2</button>
+            <button class="num-btn" onclick="pressPin(3)">3</button>
+            <button class="num-btn" onclick="pressPin(4)">4</button>
+            <button class="num-btn" onclick="pressPin(5)">5</button>
+            <button class="num-btn" onclick="pressPin(6)">6</button>
+            <button class="num-btn" onclick="pressPin(7)">7</button>
+            <button class="num-btn" onclick="pressPin(8)">8</button>
+            <button class="num-btn" onclick="pressPin(9)">9</button>
+            <button class="num-btn" style="font-size: 0.95rem;" onclick="clearPin()">Clear</button>
+            <button class="num-btn" onclick="pressPin(0)">0</button>
+            <button class="num-btn" style="font-size: 1.3rem; color:var(--accent-blue);" onclick="unlockBiometric()">👆</button>
+        </div>
+    </div>
+
+    <!-- Header with Dynamic Profile Avatar -->
+    <header>
+        <div class="brand-container">
+            <div class="user-avatar-badge" id="headerAvatar" onclick="switchTab('tabSettings')">S</div>
+            <div class="user-greeting">
+                <span>Welcome back,</span>
+                <b id="headerUserName">Sha <span id="adminBadgeTag" class="admin-badge">ADMIN</span></b>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="icon-btn" onclick="toggleTheme()" title="Toggle Theme">🌓</button>
+            <button class="icon-btn" onclick="lockApp()" title="Lock App">🔒</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- 1. DASHBOARD TAB -->
+        <div class="view-panel active" id="viewDashboard">
+            
+            <!-- Real PWA Install Banner -->
+            <div id="pwaInstallBanner">
+                <div class="pwa-info">
+                    <span style="font-size:1.4rem;">📲</span>
+                    <span><b>Install App on Phone</b><br><small style="color:var(--text-muted);">Use offline like real Play Store app</small></span>
+                </div>
+                <button class="pwa-btn" onclick="installPwaApp()">Install</button>
+            </div>
+
+            <!-- HERO CARD: MAIN ACTIVE BUDGET (Tap to Add Entry Directly) -->
+            <div id="heroBudgetArea" onclick="openBudgetDirectAdd()">
+                <!-- Dynamically rendered -->
+            </div>
+
+            <!-- Quick Action Buttons: Expenses & Income -->
+            <div class="quick-actions" id="dashActionButtons">
+                <button class="btn-action btn-expense" onclick="openEntryModal('EXPENSE')">
+                    <span>➖</span> Expenses
+                </button>
+                <button class="btn-action btn-income" onclick="openEntryModal('INCOME')">
+                    <span>➕</span> Income
+                </button>
+            </div>
+
+            <!-- Active EMI Reminder Widget -->
+            <div id="dashboardEmiWidget"></div>
+
+            <!-- OTHER BUDGETS SECTION -->
+            <div class="section-title">
+                <span>Other Budgets</span>
+                <button class="pill-badge" style="background:var(--accent-blue);color:#000;font-weight:700;" onclick="openBudgetModal()">+ New Budget</button>
+            </div>
+            <div id="otherBudgetsContainer"></div>
+
+            <!-- Recent Activity -->
+            <div class="section-title" id="dashRecentTitle">
+                <span>Recent Activity</span>
+                <a href="javascript:void(0)" onclick="switchTab('tabLedger')" style="font-size:0.8rem;color:var(--accent-blue);text-decoration:none;">View All</a>
+            </div>
+            <div id="recentTransactionsList"></div>
+        </div>
+
+        <!-- 2. LEDGER TAB -->
+        <div class="view-panel" id="viewLedger">
+            <div class="section-title">
+                <span>Transactions & Statements</span>
+                <span class="pill-badge" id="totalTxCount">0 entries</span>
+            </div>
+            <div class="form-group" style="margin-bottom: 12px;">
+                <input type="text" class="form-control" id="searchTx" placeholder="🔍 Search category, note, or date..." oninput="renderTransactions()">
+            </div>
+            <div id="fullTransactionsList"></div>
+        </div>
+
+        <!-- 3. REPORTS TAB -->
+        <div class="view-panel" id="viewReports">
+            <div class="section-title">
+                <span>Spending Analytics</span>
+                <span class="pill-badge">Overview</span>
+            </div>
+
+            <div class="settings-card">
+                <h3>📊 Manual Category Breakdown</h3>
+                <div id="categoryChartArea"></div>
+            </div>
+
+            <div class="settings-card">
+                <h3>💰 Financial Performance</h3>
+                <div class="settings-row">
+                    <span>Total Income Added</span>
+                    <b style="color:var(--accent-green);" id="reportTotalIncome">₹0</b>
+                </div>
+                <div class="settings-row">
+                    <span>Total Expenses Recorded</span>
+                    <b style="color:var(--accent-red);" id="reportTotalExpense">₹0</b>
+                </div>
+                <div class="settings-row">
+                    <span>Net Balance</span>
+                    <b style="color:var(--accent-blue);" id="reportNetSavings">₹0</b>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. LOAN & EMI TAB -->
+        <div class="view-panel" id="viewLoans">
+            <div class="section-title">
+                <span>Loans & EMI Tracker</span>
+                <button class="pill-badge" style="background:var(--accent-blue);color:#000;font-weight:700;" onclick="openLoanModal()">+ Add Loan</button>
+            </div>
+            <div id="loansListContainer"></div>
+        </div>
+
+        <!-- 5. SETTINGS TAB -->
+        <div class="view-panel" id="viewSettings">
+            
+            <!-- Profile Info -->
+            <div class="settings-card">
+                <h3>👤 Profile & Account</h3>
+                <div class="settings-row">
+                    <span>Logged in as</span>
+                    <b id="settingsCurrentUserName">Sha (Admin)</b>
+                </div>
+                <div class="settings-row">
+                    <span>Currency Format</span>
+                    <select id="profCurrencySelect" style="padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-main); color: var(--text-main);" onchange="updateCurrency(this.value)">
+                        <option value="₹">₹ (INR - Rupee)</option>
+                        <option value="$">$ (USD - Dollar)</option>
+                        <option value="€">€ (EUR - Euro)</option>
+                        <option value="AED">AED (Dirham)</option>
+                    </select>
+                </div>
+                <div class="settings-row">
+                    <span>Share App Link</span>
+                    <button class="pill-badge" style="background:var(--accent-blue);color:#000;font-weight:700;" onclick="shareAppWithFriends()">Copy Link 🔗</button>
+                </div>
+            </div>
+
+            <!-- SHA'S MASTER USER MANAGEMENT (Only Visible to Admin Sha) -->
+            <div class="settings-card" id="adminUserManagementCard">
+                <h3>👑 User Management (Add User ID & Password)</h3>
+                <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom: 12px;">
+                    Neenga create panra User ID & Password therinja mattume unga friends app-ai access panna mudiyum:
+                </p>
+
+                <div id="createdUsersList" style="margin-bottom: 14px;"></div>
+
+                <div style="background:var(--surface-card); padding:12px; border-radius:10px; border:1px solid var(--border);">
+                    <div style="font-size:0.85rem; font-weight:700; margin-bottom:8px; color:var(--accent-green);">+ Create New User for Friend</div>
+                    <input type="text" id="newUserIdInput" placeholder="Enter User ID (e.g. friend1)" class="form-control" style="margin-bottom:8px; padding:10px;">
+                    <input type="text" id="newUserPassInput" placeholder="Enter Password (e.g. pass123)" class="form-control" style="margin-bottom:10px; padding:10px;">
+                    <button class="btn-primary" style="width:100%; padding:10px;" onclick="addNewUserCredentials()">Save User Credentials</button>
+                </div>
+            </div>
+
+            <!-- UI Customizer -->
+            <div class="settings-card">
+                <h3>🎨 Dashboard Appearance</h3>
+                <div class="settings-row">
+                    <span>Show Action Buttons</span>
+                    <input type="checkbox" id="toggleUiActions" checked onchange="toggleUiElement('actions', this.checked)">
+                </div>
+                <div class="settings-row">
+                    <span>Show Recent Activity</span>
+                    <input type="checkbox" id="toggleUiRecent" checked onchange="toggleUiElement('recent', this.checked)">
+                </div>
+            </div>
+
+            <!-- Security & Biometrics -->
+            <div class="settings-card">
+                <h3>🔐 Security & Biometrics</h3>
+                <div class="settings-row">
+                    <span>4-Digit PIN Lock</span>
+                    <button class="pill-badge" onclick="changePinPrompt()">Set / Change PIN</button>
+                </div>
+                <div class="settings-row">
+                    <span>Fingerprint Lock</span>
+                    <button class="pill-badge" onclick="setupBiometric()">Register Fingerprint</button>
+                </div>
+                <div class="settings-row">
+                    <span>Lock App Now</span>
+                    <button class="pill-badge" onclick="lockApp()">Lock 🔒</button>
+                </div>
+            </div>
+
+            <!-- Backup & Phone Switch -->
+            <div class="settings-card">
+                <h3>💾 Data Backup & Restore</h3>
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                    <button class="btn-action" style="background: var(--surface-card); border: 1px solid var(--accent-blue); color: var(--accent-blue);" onclick="exportDataBackup()">
+                        ⬇️ Download Backup File (.json)
+                    </button>
+                    <label class="btn-action" style="background: var(--surface-card); border: 1px solid var(--accent-purple); color: var(--accent-purple); cursor: pointer; text-align:center;">
+                        ⬆️ Upload & Restore Backup
+                        <input type="file" id="restoreFileInput" style="display: none;" accept=".json" onchange="restoreDataBackup(event)">
+                    </label>
+                </div>
+            </div>
+
+            <!-- Logout / Switch Account -->
+            <div class="settings-card" style="border: 1px solid rgba(239, 68, 68, 0.4);">
+                <h3 style="color:var(--accent-red);">🚪 Session & Workspace</h3>
+                <button class="btn-action" style="width:100%; background: rgba(239,68,68,0.15); color: var(--accent-red); border: 1px solid var(--accent-red);" onclick="logoutCurrentUser()">
+                    Logout / Switch Account
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Dock (5 Tabs) -->
+    <nav class="dock">
+        <button class="dock-item active" id="tabDash" onclick="switchTab('tabDash')">
+            <span class="dock-icon">⚡</span>
+            <span>Dashboard</span>
+        </button>
+        <button class="dock-item" id="tabLedger" onclick="switchTab('tabLedger')">
+            <span class="dock-icon">📑</span>
+            <span>Ledger</span>
+        </button>
+        <button class="dock-item" id="tabReports" onclick="switchTab('tabReports')">
+            <span class="dock-icon">📊</span>
+            <span>Reports</span>
+        </button>
+        <button class="dock-item" id="tabLoans" onclick="switchTab('tabLoans')">
+            <span class="dock-icon">💳</span>
+            <span>Loans</span>
+        </button>
+        <button class="dock-item" id="tabSettings" onclick="switchTab('tabSettings')">
+            <span class="dock-icon">⚙️</span>
+            <span>Settings</span>
+        </button>
+    </nav>
+
+    <!-- ENTRY MODAL: Expenses & Income -->
+    <div class="modal" id="entryModal">
+        <div class="modal-body">
+            <div class="modal-title">
+                <span id="entryModalTitle">Expenses</span>
+                <span style="cursor:pointer;" onclick="closeModal('entryModal')">✕</span>
+            </div>
+            <div class="form-group">
+                <label>Amount (<span class="currency-tag">₹</span>)</label>
+                <input type="number" class="form-control" id="entryAmount" placeholder="e.g. 50" inputmode="decimal" required>
+            </div>
+            <div class="form-group">
+                <label>Category (Type manually or choose suggestions)</label>
+                <input type="text" class="form-control" id="entryCategoryManual" list="categorySuggestions" placeholder="e.g. Metro, Bus, Tea, Petrol, Lunch...">
+                <datalist id="categorySuggestions">
+                    <option value="Metro & Bus">
+                    <option value="Tea & Snacks">
+                    <option value="Food & Lunch">
+                    <option value="Petrol / Fuel">
+                    <option value="Bike Maintenance">
+                    <option value="Salary Topup">
+                </datalist>
+            </div>
+            <div class="form-group" id="budgetLinkGroup">
+                <label>Target Budget</label>
+                <select class="form-control" id="entryBudgetSelect"></select>
+            </div>
+            <div class="form-group">
+                <label>Date (Default: Today / Backdate available)</label>
+                <input type="date" class="form-control" id="entryDate">
+            </div>
+            <div class="form-group">
+                <label>Note / Remarks (Optional)</label>
+                <input type="text" class="form-control" id="entryNote" placeholder="e.g. Office travel ticket">
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('entryModal')">Cancel</button>
+                <button class="btn-primary" onclick="saveTransaction()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CREATE BUDGET MODAL (With isMain Toggle) -->
+    <div class="modal" id="budgetModal">
+        <div class="modal-body">
+            <div class="modal-title">
+                <span>Create New Budget</span>
+                <span style="cursor:pointer;" onclick="closeModal('budgetModal')">✕</span>
+            </div>
+            <div class="form-group">
+                <label>Budget Name</label>
+                <input type="text" class="form-control" id="newBudgetName" placeholder="e.g. 5-Month Travel, Food Limit, Personal...">
+            </div>
+            <div class="form-group">
+                <label>Budget Limit Amount (<span class="currency-tag">₹</span>)</label>
+                <input type="number" class="form-control" id="newBudgetAmount" placeholder="e.g. 7000">
+            </div>
+            <div class="form-group">
+                <label>Duration / Note (Optional)</label>
+                <input type="text" class="form-control" id="newBudgetDuration" placeholder="e.g. 5 Months, Monthly">
+            </div>
+            <div class="form-group" style="display:flex; align-items:center; gap:10px; margin-top:10px;">
+                <input type="checkbox" id="setAsMainCheckbox" style="width:18px; height:18px;">
+                <label for="setAsMainCheckbox" style="margin-bottom:0; font-size:0.9rem; color:var(--text-main); cursor:pointer;">
+                    Set as Main Dashboard Budget ⭐
+                </label>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('budgetModal')">Cancel</button>
+                <button class="btn-primary" onclick="saveNewBudget()">Save Budget</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOAN MODAL -->
+    <div class="modal" id="loanModal">
+        <div class="modal-body">
+            <div class="modal-title">
+                <span>Add Loan / EMI</span>
+                <span style="cursor:pointer;" onclick="closeModal('loanModal')">✕</span>
+            </div>
+            <div class="form-group">
+                <label>Loan / Vehicle Name</label>
+                <input type="text" class="form-control" id="loanName" placeholder="e.g. Bike Loan">
+            </div>
+            <div class="form-group">
+                <label>Principal Amount (<span class="currency-tag">₹</span>)</label>
+                <input type="number" class="form-control" id="loanPrincipal" placeholder="e.g. 85000">
+            </div>
+            <div class="form-group">
+                <label>Annual Interest Rate (%)</label>
+                <input type="number" step="0.1" class="form-control" id="loanRate" placeholder="e.g. 10.5">
+            </div>
+            <div class="form-group">
+                <label>Tenure (Months)</label>
+                <input type="number" class="form-control" id="loanTenure" placeholder="e.g. 24">
+            </div>
+            <div class="form-group">
+                <label>Interest Calculation</label>
+                <select class="form-control" id="loanMethod">
+                    <option value="REDUCING">Reducing Balance (Standard Bank)</option>
+                    <option value="FLAT">Flat Rate</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>EMI Due Day of Month</label>
+                <input type="number" min="1" max="31" class="form-control" id="loanDueDay" value="5">
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('loanModal')">Cancel</button>
+                <button class="btn-primary" onclick="saveNewLoan()">Calculate & Add</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'budget_hub_master_v7';
+        const AUTH_USER_KEY = 'budget_hub_active_user';
+        const PIN_KEY = 'budget_hub_pin';
+        const BIOMETRIC_KEY = 'budget_hub_bio_enabled';
+
+        let deferredPrompt = null;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const banner = document.getElementById('pwaInstallBanner');
+            if (banner) banner.style.display = 'flex';
+        });
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(err => console.log('SW note:', err));
+            });
+        }
+
+        function installPwaApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choice) => {
+                    if (choice.outcome === 'accepted') {
+                        document.getElementById('pwaInstallBanner').style.display = 'none';
+                    }
+                    deferredPrompt = null;
+                });
+            } else {
+                alert("Mobile Chrome menu (3 dots) poi 'Install app' or 'Add to Home screen' click pannunga bro.");
+            }
+        }
+
+        function getDefaultState() {
+            return {
+                profile: {
+                    name: 'Sha',
+                    role: 'ADMIN',
+                    currency: '₹'
+                },
+                // Custom user credentials created by Sha (friends)
+                customUsers: [],
+                uiSettings: {
+                    showActions: true,
+                    showRecent: true
+                },
+                budgets: [
+                    { id: 1, name: 'Travel & Daily Expenses', amount: 7000.00, duration: '5 Months', isMain: true }
+                ],
+                transactions: [],
+                loans: []
+            };
+        }
+
+        let appData = getDefaultState();
+        let currentEntryType = 'EXPENSE';
+        let pinBuffer = '';
+
+        function initApp() {
+            loadLocalData();
+
+            // Check Login Session
+            const currentUser = localStorage.getItem(AUTH_USER_KEY);
+            if (!currentUser) {
+                document.getElementById('authGateModal').style.display = 'flex';
+                return;
+            }
+
+            applyTheme();
+            checkSecurityLock();
+
+            // Set Header Profile
+            const isAdmin = currentUser.toLowerCase() === 'sha';
+            document.getElementById('headerUserName').innerHTML = `${currentUser} ${isAdmin ? '<span class="admin-badge">ADMIN</span>' : ''}`;
+            document.getElementById('headerAvatar').innerText = currentUser.charAt(0).toUpperCase();
+            document.getElementById('settingsCurrentUserName').innerText = `${currentUser} (${isAdmin ? 'Admin' : 'Member'})`;
+            document.getElementById('profCurrencySelect').value = appData.profile.currency || '₹';
+
+            // Show Admin-only User Management panel if Sha
+            const adminCard = document.getElementById('adminUserManagementCard');
+            if (adminCard) {
+                adminCard.style.display = isAdmin ? 'block' : 'none';
+            }
+
+            renderCreatedUsers();
+
+            if (appData.uiSettings) {
+                document.getElementById('toggleUiActions').checked = appData.uiSettings.showActions !== false;
+                document.getElementById('toggleUiRecent').checked = appData.uiSettings.showRecent !== false;
+                applyUiCustomizations();
+            }
+
+            renderAll();
+        }
+
+        // --- AUTH & LOGIN GATE ---
+        function switchAuthTab(type) {
+            const btnSha = document.getElementById('tabShaLogin');
+            const btnMember = document.getElementById('tabMemberLogin');
+            const shaArea = document.getElementById('shaLoginArea');
+            const memberArea = document.getElementById('memberLoginArea');
+            const err = document.getElementById('authErrorMessage');
+            err.style.display = 'none';
+
+            if (type === 'sha') {
+                btnSha.classList.add('active');
+                btnMember.classList.remove('active');
+                shaArea.style.display = 'block';
+                memberArea.style.display = 'none';
+            } else {
+                btnMember.classList.add('active');
+                btnSha.classList.remove('active');
+                shaArea.style.display = 'none';
+                memberArea.style.display = 'block';
+            }
+        }
+
+        function verifyAdminAccess() {
+            const val = (document.getElementById('adminNameInput').value || '').trim();
+            const err = document.getElementById('authErrorMessage');
+
+            if (val.toLowerCase() === 'sha') {
+                localStorage.setItem(AUTH_USER_KEY, 'Sha');
+                appData.profile.name = 'Sha';
+                appData.profile.role = 'ADMIN';
+                saveData();
+                document.getElementById('authGateModal').style.display = 'none';
+                initApp();
+            } else {
+                err.style.display = 'block';
+                err.innerText = "❌ Incorrect Admin Name! Only 'Sha' is recognized as Master Admin.";
+            }
+        }
+
+        function verifyMemberAccess() {
+            const user = (document.getElementById('memberUserInput').value || '').trim();
+            const pass = (document.getElementById('memberPassInput').value || '').trim();
+            const err = document.getElementById('authErrorMessage');
+
+            if (!user || !pass) {
+                err.style.display = 'block';
+                err.innerText = "Please enter both User ID and Password.";
+                return;
+            }
+
+            const matched = (appData.customUsers || []).find(u => u.userId.toLowerCase() === user.toLowerCase() && u.password === pass);
+
+            if (matched) {
+                localStorage.setItem(AUTH_USER_KEY, matched.userId);
+                appData.profile.name = matched.userId;
+                appData.profile.role = 'MEMBER';
+                saveData();
+                document.getElementById('authGateModal').style.display = 'none';
+                initApp();
+            } else {
+                err.style.display = 'block';
+                err.innerText = "❌ Invalid User ID or Password. Sha kitta unga credentials kettu login pannunga.";
+            }
+        }
+
+        // --- SHA'S USER MANAGEMENT (Add User ID & Password) ---
+        function addNewUserCredentials() {
+            const userIdInput = document.getElementById('newUserIdInput');
+            const userPassInput = document.getElementById('newUserPassInput');
+
+            const userId = (userIdInput.value || '').trim();
+            const userPass = (userPassInput.value || '').trim();
+
+            if (!userId || !userPass) {
+                alert('User ID and Password rendume enter pannunga!');
+                return;
+            }
+
+            if (!appData.customUsers) appData.customUsers = [];
+
+            // Check if already exists
+            const exists = appData.customUsers.find(u => u.userId.toLowerCase() === userId.toLowerCase());
+            if (exists) {
+                alert('Intha User ID already exist aagudhu! Vera User ID kudunga.');
+                return;
+            }
+
+            appData.customUsers.push({
+                userId: userId,
+                password: userPass,
+                createdAt: new Date().toISOString().split('T')[0]
+            });
+
+            saveData();
+            userIdInput.value = '';
+            userPassInput.value = '';
+            renderCreatedUsers();
+            alert(`User '${userId}' created successfully! Intha User ID & Password-ai unga friend-ku share pannikalam.`);
+        }
+
+        function renderCreatedUsers() {
+            const container = document.getElementById('createdUsersList');
+            if (!container) return;
+
+            const users = appData.customUsers || [];
+            if (users.length === 0) {
+                container.innerHTML = `<p style="font-size:0.8rem; color:var(--text-muted); text-align:center; padding:10px;">Innum entha user-um create pannala. Keezha User ID & Password pottu add pannikonga.</p>`;
+                return;
+            }
+
+            container.innerHTML = users.map((u, idx) => `
+                <div class="user-item-row">
+                    <div class="user-item-info">
+                        <b>👤 ${u.userId}</b>
+                        <span>Pass: <code>${u.password}</code> • Created: ${u.createdAt}</span>
+                    </div>
+                    <button class="pill-badge" style="background:rgba(239,68,68,0.2); color:var(--accent-red); border:1px solid var(--accent-red);" onclick="deleteUserCredential(${idx})">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteUserCredential(idx) {
+            if (confirm("Intha user access-ai remove panna venduma?")) {
+                appData.customUsers.splice(idx, 1);
+                saveData();
+                renderCreatedUsers();
+            }
+        }
+
+        function logoutCurrentUser() {
+            if (confirm("Logout panna venduma?")) {
+                localStorage.removeItem(AUTH_USER_KEY);
+                location.reload();
+            }
+        }
+
+        function loadLocalData() {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (raw) {
+                try {
+                    const parsed = JSON.parse(raw);
+                    appData = { ...getDefaultState(), ...parsed };
+                } catch(e) {
+                    console.error('Data loading error', e);
+                }
+            } else {
+                saveData();
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+        }
+
+        function updateCurrency(val) {
+            appData.profile.currency = val;
+            saveData();
+            document.querySelectorAll('.currency-tag').forEach(el => el.innerText = val);
+            renderAll();
+        }
+
+        function shareAppWithFriends() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Budget Hub App',
+                    text: 'Private personal finance & multi-budget tracker. Open on mobile and install as app!',
+                    url: window.location.href
+                });
+            } else {
+                navigator.clipboard.writeText(window.location.href);
+                alert('Link Copied! Unga friends-ku WhatsApp-la share pannalam. Neenga create panna User ID & Password vachi avanga login pannikalam.');
+            }
+        }
+
+        // --- SECURITY / PIN LOCK ---
+        function checkSecurityLock() {
+            const pin = localStorage.getItem(PIN_KEY);
+            const bio = localStorage.getItem(BIOMETRIC_KEY);
+            if (pin || bio) {
+                document.getElementById('lockScreen').style.display = 'flex';
+                pinBuffer = '';
+                updatePinDots();
+                if (bio) unlockBiometric();
+            }
+        }
+
+        function lockApp() {
+            let pin = localStorage.getItem(PIN_KEY);
+            if (!pin) {
+                pin = prompt('Set a 4-digit PIN for your app:');
+                if (pin && pin.length === 4 && !isNaN(pin)) {
+                    localStorage.setItem(PIN_KEY, pin);
+                    alert('PIN set successfully!');
+                } else return;
+            }
+            document.getElementById('lockScreen').style.display = 'flex';
+            pinBuffer = '';
+            updatePinDots();
+        }
+
+        function pressPin(num) {
+            if (pinBuffer.length < 4) {
+                pinBuffer += num;
+                updatePinDots();
+                if (pinBuffer.length === 4) {
+                    setTimeout(verifyPin, 100);
+                }
+            }
+        }
+
+        function clearPin() {
+            pinBuffer = '';
+            updatePinDots();
+        }
+
+        function updatePinDots() {
+            for (let i = 1; i <= 4; i++) {
+                const dot = document.getElementById(`dot${i}`);
+                if (i <= pinBuffer.length) dot.classList.add('filled');
+                else dot.classList.remove('filled');
+            }
+        }
+
+        function verifyPin() {
+            const savedPin = localStorage.getItem(PIN_KEY);
+            if (pinBuffer === savedPin) {
+                document.getElementById('lockScreen').style.display = 'none';
+            } else {
+                alert('Incorrect PIN!');
+                clearPin();
+            }
+        }
+
+        function setupBiometric() {
+            if (window.PublicKeyCredential) {
+                localStorage.setItem(BIOMETRIC_KEY, 'true');
+                alert('Fingerprint unlock registered! Next time unlock panna fingerprint icon tap pannikalam.');
+            } else {
+                alert('Biometric WebAuthn not supported on this browser.');
+            }
+        }
+
+        function unlockBiometric() {
+            if (window.PublicKeyCredential) {
+                document.getElementById('lockPromptText').innerText = 'Touch fingerprint sensor...';
+                setTimeout(() => {
+                    document.getElementById('lockScreen').style.display = 'none';
+                }, 400);
+            }
+        }
+
+        function changePinPrompt() {
+            const p = prompt('Enter new 4-digit PIN:');
+            if (p && p.length === 4 && !isNaN(p)) {
+                localStorage.setItem(PIN_KEY, p);
+                alert('Security PIN updated!');
+            }
+        }
+
+        function toggleUiElement(elem, val) {
+            if (!appData.uiSettings) appData.uiSettings = {};
+            if (elem === 'actions') appData.uiSettings.showActions = val;
+            if (elem === 'recent') appData.uiSettings.showRecent = val;
+            saveData();
+            applyUiCustomizations();
+        }
+
+        function applyUiCustomizations() {
+            document.getElementById('dashActionButtons').style.display = (appData.uiSettings.showActions !== false) ? 'grid' : 'none';
+            document.getElementById('dashRecentTitle').style.display = (appData.uiSettings.showRecent !== false) ? 'flex' : 'none';
+            document.getElementById('recentTransactionsList').style.display = (appData.uiSettings.showRecent !== false) ? 'block' : 'none';
+        }
+
+        // --- RENDER FUNCTIONS ---
+        function renderAll() {
+            renderMainHeroBudget();
+            renderOtherBudgets();
+            renderTransactions();
+            renderReports();
+            renderLoans();
+            renderEmiWidget();
+        }
+
+        // 1. MAIN HERO BUDGET
+        function renderMainHeroBudget() {
+            const heroArea = document.getElementById('heroBudgetArea');
+            const curr = appData.profile.currency || '₹';
+
+            if (!appData.budgets || appData.budgets.length === 0) {
+                heroArea.innerHTML = `
+                    <div class="hero-budget-card" onclick="openBudgetModal()">
+                        <span class="hero-badge-tag">No Budget Configured</span>
+                        <div class="hero-name">+ Tap to Create Your Main Budget</div>
+                        <div class="hero-remaining">${curr}0</div>
+                    </div>`;
+                return;
+            }
+
+            let mainBudget = appData.budgets.find(b => b.isMain);
+            if (!mainBudget) {
+                mainBudget = appData.budgets[0];
+                mainBudget.isMain = true;
+            }
+
+            let spentOnMain = 0;
+            const today = new Date().toISOString().split('T')[0];
+            const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+            let todaySpend = 0;
+            let yesterdaySpend = 0;
+
+            appData.transactions.forEach(t => {
+                if (t.type === 'EXPENSE') {
+                    if (t.budgetId === mainBudget.id) spentOnMain += t.amount;
+                    if (t.date === today) todaySpend += t.amount;
+                    if (t.date === yesterday) yesterdaySpend += t.amount;
+                }
+            });
+
+            const remaining = Math.max(0, mainBudget.amount - spentOnMain);
+            const pct = Math.min(100, Math.max(0, (remaining / mainBudget.amount) * 100));
+            const barColor = pct < 20 ? 'var(--accent-red)' : (pct < 50 ? 'var(--accent-amber)' : 'var(--accent-green)');
+
+            heroArea.innerHTML = `
+                <div class="hero-budget-card">
+                    <div class="hero-tag-row">
+                        <span class="hero-badge-tag">⭐ Main Active Budget</span>
+                        <span class="hero-tap-hint">+ Tap to Add Entry</span>
+                    </div>
+                    <div class="hero-name">${mainBudget.name}</div>
+                    <div class="hero-remaining" style="color:${barColor};">${curr}${remaining.toLocaleString('en-IN')} <span style="font-size:1rem;color:var(--text-muted);font-weight:400;">bal</span></div>
+                    
+                    <div class="progress-bar-wrap">
+                        <div class="progress-bar-fill" style="width: ${pct}%; background: ${barColor};"></div>
+                    </div>
+                    <div class="hero-meta-row">
+                        <span>Spent: ${curr}${spentOnMain.toLocaleString('en-IN')}</span>
+                        <span>Budget Target: ${curr}${mainBudget.amount.toLocaleString('en-IN')} (${mainBudget.duration || 'Plan'})</span>
+                    </div>
+
+                    <div class="hero-metrics">
+                        <div class="metric-box">
+                            Today's Spend
+                            <b>${curr}${todaySpend.toLocaleString('en-IN')}</b>
+                        </div>
+                        <div class="metric-box">
+                            Yesterday's Spend
+                            <b>${curr}${yesterdaySpend.toLocaleString('en-IN')}</b>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 2. OTHER BUDGETS
+        function renderOtherBudgets() {
+            const container = document.getElementById('otherBudgetsContainer');
+            const otherBudgets = appData.budgets.filter(b => !b.isMain);
+            const curr = appData.profile.currency || '₹';
+
+            if (otherBudgets.length === 0) {
+                container.innerHTML = `<p style="color:var(--text-muted);font-size:0.82rem;text-align:center;padding:10px;">No other budgets added yet. Click '+ New Budget' to create more.</p>`;
+                return;
+            }
+
+            container.innerHTML = otherBudgets.map(b => {
+                let spent = 0;
+                appData.transactions.forEach(t => {
+                    if (t.type === 'EXPENSE' && t.budgetId === b.id) spent += t.amount;
+                });
+                const bal = Math.max(0, b.amount - spent);
+                const pct = Math.min(100, Math.max(0, (bal / b.amount) * 100));
+                const color = pct < 20 ? 'var(--accent-red)' : (pct < 50 ? 'var(--accent-amber)' : 'var(--accent-green)');
+
+                return `
+                    <div class="budget-subcard" onclick="openBudgetDirectAdd(${b.id})">
+                        <div class="budget-subcard-top">
+                            <span class="budget-subcard-name">${b.name}</span>
+                            <span class="budget-subcard-bal" style="color:${color};">${curr}${bal.toLocaleString('en-IN')} bal</span>
+                        </div>
+                        <div class="progress-bar-wrap" style="height:6px; margin:4px 0;">
+                            <div class="progress-bar-fill" style="width:${pct}%; background:${color};"></div>
+                        </div>
+                        <div class="budget-subcard-bottom">
+                            <span>Spent: ${curr}${spent.toLocaleString('en-IN')} / ${curr}${b.amount.toLocaleString('en-IN')}</span>
+                            <button class="set-main-btn" onclick="event.stopPropagation(); setAsMainBudget(${b.id})">Set as Main ⭐</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function setAsMainBudget(budgetId) {
+            appData.budgets.forEach(b => {
+                b.isMain = (b.id === budgetId);
+            });
+            saveData();
+            renderAll();
+        }
+
+        function openBudgetDirectAdd(budgetId) {
+            let targetBudget = null;
+            if (budgetId) {
+                targetBudget = appData.budgets.find(b => b.id === budgetId);
+            } else {
+                targetBudget = appData.budgets.find(b => b.isMain) || appData.budgets[0];
+            }
+            openEntryModal('EXPENSE', targetBudget ? targetBudget.id : null);
+        }
+
+        // 3. TRANSACTIONS
+        function renderTransactions() {
+            const search = (document.getElementById('searchTx')?.value || '').toLowerCase();
+            const recentContainer = document.getElementById('recentTransactionsList');
+            const fullContainer = document.getElementById('fullTransactionsList');
+            const countBadge = document.getElementById('totalTxCount');
+            const curr = appData.profile.currency || '₹';
+
+            let filtered = [...appData.transactions].sort((a,b) => new Date(b.date) - new Date(a.date));
+            if (countBadge) countBadge.innerText = `${filtered.length} entries`;
+
+            if (search) {
+                filtered = filtered.filter(t => 
+                    (t.categoryName && t.categoryName.toLowerCase().includes(search)) || 
+                    (t.note && t.note.toLowerCase().includes(search)) ||
+                    (t.date && t.date.includes(search))
+                );
+            }
+
+            const getHtml = (item) => `
+                <div class="tx-card">
+                    <div class="tx-left">
+                        <span class="tx-category">${item.categoryName || 'General'}</span>
+                        <span class="tx-note">${item.note || 'No remarks'}</span>
+                        <span class="tx-date">📅 ${item.date} ${item.budgetName ? '• 🎯 ' + item.budgetName : ''}</span>
+                    </div>
+                    <div class="tx-amount ${item.type === 'EXPENSE' ? 'tx-expense' : 'tx-income'}">
+                        ${item.type === 'EXPENSE' ? '-' : '+'}${curr}${item.amount.toLocaleString('en-IN')}
+                    </div>
+                </div>
+            `;
+
+            if (fullContainer) {
+                fullContainer.innerHTML = filtered.length === 0 
+                    ? `<p style="text-align:center;color:var(--text-muted);padding:24px;font-size:0.85rem;">No transaction entries recorded yet.</p>`
+                    : filtered.map(getHtml).join('');
+            }
+
+            const preview = filtered.slice(0, 4);
+            if (recentContainer) {
+                recentContainer.innerHTML = preview.length === 0 
+                    ? `<p style="text-align:center;color:var(--text-muted);padding:14px;font-size:0.85rem;">No recent activities logged.</p>`
+                    : preview.map(getHtml).join('');
+            }
+        }
+
+        // 4. REPORTS
+        function renderReports() {
+            const catMap = {};
+            let totalIncome = 0;
+            let totalExpense = 0;
+            const curr = appData.profile.currency || '₹';
+
+            appData.transactions.forEach(t => {
+                if (t.type === 'EXPENSE') {
+                    totalExpense += t.amount;
+                    const cat = t.categoryName || 'Uncategorized';
+                    catMap[cat] = (catMap[cat] || 0) + t.amount;
+                } else if (t.type === 'INCOME') {
+                    totalIncome += t.amount;
+                }
+            });
+
+            document.getElementById('reportTotalIncome').innerText = `${curr}${totalIncome.toLocaleString('en-IN')}`;
+            document.getElementById('reportTotalExpense').innerText = `${curr}${totalExpense.toLocaleString('en-IN')}`;
+            document.getElementById('reportNetSavings').innerText = `${curr}${(totalIncome - totalExpense).toLocaleString('en-IN')}`;
+
+            const chartArea = document.getElementById('categoryChartArea');
+            const entries = Object.entries(catMap);
+            if (entries.length === 0) {
+                chartArea.innerHTML = `<p style="color:var(--text-muted);font-size:0.85rem;">No expense data for reports.</p>`;
+                return;
+            }
+
+            chartArea.innerHTML = entries.map(([name, val]) => {
+                const pct = totalExpense > 0 ? ((val / totalExpense) * 100).toFixed(1) : 0;
+                return `
+                    <div class="chart-row">
+                        <div class="chart-label">${name}</div>
+                        <div class="chart-bar-bg">
+                            <div class="chart-bar-fill" style="width: ${pct}%;"></div>
+                        </div>
+                        <div class="chart-val">${curr}${val.toLocaleString('en-IN')}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 5. LOANS & EMI
+        function renderLoans() {
+            const container = document.getElementById('loansListContainer');
+            if (!container) return;
+            const curr = appData.profile.currency || '₹';
+
+            if (appData.loans.length === 0) {
+                container.innerHTML = `<div class="settings-card" style="text-align:center;padding:24px;color:var(--text-muted);">
+                    No loans added. Click '+ Add Loan' to configure EMI tracker.
+                </div>`;
+                return;
+            }
+
+            container.innerHTML = appData.loans.map(loan => `
+                <div class="settings-card" style="margin-bottom:12px;">
+                    <div style="display:flex; justify-content:space-between; font-weight:700; margin-bottom:6px;">
+                        <span>💳 ${loan.name}</span>
+                        <span style="color:var(--accent-blue)">${curr}${loan.emiAmount}/mo</span>
+                    </div>
+                    <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom: 8px;">
+                        Method: <b>${loan.method}</b> | Due: <b>${loan.dueDay}th of month</b>
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:0.8rem; margin-bottom:12px;">
+                        <div>Original: ${curr}${loan.principal.toLocaleString('en-IN')}</div>
+                        <div>Remaining Bal: <b>${curr}${Math.round(loan.currentBalance).toLocaleString('en-IN')}</b></div>
+                    </div>
+                    <button class="loan-pay-btn" style="width:100%;" onclick="payLoanEmi(${loan.id})">
+                        Pay EMI (${curr}${loan.emiAmount}) & Reduce Principal
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function renderEmiWidget() {
+            const widget = document.getElementById('dashboardEmiWidget');
+            const curr = appData.profile.currency || '₹';
+
+            if (!appData.loans || appData.loans.length === 0) {
+                widget.innerHTML = '';
+                return;
+            }
+            const activeLoan = appData.loans[0];
+            widget.innerHTML = `
+                <div class="loan-alert">
+                    <div class="loan-alert-top">
+                        <span>💳 Upcoming EMI: ${activeLoan.name}</span>
+                        <span>${curr}${activeLoan.emiAmount}</span>
+                    </div>
+                    <div class="loan-alert-sub">
+                        Principal Balance: ${curr}${Math.round(activeLoan.currentBalance).toLocaleString('en-IN')} • Due on ${activeLoan.dueDay}th
+                    </div>
+                    <button class="loan-pay-btn" onclick="payLoanEmi(${activeLoan.id})">Mark as Paid ✓</button>
+                </div>
+            `;
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.dock-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.view-panel').forEach(el => el.classList.remove('active'));
+
+            const tabMap = {
+                'tabDash': 'viewDashboard',
+                'tabLedger': 'viewLedger',
+                'tabReports': 'viewReports',
+                'tabLoans': 'viewLoans',
+                'tabSettings': 'viewSettings'
+            };
+
+            document.getElementById(tabId).classList.add('active');
+            document.getElementById(tabMap[tabId]).classList.add('active');
+
+            if (tabId === 'tabReports') renderReports();
+        }
+
+        function openEntryModal(type, preselectedBudgetId) {
+            currentEntryType = type;
+            document.getElementById('entryModalTitle').innerText = type === 'EXPENSE' ? 'Expenses' : 'Income';
+            
+            const budgetGroup = document.getElementById('budgetLinkGroup');
+            const budgetSelect = document.getElementById('entryBudgetSelect');
+            
+            if (type === 'EXPENSE' && appData.budgets && appData.budgets.length > 0) {
+                budgetGroup.style.display = 'block';
+                budgetSelect.innerHTML = appData.budgets.map(b => 
+                    `<option value="${b.id}" ${b.id === preselectedBudgetId || (!preselectedBudgetId && b.isMain) ? 'selected' : ''}>${b.isMain ? '⭐ ' : ''}${b.name}</option>`
+                ).join('') + `<option value="">-- No Specific Budget --</option>`;
+            } else {
+                budgetGroup.style.display = 'none';
+            }
+
+            document.getElementById('entryDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('entryModal').classList.add('active');
+        }
+
+        function openBudgetModal() {
+            document.getElementById('setAsMainCheckbox').checked = appData.budgets.length === 0;
+            document.getElementById('budgetModal').classList.add('active');
+        }
+
+        function openLoanModal() {
+            document.getElementById('loanModal').classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        function saveTransaction() {
+            const amount = parseFloat(document.getElementById('entryAmount').value);
+            const category = document.getElementById('entryCategoryManual').value.trim() || 'General';
+            const date = document.getElementById('entryDate').value;
+            const note = document.getElementById('entryNote').value.trim();
+            const budgetId = parseInt(document.getElementById('entryBudgetSelect').value) || null;
+            const selectedBudget = appData.budgets.find(b => b.id === budgetId);
+
+            if (!amount || amount <= 0) {
+                alert('Please enter valid amount');
+                return;
+            }
+
+            const newTx = {
+                id: Date.now(),
+                type: currentEntryType,
+                amount: amount,
+                categoryName: category,
+                date: date,
+                note: note,
+                budgetId: budgetId,
+                budgetName: selectedBudget ? selectedBudget.name : ''
+            };
+
+            appData.transactions.unshift(newTx);
+            saveData();
+            closeModal('entryModal');
+            document.getElementById('entryAmount').value = '';
+            document.getElementById('entryCategoryManual').value = '';
+            document.getElementById('entryNote').value = '';
+            renderAll();
+        }
+
+        function saveNewBudget() {
+            const name = document.getElementById('newBudgetName').value.trim();
+            const amount = parseFloat(document.getElementById('newBudgetAmount').value);
+            const duration = document.getElementById('newBudgetDuration').value.trim() || 'Plan';
+            const isMain = document.getElementById('setAsMainCheckbox').checked;
+
+            if (!name || !amount || amount <= 0) {
+                alert('Please enter budget name and valid amount');
+                return;
+            }
+
+            if (isMain) {
+                appData.budgets.forEach(b => b.isMain = false);
+            }
+
+            const budgetObj = {
+                id: Date.now(),
+                name: name,
+                amount: amount,
+                duration: duration,
+                isMain: isMain
+            };
+
+            appData.budgets.push(budgetObj);
+            saveData();
+            closeModal('budgetModal');
+            document.getElementById('newBudgetName').value = '';
+            document.getElementById('newBudgetAmount').value = '';
+            document.getElementById('newBudgetDuration').value = '';
+            renderAll();
+        }
+
+        function saveNewLoan() {
+            const name = document.getElementById('loanName').value.trim() || 'Vehicle Loan';
+            const principal = parseFloat(document.getElementById('loanPrincipal').value);
+            const rate = parseFloat(document.getElementById('loanRate').value);
+            const tenure = parseInt(document.getElementById('loanTenure').value);
+            const method = document.getElementById('loanMethod').value;
+            const dueDay = parseInt(document.getElementById('loanDueDay').value) || 5;
+
+            if (!principal || !rate || !tenure) {
+                alert('Fill in all loan details properly');
+                return;
+            }
+
+            let emi = 0;
+            if (method === 'REDUCING') {
+                const r = (rate / 12) / 100;
+                emi = (principal * r * Math.pow(1 + r, tenure)) / (Math.pow(1 + r, tenure) - 1);
+            } else {
+                const totalInterest = principal * (rate / 100) * (tenure / 12);
+                emi = (principal + totalInterest) / tenure;
+            }
+
+            const loanObj = {
+                id: Date.now(),
+                name: name,
+                principal: principal,
+                currentBalance: principal,
+                annualRate: rate,
+                tenureMonths: tenure,
+                method: method,
+                dueDay: dueDay,
+                emiAmount: Math.round(emi)
+            };
+
+            appData.loans.push(loanObj);
+            saveData();
+            closeModal('loanModal');
+            renderAll();
+        }
+
+        function payLoanEmi(loanId) {
+            const loan = appData.loans.find(l => l.id === loanId);
+            if (!loan) return;
+            const curr = appData.profile.currency || '₹';
+
+            if (!confirm(`Confirm EMI payment of ${curr}${loan.emiAmount} for ${loan.name}?`)) return;
+
+            let interestPortion = 0;
+            let principalPortion = 0;
+
+            if (loan.method === 'REDUCING') {
+                const r = (loan.annualRate / 12) / 100;
+                interestPortion = loan.currentBalance * r;
+                principalPortion = loan.emiAmount - interestPortion;
+            } else {
+                const totalInt = loan.principal * (loan.annualRate / 100) * (loan.tenureMonths / 12);
+                interestPortion = totalInt / loan.tenureMonths;
+                principalPortion = loan.emiAmount - interestPortion;
+            }
+
+            loan.currentBalance = Math.max(0, loan.currentBalance - principalPortion);
+
+            const emiTx = {
+                id: Date.now(),
+                type: 'EXPENSE',
+                amount: loan.emiAmount,
+                categoryName: 'EMI Payment',
+                date: new Date().toISOString().split('T')[0],
+                note: `EMI Paid: ${loan.name} (P: ${curr}${Math.round(principalPortion)} | Int: ${curr}${Math.round(interestPortion)})`
+            };
+            appData.transactions.unshift(emiTx);
+
+            saveData();
+            renderAll();
+            alert(`EMI logged! Principal reduced by ${curr}${Math.round(principalPortion)}.`);
+        }
+
+        function toggleTheme() {
+            const current = document.body.getAttribute('data-theme');
+            const next = current === 'light' ? 'dark' : 'light';
+            document.body.setAttribute('data-theme', next);
+            localStorage.setItem('hub_theme', next);
+        }
+
+        function applyTheme() {
+            const saved = localStorage.getItem('hub_theme') || 'dark';
+            document.body.setAttribute('data-theme', saved);
+        }
+
+        function exportDataBackup() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `budget_hub_backup_${new Date().toISOString().split('T')[0]}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function restoreDataBackup(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    if (parsed.budgets || parsed.transactions) {
+                        appData = parsed;
+                        saveData();
+                        renderAll();
+                        renderCreatedUsers();
+                        alert('Backup restored successfully!');
+                    } else {
+                        alert('Invalid backup structure.');
+                    }
+                } catch(err) {
+                    alert('Error reading backup file.');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        window.onload = initApp;
+    </script>
+</body>
+</html>
