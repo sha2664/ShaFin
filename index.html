@@ -980,6 +980,18 @@
 
         <!-- ================= TAB 6: SETTINGS ================= -->
         <div class="view-panel" id="viewSettings">
+            <!-- Permanent Add to Home Screen / App Download Card -->
+            <div class="card-row" style="cursor:default; border: 1px solid var(--border-glow); background: linear-gradient(135deg, rgba(6,182,212,0.12), rgba(139,92,246,0.08));">
+                <div style="font-size:1rem; font-weight:800; margin-bottom:6px; color:var(--cyan); display:flex; align-items:center; gap:8px;">
+                    <span>📲 Install App to Home Screen</span>
+                </div>
+                <p style="font-size:0.78rem; color:var(--text-med); margin-bottom:12px; line-height:1.4;">
+                    Intha web link-ai unga phone-la real Android / iOS Play Store app mathiri home screen-la install panni direct-aga open pannikalam.
+                </p>
+                <button class="btn-submit" style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="triggerAddToHomeScreen()">
+                    <span>📲</span> Add to Home Screen / Install
+                </button>
+            </div>
             <div class="card-row" style="cursor:default;">
                 <div style="font-size:1rem; font-weight:800; margin-bottom:10px; color:var(--cyan);">👤 Account & Profile</div>
                 <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.88rem;">
@@ -2563,7 +2575,54 @@
             reader.readAsText(file);
         }
 
+        
+        let pwaDeferredPrompt = null;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            pwaDeferredPrompt = e;
+            console.log('beforeinstallprompt captured!');
+        });
+
+        function triggerAddToHomeScreen() {
+            if (pwaDeferredPrompt) {
+                pwaDeferredPrompt.prompt();
+                pwaDeferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        alert('App home screen-la install aagirukku! Phone app drawer check pannunga.');
+                    }
+                    pwaDeferredPrompt = null;
+                });
+            } else if (window.matchMedia('(display-mode: standalone)').matches) {
+                alert('App already installed and running as Standalone App!');
+            } else {
+                // Show clear guided walkthrough popup
+                document.getElementById('pwaGuideModal').classList.add('active');
+            }
+        }
+
         window.onload = initApp;
     </script>
+
+    <!-- Install Help Guide Modal -->
+    <div class="modal" id="pwaGuideModal">
+        <div class="modal-body">
+            <div class="modal-head">
+                <span>📲 Add to Home Screen</span>
+                <span style="cursor:pointer;" onclick="closeModal('pwaGuideModal')">✕</span>
+            </div>
+            <div style="font-size:0.85rem; line-height:1.6; color:var(--text-med); margin-bottom:16px;">
+                <b style="color:var(--text-high); display:block; margin-bottom:6px;">Chrome / Android Users:</b>
+                1. Top-right corner-la irukira <b>3 dots (⋮)</b> menu click pannunga.<br>
+                2. Anga <b>"Install app"</b> or <b>"Add to Home screen"</b> nu irukum, adhai tap pannunga.<br>
+                3. "Install" click pannina udane unga phone app drawer-la real app icon vanthudum!
+                <br><br>
+                <b style="color:var(--text-high); display:block; margin-bottom:6px;">iPhone / Safari Users:</b>
+                1. Browser bottom-la irukira <b>Share icon</b> (square with up arrow) tap pannunga.<br>
+                2. Scroll down panni <b>"Add to Home Screen"</b> tap pannunga.
+            </div>
+            <button class="btn-submit" style="width:100%;" onclick="closeModal('pwaGuideModal')">Got it 👍</button>
+        </div>
+    </div>
+
 </body>
 </html>
