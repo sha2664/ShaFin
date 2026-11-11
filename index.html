@@ -221,7 +221,6 @@
             z-index: 10;
         }
 
-        /* Accounts Strip with Dual Balances */
         .accounts-overview-strip {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -258,7 +257,6 @@
             padding-top: 4px;
         }
 
-        /* Hero Budget Card */
         .hero-budget-card {
             background: linear-gradient(145deg, #131b2e 0%, #0d1424 100%);
             border: 1px solid var(--border-glow);
@@ -344,7 +342,6 @@
             margin-top: 2px;
         }
 
-        /* Action Buttons */
         .actions-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -376,7 +373,6 @@
             color: var(--emerald);
         }
 
-        /* Loan EMI Countdown Notification Banner */
         .emi-alert-banner {
             background: linear-gradient(135deg, rgba(245,158,11,0.14), rgba(245,158,11,0.05));
             border: 1px solid var(--amber);
@@ -493,7 +489,6 @@
             padding: 2px 4px;
         }
 
-        /* Bottom Dock */
         .dock {
             position: fixed;
             bottom: 0;
@@ -530,7 +525,6 @@
         .view-panel { display: none; }
         .view-panel.active { display: block; }
 
-        /* Modals & Inputs */
         .modal {
             display: none;
             position: fixed;
@@ -641,7 +635,6 @@
             border-color: var(--cyan);
         }
 
-        /* Login */
         #authGateModal {
             position: fixed;
             inset: 0;
@@ -665,7 +658,6 @@
             overflow: hidden;
         }
 
-        /* PIN Lock Screen */
         #lockScreen {
             position: fixed;
             inset: 0;
@@ -729,12 +721,18 @@
                 <input type="password" id="loginPasswordInput" class="input-box" placeholder="Password" autocomplete="current-password" style="margin-bottom:16px;" required>
                 <button type="submit" class="btn-submit" style="width:100%;">Access Workspace</button>
             </form>
-            <div style="margin-top:10px; display:flex; justify-content:flex-end;">
+
+            <div style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+                <button type="button" style="background:transparent; border:none; color:var(--emerald); font-size:0.75rem; font-weight:700; cursor:pointer;" onclick="openRegisterFriendModal()">
+                    + Register Friend User
+                </button>
                 <button type="button" style="background:transparent; border:none; color:var(--cyan); font-size:0.75rem; font-weight:700; cursor:pointer;" onclick="openForgotPasswordModal()">
                     Forgot Password? 🔑
                 </button>
             </div>
+
             <div id="authErrorMessage" style="color:var(--rose); font-size:0.82rem; margin-top:14px; display:none; font-weight:700;"></div>
+            
             <div style="margin-top:16px; border-top:1px solid var(--border-subtle); padding-top:12px;">
                 <button type="button" style="background:transparent; border:none; color:var(--cyan); font-size:0.75rem; font-weight:700; cursor:pointer;" onclick="forceCleanAppReload()">
                     🔄 Check & Fetch Latest App Update
@@ -988,6 +986,7 @@
                 </div>
             </div>
 
+            <!-- PIN LOCK SETTINGS & REMOVE OPTION -->
             <div class="card-row" style="cursor:default;">
                 <div style="font-size:1rem; font-weight:800; margin-bottom:10px; color:var(--violet);">🔐 Security & PIN Lock</div>
                 <div style="margin-bottom:12px;">
@@ -999,9 +998,14 @@
                         <option value="DAILY">Once per day</option>
                     </select>
                 </div>
-                <div style="display:flex; gap:8px;">
+                <div style="display:flex; gap:8px; margin-bottom:8px;">
                     <button class="pill-action" style="flex:1;" onclick="promptSetPin()">Set / Change PIN</button>
                     <button class="pill-action" style="flex:1;" onclick="manualLockNow()">Lock App Now 🔒</button>
+                </div>
+                <div>
+                    <button class="pill-action" style="width:100%; color:var(--rose); border-color:rgba(244,63,94,0.3);" onclick="removePinCompletely()">
+                        🚫 Remove PIN Lock (Turn Off)
+                    </button>
                 </div>
             </div>
 
@@ -1315,6 +1319,35 @@
         </div>
     </div>
 
+    <!-- SELF-REGISTER MODAL FOR FRIENDS -->
+    <div class="modal" id="registerFriendModal">
+        <div class="modal-body">
+            <div class="modal-head">
+                <span>👥 Register Friend Account</span>
+                <span style="cursor:pointer;" onclick="closeModal('registerFriendModal')">✕</span>
+            </div>
+            <p style="font-size:0.8rem; color:var(--text-med); margin-bottom:14px;">
+                Enter your chosen User ID, Password, and Sha's Master Invite Key to setup access on this device:
+            </p>
+            <div class="form-row">
+                <label>Choose User ID</label>
+                <input type="text" id="regUserIdInput" class="input-box" placeholder="e.g. friend1, rahul">
+            </div>
+            <div class="form-row">
+                <label>Choose Password</label>
+                <input type="password" id="regPasswordInput" class="input-box" placeholder="Minimum 4 characters">
+            </div>
+            <div class="form-row">
+                <label>Admin Master Invite Key</label>
+                <input type="password" id="regAdminKeyInput" class="input-box" placeholder="Ask Sha for Master Key">
+            </div>
+            <div class="modal-foot">
+                <button class="btn-cancel" onclick="closeModal('registerFriendModal')">Cancel</button>
+                <button class="btn-submit" onclick="submitFriendRegistration()">Create & Log In</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const STORAGE_KEY = 'shafin_master_db_v9';
         const AUTH_USER_KEY = 'shafin_active_session';
@@ -1457,7 +1490,7 @@
                 initApp();
             } else {
                 err.style.display = 'block';
-                err.innerText = "❌ Invalid User ID or Password.";
+                err.innerText = "❌ Invalid User ID or Password. Friend users please register first.";
             }
         }
 
@@ -1468,13 +1501,58 @@
             }
         }
 
+        // ================= FRIEND SELF-REGISTRATION =================
+        function openRegisterFriendModal() {
+            document.getElementById('regUserIdInput').value = '';
+            document.getElementById('regPasswordInput').value = '';
+            document.getElementById('regAdminKeyInput').value = '';
+            document.getElementById('registerFriendModal').classList.add('active');
+        }
+
+        function submitFriendRegistration() {
+            const uId = (document.getElementById('regUserIdInput').value || '').trim();
+            const pass = (document.getElementById('regPasswordInput').value || '').trim();
+            const key = (document.getElementById('regAdminKeyInput').value || '').trim();
+
+            if (!uId || !pass || !key) {
+                alert('Please fill in User ID, Password and Admin Key!');
+                return;
+            }
+
+            if (uId.toLowerCase() === MASTER_ADMIN_USER) {
+                alert("'Sha' is reserved for Master Admin!");
+                return;
+            }
+
+            const curMaster = localStorage.getItem('shafin_custom_master_pass') || MASTER_ADMIN_PASS;
+            if (key !== curMaster && key !== MASTER_ADMIN_PASS) {
+                alert('Invalid Admin Master Invite Key! Ask Sha for the master key.');
+                return;
+            }
+
+            if (!appData.customUsers) appData.customUsers = [];
+            const existing = appData.customUsers.find(u => u.userId.toLowerCase() === uId.toLowerCase());
+            if (existing) {
+                existing.password = pass;
+            } else {
+                appData.customUsers.push({ userId: uId, password: pass });
+            }
+            saveDatabase();
+
+            closeModal('registerFriendModal');
+            localStorage.setItem(AUTH_USER_KEY, uId);
+            localStorage.setItem(LAST_ACTIVE_KEY, Date.now());
+            document.getElementById('authGateModal').style.display = 'none';
+            initApp();
+            alert(`✅ Account '${uId}' registered and logged in successfully!`);
+        }
+
         // ================= SECURITY & LOCK FREQUENCY =================
         window.addEventListener('beforeunload', () => {
             sessionStorage.setItem('shafin_refresh_flag', 'true');
         });
 
         function shouldLockApp() {
-            // Page refresh never triggers lock screen
             if (sessionStorage.getItem('shafin_refresh_flag') === 'true') {
                 sessionStorage.removeItem('shafin_refresh_flag');
                 return false;
@@ -1517,6 +1595,11 @@
         }
 
         function manualLockNow() {
+            const pin = localStorage.getItem(PIN_KEY);
+            if (!pin) {
+                alert("Security PIN is currently turned off. Click 'Set / Change PIN' to set a new PIN.");
+                return;
+            }
             showLockScreen();
         }
 
@@ -1559,6 +1642,21 @@
             if (p && p.length === 4 && !isNaN(p)) {
                 localStorage.setItem(PIN_KEY, p);
                 alert('Security PIN updated successfully!');
+            }
+        }
+
+        function removePinCompletely() {
+            const saved = localStorage.getItem(PIN_KEY);
+            if (!saved) {
+                alert('PIN lock is already turned off!');
+                return;
+            }
+            const entered = prompt('Enter your current 4-digit PIN to turn off lock:');
+            if (entered === saved) {
+                localStorage.removeItem(PIN_KEY);
+                alert('✅ PIN lock turned off successfully! The app will not ask for a PIN anymore.');
+            } else if (entered) {
+                alert('Incorrect PIN. Lock was not removed.');
             }
         }
 
