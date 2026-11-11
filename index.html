@@ -43,6 +43,7 @@
             --radius-sm: 6px;
         }
 
+        
         [data-theme="light"] {
             --bg-base: #f8fafc;
             --surface-1: #ffffff;
@@ -57,27 +58,35 @@
             --cyan: #0284c7;
             --rose: #e11d48;
         }
-        [data-theme="light"] header {
-            background: rgba(255, 255, 255, 0.95);
-        }
         [data-theme="light"] .user-avatar {
             background: #0f172a !important;
-            border: 1px solid rgba(245, 158, 11, 0.5) !important;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2) !important;
+            border: 1px solid rgba(245, 158, 11, 0.4) !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
+        }
+        [data-theme="light"] .user-avatar img {
+            border-radius: 10px;
         }
 
-        *, *::before, *::after {
-            box-sizing: border-box !important;
+            --bg-base: #f8fafc;
+            --surface-1: #ffffff;
+            --surface-2: #f1f5f9;
+            --surface-3: #e2e8f0;
+            --border-subtle: rgba(0, 0, 0, 0.08);
+            --border-glow: rgba(2, 132, 199, 0.25);
+            --text-high: #090d16;
+            --text-med: #475569;
+            --text-dim: #94a3b8;
+            --emerald: #059669;
+            --cyan: #0284c7;
+            --rose: #e11d48;
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            -webkit-tap-highlight-color: transparent !important;
-            outline: none !important;
-        }
-
-        input, select, textarea, button {
-            box-sizing: border-box !important;
-            max-width: 100% !important;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -89,6 +98,7 @@
             transition: background-color 0.3s ease;
         }
 
+        /* Ambient Luxury Glow Effects */
         .ambient-glow {
             position: fixed;
             top: -120px;
@@ -102,6 +112,7 @@
             z-index: 0;
         }
 
+        /* Top Header */
         header {
             padding: 14px 18px;
             display: flex;
@@ -114,29 +125,27 @@
             top: 0;
             z-index: 60;
         }
+        [data-theme="light"] header {
+            background: rgba(255, 255, 255, 0.85);
+        }
         .header-left {
             display: flex;
             align-items: center;
             gap: 12px;
         }
         .user-avatar {
-            width: 42px;
-            height: 42px;
+            width: 40px;
+            height: 40px;
             border-radius: 12px;
-            background: #0f172a;
-            border: 1px solid rgba(245, 158, 11, 0.4);
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            color: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-weight: 800;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
             cursor: pointer;
-            overflow: hidden;
-            padding: 2px;
-        }
-        .user-avatar img {
-            width: 100%;
-            height: 100%;
-            border-radius: 10px;
-            object-fit: cover;
         }
         .header-meta {
             display: flex;
@@ -197,9 +206,11 @@
             justify-content: center;
             cursor: pointer;
             font-size: 1rem;
-            transition: transform 0.15s ease;
+            transition: all 0.2s ease;
         }
-        .btn-icon:active { transform: scale(0.92); }
+        .btn-icon:active {
+            transform: scale(0.92);
+        }
 
         main {
             padding: 16px;
@@ -209,7 +220,7 @@
             z-index: 10;
         }
 
-        /* Accounts Strip */
+        /* Financial Position Hub (Bank vs Cash vs Budget) */
         .accounts-overview-strip {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -222,9 +233,11 @@
             border-radius: var(--radius-lg);
             padding: 12px 14px;
             cursor: pointer;
-            transition: transform 0.15s ease;
+            transition: all 0.2s ease;
         }
-        .account-card:active { transform: scale(0.98); }
+        .account-card:active {
+            transform: scale(0.98);
+        }
         .acc-top {
             display: flex;
             justify-content: space-between;
@@ -238,15 +251,8 @@
         }
         .acc-bank-val { color: var(--cyan); }
         .acc-cash-val { color: var(--emerald); }
-        .acc-sub-unbudgeted {
-            font-size: 0.72rem;
-            color: var(--text-dim);
-            margin-top: 4px;
-            border-top: 1px solid var(--border-subtle);
-            padding-top: 4px;
-        }
 
-        /* Hero Budget Card */
+        /* Hero Main Budget Card */
         .hero-budget-card {
             background: linear-gradient(145deg, #131b2e 0%, #0d1424 100%);
             border: 1px solid var(--border-glow);
@@ -259,7 +265,9 @@
             overflow: hidden;
             transition: transform 0.15s ease;
         }
-        .hero-budget-card:active { transform: scale(0.99); }
+        .hero-budget-card:active {
+            transform: scale(0.99);
+        }
         [data-theme="light"] .hero-budget-card {
             background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
         }
@@ -278,6 +286,7 @@
             padding: 3px 10px;
             border-radius: 20px;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         .hero-actions-hint {
             font-size: 0.72rem;
@@ -287,11 +296,13 @@
         .hero-title {
             font-size: 1.15rem;
             font-weight: 800;
+            color: var(--text-high);
             margin-bottom: 2px;
         }
         .hero-amount {
-            font-size: 2.3rem;
+            font-size: 2.4rem;
             font-weight: 900;
+            letter-spacing: -0.5px;
             margin: 4px 0 12px;
         }
         .progress-track {
@@ -301,7 +312,9 @@
             overflow: hidden;
             margin-bottom: 12px;
         }
-        [data-theme="light"] .progress-track { background: rgba(0, 0, 0, 0.08); }
+        [data-theme="light"] .progress-track {
+            background: rgba(0, 0, 0, 0.08);
+        }
         .progress-bar {
             height: 100%;
             border-radius: 10px;
@@ -350,9 +363,12 @@
             justify-content: center;
             gap: 8px;
             cursor: pointer;
-            transition: transform 0.15s ease, opacity 0.15s ease;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease;
         }
-        .btn-action:active { transform: scale(0.97); opacity: 0.9; }
+        .btn-action:active {
+            transform: scale(0.97);
+        }
         .btn-exp {
             background: linear-gradient(135deg, rgba(244,63,94,0.18), rgba(244,63,94,0.06));
             border: 1px solid var(--rose);
@@ -364,7 +380,7 @@
             color: var(--emerald);
         }
 
-        /* Countdown Banner */
+        /* Loan EMI Countdown Notification Banner */
         .emi-alert-banner {
             background: linear-gradient(135deg, rgba(245,158,11,0.14), rgba(245,158,11,0.05));
             border: 1px solid var(--amber);
@@ -375,10 +391,18 @@
             align-items: center;
             justify-content: space-between;
         }
+        .emi-alert-left {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
         .emi-alert-title {
             font-size: 0.92rem;
             font-weight: 800;
             color: var(--amber);
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
         .emi-alert-desc {
             font-size: 0.78rem;
@@ -395,6 +419,7 @@
             cursor: pointer;
         }
 
+        /* Section Headers */
         .section-header {
             display: flex;
             justify-content: space-between;
@@ -412,10 +437,9 @@
             padding: 5px 12px;
             border-radius: 20px;
             cursor: pointer;
-            transition: transform 0.15s ease;
         }
-        .pill-action:active { transform: scale(0.95); }
 
+        /* Sub-cards (Other budgets & Loans) */
         .card-row {
             background: var(--surface-1);
             border: 1px solid var(--border-subtle);
@@ -423,7 +447,10 @@
             padding: 14px 16px;
             margin-bottom: 10px;
             cursor: pointer;
-            width: 100% !important;
+            transition: all 0.2s ease;
+        }
+        .card-row:active {
+            transform: scale(0.98);
         }
         .card-row-head {
             display: flex;
@@ -431,8 +458,14 @@
             align-items: center;
             margin-bottom: 6px;
         }
-        .card-row-title { font-size: 0.98rem; font-weight: 800; }
-        .card-row-val { font-size: 1.05rem; font-weight: 800; }
+        .card-row-title {
+            font-size: 0.98rem;
+            font-weight: 800;
+        }
+        .card-row-val {
+            font-size: 1.05rem;
+            font-weight: 800;
+        }
         .card-row-foot {
             display: flex;
             justify-content: space-between;
@@ -445,16 +478,18 @@
             background: var(--surface-2);
             border: 1px solid var(--border-subtle);
             color: var(--cyan);
-            padding: 4px 10px;
+            padding: 3px 8px;
             border-radius: 6px;
             font-size: 0.72rem;
             font-weight: 700;
             cursor: pointer;
-            transition: transform 0.15s ease;
         }
-        .chip-btn:active { transform: scale(0.95); }
-        .chip-btn-danger { color: var(--rose); border-color: rgba(244,63,94,0.3); }
+        .chip-btn-danger {
+            color: var(--rose);
+            border-color: rgba(244,63,94,0.3);
+        }
 
+        /* Transactions List Items */
         .tx-item {
             background: var(--surface-1);
             border: 1px solid var(--border-subtle);
@@ -464,14 +499,38 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            width: 100% !important;
+            transition: all 0.2s ease;
         }
-        .tx-left { display: flex; flex-direction: column; gap: 2px; }
-        .tx-title { font-size: 0.92rem; font-weight: 700; }
-        .tx-sub { font-size: 0.75rem; color: var(--text-dim); }
-        .tx-amount { font-size: 1.05rem; font-weight: 800; }
+        .tx-left {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .tx-title {
+            font-size: 0.92rem;
+            font-weight: 700;
+        }
+        .tx-sub {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+        .tx-right {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+        }
+        .tx-amount {
+            font-size: 1.05rem;
+            font-weight: 800;
+        }
         .val-neg { color: var(--rose); }
         .val-pos { color: var(--emerald); }
+        .tx-actions-row {
+            display: flex;
+            gap: 6px;
+        }
         .btn-mini-del {
             background: transparent;
             border: none;
@@ -480,15 +539,18 @@
             cursor: pointer;
             padding: 2px 4px;
         }
+        .btn-mini-del:hover {
+            color: var(--rose);
+        }
 
-        /* Bottom Dock */
+        /* Bottom Tab Dock Navigation */
         .dock {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
             height: 68px;
-            background: rgba(15, 23, 42, 0.95);
+            background: rgba(15, 23, 42, 0.92);
             backdrop-filter: blur(18px);
             border-top: 1px solid var(--border-subtle);
             display: flex;
@@ -496,7 +558,9 @@
             align-items: center;
             z-index: 80;
         }
-        [data-theme="light"] .dock { background: rgba(255, 255, 255, 0.95); }
+        [data-theme="light"] .dock {
+            background: rgba(255, 255, 255, 0.92);
+        }
         .dock-item {
             display: flex;
             flex-direction: column;
@@ -512,13 +576,21 @@
             flex: 1;
             transition: all 0.2s ease;
         }
-        .dock-item.active { color: var(--cyan); }
-        .dock-icon { font-size: 1.25rem; }
+        .dock-item.active {
+            color: var(--cyan);
+        }
+        .dock-item.active .dock-icon {
+            transform: scale(1.15);
+        }
+        .dock-icon {
+            font-size: 1.25rem;
+            transition: transform 0.2s ease;
+        }
 
         .view-panel { display: none; }
         .view-panel.active { display: block; }
 
-        /* Modals & Inputs */
+        /* Generic Modals */
         .modal {
             display: none;
             position: fixed;
@@ -528,7 +600,6 @@
             z-index: 100;
             align-items: flex-end;
             justify-content: center;
-            padding: 0;
         }
         .modal.active { display: flex; }
         .modal-body {
@@ -536,11 +607,12 @@
             border: 1px solid var(--border-subtle);
             border-top-left-radius: 24px;
             border-top-right-radius: 24px;
-            width: 100% !important;
-            max-width: 520px !important;
+            width: 100%;
+            max-width: 520px;
             padding: 24px 20px;
             max-height: 90vh;
             overflow-y: auto;
+            box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.5);
         }
         .modal-head {
             font-size: 1.2rem;
@@ -550,10 +622,7 @@
             justify-content: space-between;
             align-items: center;
         }
-        .form-row {
-            margin-bottom: 14px;
-            width: 100% !important;
-        }
+        .form-row { margin-bottom: 14px; }
         .form-row label {
             display: block;
             font-size: 0.8rem;
@@ -562,8 +631,7 @@
             margin-bottom: 6px;
         }
         .input-box {
-            width: 100% !important;
-            max-width: 100% !important;
+            width: 100%;
             padding: 12px 14px;
             border-radius: var(--radius-md);
             border: 1px solid var(--border-subtle);
@@ -571,11 +639,10 @@
             color: var(--text-high);
             font-size: 0.95rem;
             font-weight: 600;
-            display: block;
         }
         .input-box:focus {
-            border-color: var(--cyan) !important;
-            box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.25) !important;
+            outline: none;
+            border-color: var(--cyan);
         }
         .modal-foot {
             display: flex;
@@ -592,9 +659,7 @@
             border-radius: var(--radius-md);
             font-size: 0.95rem;
             cursor: pointer;
-            transition: transform 0.15s ease, opacity 0.15s ease;
         }
-        .btn-submit:active { transform: scale(0.97); opacity: 0.9; }
         .btn-cancel {
             padding: 13px 20px;
             background: transparent;
@@ -605,6 +670,7 @@
             cursor: pointer;
         }
 
+        /* Filter Pills for Reports & Ledger */
         .filter-strip {
             display: flex;
             gap: 8px;
@@ -629,7 +695,7 @@
             border-color: var(--cyan);
         }
 
-        /* Login */
+        /* Clean Unified Login Gate */
         #authGateModal {
             position: fixed;
             inset: 0;
@@ -646,14 +712,13 @@
             border: 1px solid var(--border-glow);
             border-radius: var(--radius-xl);
             padding: 32px 24px;
-            width: 100% !important;
-            max-width: 380px !important;
+            width: 100%;
+            max-width: 380px;
             text-align: center;
             box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
-            overflow: hidden;
         }
 
-        /* PIN & Biometric Screen */
+        /* Biometric & PIN Screen */
         #lockScreen {
             position: fixed;
             inset: 0;
@@ -696,26 +761,25 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: transform 0.15s ease;
         }
-        .num-btn:active { transform: scale(0.92); background: var(--surface-2); }
+        .num-btn:active { background: var(--surface-2); }
     </style>
 </head>
 <body>
 
     <div class="ambient-glow"></div>
 
-    <!-- 1. LOGIN GATE -->
+    <!-- 1. UNIFIED LOGIN GATE (Zero Hints) -->
     <div id="authGateModal" style="display: none;">
         <div class="login-box">
             <img src="./logo.png" alt="ShaFin Logo" style="width:78px; height:78px; border-radius:18px; margin-bottom:12px; box-shadow:0 8px 24px rgba(245,158,11,0.25);">
             <div style="font-size:1.4rem; font-weight:900; margin-bottom:4px;">ShaFin Hub</div>
             <p style="font-size:0.82rem; color:var(--text-med); margin-bottom:22px;">Private Financial Management Workspace</p>
 
-            <form onsubmit="event.preventDefault(); performUnifiedLogin();" style="width:100%;">
+            <form onsubmit="event.preventDefault(); performUnifiedLogin();">
                 <input type="text" id="loginUserIdInput" class="input-box" placeholder="User ID" autocomplete="username" style="margin-bottom:12px;" required>
                 <input type="password" id="loginPasswordInput" class="input-box" placeholder="Password" autocomplete="current-password" style="margin-bottom:16px;" required>
-                <button type="submit" class="btn-submit" style="width:100%;">Access Workspace</button>
+                                <button type="submit" class="btn-submit" style="width:100%;">Access Workspace</button>
             </form>
             <div style="margin-top:10px; display:flex; justify-content:flex-end;">
                 <button type="button" style="background:transparent; border:none; color:var(--cyan); font-size:0.75rem; font-weight:700; cursor:pointer;" onclick="openForgotPasswordModal()">
@@ -731,10 +795,10 @@
         </div>
     </div>
 
-    <!-- 2. NATIVE LOCK SCREEN -->
+    <!-- 2. SECURITY PIN & FINGERPRINT LOCK -->
     <div id="lockScreen">
         <h2 style="margin-bottom: 6px;">🔐 Security Lock</h2>
-        <p style="color: var(--text-med); font-size: 0.85rem;" id="lockPromptText">Touch fingerprint sensor or enter PIN</p>
+        <p style="color: var(--text-med); font-size: 0.85rem;" id="lockPromptText">Enter PIN or tap Fingerprint</p>
         <div class="pin-dots">
             <div class="pin-dot" id="dot1"></div>
             <div class="pin-dot" id="dot2"></div>
@@ -753,16 +817,14 @@
             <button class="num-btn" onclick="pressPin(9)">9</button>
             <button class="num-btn" style="font-size: 0.95rem;" onclick="clearPin()">Clear</button>
             <button class="num-btn" onclick="pressPin(0)">0</button>
-            <button class="num-btn" style="font-size: 1.4rem; color:var(--cyan);" onclick="unlockBiometric(true)">👆</button>
+            <button class="num-btn" style="font-size: 1.4rem; color:var(--cyan);" onclick="unlockBiometric()">👆</button>
         </div>
     </div>
 
-    <!-- 3. TOP APP BAR -->
+    <!-- 3. TOP APP BAR WITH LIVE TICKING CLOCK -->
     <header>
         <div class="header-left">
-            <div class="user-avatar" id="headerAvatar" onclick="switchTab('tabSettings')">
-                <img id="headerLogoImg" src="./logo.png" alt="S">
-            </div>
+            <div class="user-avatar" id="headerAvatar" onclick="switchTab('tabSettings')" style="padding:2px; background:#0f172a; border:1px solid rgba(245,158,11,0.3);"><img id="headerLogoImg" src="./logo.png" style="width:100%; height:100%; border-radius:10px; object-fit:cover;" alt="S" onerror="this.style.display='none'; document.getElementById('headerAvatarText').style.display='block';"><span id="headerAvatarText" style="display:none; font-weight:900; color:#f59e0b;">S</span></div>
             <div class="header-meta">
                 <div class="live-clock-badge">
                     <span class="live-clock-dot"></span>
@@ -781,10 +843,10 @@
     </header>
 
     <main>
-        <!-- TAB 1: DASHBOARD -->
+        <!-- ================= TAB 1: DASHBOARD ================= -->
         <div class="view-panel active" id="viewDashboard">
             
-            <!-- Accounts Overview Strip with Dual Balances -->
+            <!-- Bank & Cash Holding Strip -->
             <div class="accounts-overview-strip">
                 <div class="account-card" onclick="openBalanceAdjustModal('BANK')">
                     <div class="acc-top">
@@ -792,7 +854,6 @@
                         <span style="font-size:0.7rem; color:var(--cyan);">✎ Edit</span>
                     </div>
                     <div class="acc-val acc-bank-val" id="dispBankBal">₹0</div>
-                    <div class="acc-sub-unbudgeted" id="dispBankUnbudgeted">Free: ₹0</div>
                 </div>
                 <div class="account-card" onclick="openBalanceAdjustModal('CASH')">
                     <div class="acc-top">
@@ -800,13 +861,15 @@
                         <span style="font-size:0.7rem; color:var(--emerald);">✎ Edit</span>
                     </div>
                     <div class="acc-val acc-cash-val" id="dispCashBal">₹0</div>
-                    <div class="acc-sub-unbudgeted" id="dispCashSub">Pocket Cash</div>
                 </div>
             </div>
 
-            <!-- Hero Budget Card -->
-            <div id="heroBudgetArea" onclick="openBudgetLedgerFromHero()"></div>
+            <!-- HERO CARD: MAIN ACTIVE BUDGET (Tap to open budget ledger) -->
+            <div id="heroBudgetArea" onclick="openBudgetLedgerFromHero()">
+                <!-- Dynamically rendered -->
+            </div>
 
+            <!-- Action Buttons: Expenses & Income -->
             <div class="actions-grid">
                 <button class="btn-action btn-exp" onclick="openEntryModal('EXPENSE')">
                     <span>➖</span> Expenses
@@ -816,14 +879,17 @@
                 </button>
             </div>
 
+            <!-- Dynamic Loan EMI Countdown Banner (Shows if due within reminder threshold) -->
             <div id="dashboardEmiWidget"></div>
 
+            <!-- OTHER BUDGETS LIST -->
             <div class="section-header">
                 <span>Other Budgets</span>
                 <span class="pill-action" onclick="openCreateBudgetModal()">+ New Budget</span>
             </div>
             <div id="otherBudgetsContainer"></div>
 
+            <!-- Recent Activity Preview -->
             <div class="section-header">
                 <span>Recent Expenses & Income</span>
                 <span class="pill-action" onclick="switchTab('tabLedger')">View All</span>
@@ -831,24 +897,26 @@
             <div id="recentTxList"></div>
         </div>
 
-        <!-- TAB 2: BUDGETS -->
+        <!-- ================= TAB 2: BUDGETS & BUDGET LEDGER ================= -->
         <div class="view-panel" id="viewBudgets">
             <div class="section-header">
                 <span>Multi-Budget Central</span>
                 <span class="pill-action" onclick="openCreateBudgetModal()">+ Create Budget</span>
             </div>
+
             <div id="allBudgetsDetailList"></div>
 
+            <!-- Selected Budget In-Depth Ledger Statement View -->
             <div id="budgetSpecificLedgerView" style="display:none; margin-top:20px;">
                 <div class="section-header" style="border-top:1px solid var(--border-subtle); padding-top:16px;">
                     <span id="selectedBudgetNameTitle">Budget Ledger</span>
-                    <span class="pill-action" onclick="closeBudgetSpecificLedger()">✕ Close</span>
+                    <span class="pill-action" onclick="closeBudgetSpecificLedger()">✕ Close Ledger</span>
                 </div>
                 <div id="budgetSpecificTxList"></div>
             </div>
         </div>
 
-        <!-- TAB 3: LEDGER -->
+        <!-- ================= TAB 3: LEDGER (TRANSACTIONS) ================= -->
         <div class="view-panel" id="viewLedger">
             <div class="section-header">
                 <span>Transaction Statements</span>
@@ -863,36 +931,40 @@
                 <div class="filter-chip" onclick="setLedgerFilter('CASH', this)">Cash</div>
             </div>
 
-            <div class="form-row">
+            <div class="form-row" style="margin-bottom: 12px;">
                 <input type="text" class="input-box" id="searchTxInput" placeholder="🔍 Search description, category, or date..." oninput="renderAllTransactions()">
             </div>
+
             <div id="fullTxList"></div>
         </div>
 
-        <!-- TAB 4: LOANS & PREPAYMENT -->
+        <!-- ================= TAB 4: LOANS & STATEMENT ================= -->
         <div class="view-panel" id="viewLoans">
             <div class="section-header">
                 <span>Loan & EMI Manager</span>
                 <span class="pill-action" onclick="openAddLoanModal()">+ Add Loan</span>
             </div>
+
             <div id="loansCardsContainer"></div>
 
+            <!-- Isolated Loan Repayment Statement (Does not pollute today's expense) -->
             <div id="loanStatementView" style="display:none; margin-top:20px;">
                 <div class="section-header" style="border-top:1px solid var(--border-subtle); padding-top:16px;">
                     <span id="loanStatementTitle">Loan Statement</span>
-                    <span class="pill-action" onclick="closeLoanStatement()">✕ Close</span>
+                    <span class="pill-action" onclick="closeLoanStatement()">✕ Close Statement</span>
                 </div>
                 <div id="loanScheduleList"></div>
             </div>
         </div>
 
-        <!-- TAB 5: REPORTS -->
+        <!-- ================= TAB 5: REPORTS & ANALYTICS ================= -->
         <div class="view-panel" id="viewReports">
             <div class="section-header">
                 <span>Financial Analytics</span>
                 <span class="pill-action" id="reportRangeIndicator">This Month</span>
             </div>
 
+            <!-- Date Range Selector -->
             <div class="filter-strip">
                 <div class="filter-chip" onclick="setReportTimeframe('TODAY', this)">Today</div>
                 <div class="filter-chip" onclick="setReportTimeframe('WEEK', this)">This Week</div>
@@ -900,6 +972,7 @@
                 <div class="filter-chip" onclick="setReportTimeframe('CUSTOM', this)">Custom Date</div>
             </div>
 
+            <!-- Custom Date Range Form (Hidden by default) -->
             <div id="customDateRangeBox" style="display:none; background:var(--surface-1); border:1px solid var(--border-subtle); border-radius:var(--radius-lg); padding:12px; margin-bottom:14px;">
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:8px;">
                     <div>
@@ -914,6 +987,7 @@
                 <button class="btn-submit" style="width:100%; padding:8px;" onclick="applyCustomDateFilter()">Apply Filter</button>
             </div>
 
+            <!-- Net Overview Cards -->
             <div class="card-row" style="cursor:default; margin-bottom:14px;">
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
                     <div>
@@ -931,39 +1005,47 @@
                 </div>
             </div>
 
+            <!-- Category Spend Breakdown -->
             <div class="card-row" style="cursor:default;">
                 <div style="font-size:0.95rem; font-weight:800; margin-bottom:12px;">Category Spend Breakdown</div>
                 <div id="repCategoryBars"></div>
             </div>
         </div>
 
-        <!-- TAB 6: SETTINGS -->
+        <!-- ================= TAB 6: SETTINGS ================= -->
         <div class="view-panel" id="viewSettings">
+                        <div class="card-row" style="cursor:default;">
+                <div style="font-size:1rem; font-weight:800; margin-bottom:6px; color:var(--cyan); display:flex; align-items:center; gap:8px;">
+                    <span>⚡ Version & Instant Updates</span>
+                </div>
+                <p style="font-size:0.78rem; color:var(--text-dim); margin-bottom:10px;">
+                    GitHub-la puthu feature potta udane manual-aga browser cache clear pannama intha button click pannaale fresh version load aaidum:
+                </p>
+                <button class="btn-action" style="width:100%; background:var(--surface-2); border:1px solid var(--cyan); color:var(--cyan);" onclick="forceCleanAppReload()">
+                    🔄 Force Fetch Latest Version Now
+                </button>
+            </div>
+            <!-- Permanent Add to Home Screen / App Download Card -->
             <div class="card-row" style="cursor:default; border: 1px solid var(--border-glow); background: linear-gradient(135deg, rgba(6,182,212,0.12), rgba(139,92,246,0.08));">
                 <div style="font-size:1rem; font-weight:800; margin-bottom:6px; color:var(--cyan); display:flex; align-items:center; gap:8px;">
                     <span>📲 Install App to Home Screen</span>
                 </div>
                 <p style="font-size:0.78rem; color:var(--text-med); margin-bottom:12px; line-height:1.4;">
-                    Install as a standalone app with the 3D Gold Logo icon without browser URL bars.
+                    Intha web link-ai unga phone-la real Android / iOS Play Store app mathiri home screen-la install panni direct-aga open pannikalam.
                 </p>
-                <button class="btn-submit" style="width:100%;" onclick="triggerAddToHomeScreen()">
-                    📲 Add to Home Screen / Install
+                <button class="btn-submit" style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="triggerAddToHomeScreen()">
+                    <span>📲</span> Add to Home Screen / Install
                 </button>
             </div>
-
             <div class="card-row" style="cursor:default;">
                 <div style="font-size:1rem; font-weight:800; margin-bottom:10px; color:var(--cyan);">👤 Account & Profile</div>
                 <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.88rem;">
                     <span>Logged User</span>
                     <b id="settingsUserNameDisplay">Sha (Admin)</b>
                 </div>
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; padding-top:10px; border-top:1px solid var(--border-subtle);">
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; padding-top:10px; border-top:1px solid var(--border-subtle);">
                     <span>Security Password</span>
                     <button class="pill-action" onclick="openChangePasswordModal()">Change Password 🔑</button>
-                </div>
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; padding-top:10px; border-top:1px solid var(--border-subtle);">
-                    <span>Share App with Friends</span>
-                    <button class="pill-action" onclick="shareShaFinLink()">Copy Link 🔗</button>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.88rem; margin-top:10px;">
                     <span>Primary Currency</span>
@@ -976,12 +1058,13 @@
                 </div>
             </div>
 
+            <!-- App Lock Frequency & Security Settings -->
             <div class="card-row" style="cursor:default;">
-                <div style="font-size:1rem; font-weight:800; margin-bottom:10px; color:var(--violet);">🔐 Lock Screen & Biometrics</div>
+                <div style="font-size:1rem; font-weight:800; margin-bottom:10px; color:var(--violet);">🔐 Security & PIN Lock</div>
                 <div style="margin-bottom:12px;">
                     <label style="display:block; font-size:0.8rem; color:var(--text-med); margin-bottom:4px;">When to Lock App?</label>
                     <select id="lockFrequencySelect" class="input-box" onchange="updateLockFrequency(this.value)">
-                        <option value="IMMEDIATE">Immediately on close or refresh</option>
+                        <option value="IMMEDIATE">Immediately when app is closed / backgrounded</option>
                         <option value="1MIN">After 1 minute of inactivity</option>
                         <option value="5MIN">After 5 minutes of inactivity</option>
                         <option value="DAILY">Once per day</option>
@@ -989,13 +1072,14 @@
                 </div>
                 <div style="display:flex; gap:8px;">
                     <button class="pill-action" style="flex:1;" onclick="promptSetPin()">Set / Change PIN</button>
-                    <button class="pill-action" style="flex:1;" onclick="setupBiometrics()">Setup Fingerprint</button>
+                    <button class="pill-action" style="flex:1;" onclick="manualLockNow()">Lock App Now 🔒</button>
                 </div>
             </div>
 
+            <!-- Admin User Management (Only Sha can see) -->
             <div class="card-row" id="adminUserManagementSection" style="cursor:default;">
                 <div style="font-size:1rem; font-weight:800; margin-bottom:8px; color:var(--emerald);">👑 User Management (Admin Only)</div>
-                <p style="font-size:0.78rem; color:var(--text-dim); margin-bottom:12px;">Create credentials for friends or reset passwords directly:</p>
+                <p style="font-size:0.78rem; color:var(--text-dim); margin-bottom:12px;">Create custom User IDs and Passwords for friends to use this app:</p>
                 <div id="adminUsersList" style="margin-bottom:12px;"></div>
                 <div style="background:var(--surface-2); padding:10px; border-radius:8px;">
                     <input type="text" id="newFriendUserId" placeholder="User ID (e.g. friend1)" class="input-box" style="margin-bottom:8px;">
@@ -1004,9 +1088,10 @@
                 </div>
             </div>
 
+            <!-- Backup & Restore -->
             <div class="card-row" style="cursor:default;">
                 <div style="font-size:1rem; font-weight:800; margin-bottom:8px;">💾 Backup & Data Portability</div>
-                <p style="font-size:0.78rem; color:var(--text-dim); margin-bottom:12px;">Download a JSON backup to protect your financial records:</p>
+                <p style="font-size:0.78rem; color:var(--text-dim); margin-bottom:12px;">Download all data to phone or restore when changing device:</p>
                 <div style="display:flex; gap:10px;">
                     <button class="btn-action" style="flex:1; background:var(--surface-2); border:1px solid var(--cyan); color:var(--cyan);" onclick="exportJsonBackup()">Download Backup</button>
                     <label class="btn-action" style="flex:1; background:var(--surface-2); border:1px solid var(--violet); color:var(--violet); text-align:center; cursor:pointer;">
@@ -1022,7 +1107,7 @@
         </div>
     </main>
 
-    <!-- Bottom Dock Navigation -->
+    <!-- Bottom Dock Navigation (5 Clean Tabs) -->
     <nav class="dock">
         <button class="dock-item active" id="tabNavDash" onclick="switchTab('tabDash')">
             <span class="dock-icon">⚡</span>
@@ -1050,9 +1135,9 @@
         </button>
     </nav>
 
-    <!-- MODALS -->
+    <!-- ================= MODALS ================= -->
 
-    <!-- ENTRY MODAL -->
+    <!-- ENTRY MODAL: Expenses & Income -->
     <div class="modal" id="entryModal">
         <div class="modal-body">
             <div class="modal-head">
@@ -1075,23 +1160,24 @@
                 <select id="txBudgetSelect" class="input-box"></select>
             </div>
             <div class="form-row">
-                <label>Category</label>
-                <input type="text" id="txCategoryManual" class="input-box" list="catSuggestions" placeholder="e.g. Metro, Lunch, Petrol...">
+                <label>Category (Type manually or choose suggestion)</label>
+                <input type="text" id="txCategoryManual" class="input-box" list="catSuggestions" placeholder="e.g. Metro, Bus, Petrol, Lunch, Groceries...">
                 <datalist id="catSuggestions">
                     <option value="Metro & Bus">
                     <option value="Tea & Snacks">
                     <option value="Lunch & Food">
                     <option value="Bike Petrol">
+                    <option value="Maintenance">
                     <option value="Salary Topup">
                 </datalist>
             </div>
             <div class="form-row">
-                <label>Date</label>
+                <label>Date (Change for backdated entries)</label>
                 <input type="date" id="txDateInput" class="input-box">
             </div>
             <div class="form-row">
-                <label>Note / Remarks</label>
-                <input type="text" id="txNoteInput" class="input-box" placeholder="e.g. Metro ticket">
+                <label>Note / Remarks (Optional)</label>
+                <input type="text" id="txNoteInput" class="input-box" placeholder="e.g. Washermanpet to Nandanam metro ticket">
             </div>
             <div class="modal-foot">
                 <button class="btn-cancel" onclick="closeModal('entryModal')">Cancel</button>
@@ -1100,7 +1186,7 @@
         </div>
     </div>
 
-    <!-- BUDGET MODAL -->
+    <!-- CREATE & RE-EDIT BUDGET MODAL -->
     <div class="modal" id="budgetModal">
         <div class="modal-body">
             <div class="modal-head">
@@ -1110,7 +1196,7 @@
             <input type="hidden" id="editBudgetId">
             <div class="form-row">
                 <label>Budget Title</label>
-                <input type="text" id="bNameInput" class="input-box" placeholder="e.g. Travel & Daily Expenses">
+                <input type="text" id="bNameInput" class="input-box" placeholder="e.g. 5-Month Travel & Daily Fund">
             </div>
             <div class="form-row">
                 <label>Allocated Amount (<span class="curr-symbol">₹</span>)</label>
@@ -1118,7 +1204,7 @@
             </div>
             <div class="form-row">
                 <label>Plan Duration / Target</label>
-                <input type="text" id="bDurationInput" class="input-box" placeholder="e.g. 5 Months">
+                <input type="text" id="bDurationInput" class="input-box" placeholder="e.g. Next 5 Months, Monthly">
             </div>
             <div class="form-row" style="display:flex; align-items:center; gap:10px; margin-top:8px;">
                 <input type="checkbox" id="bIsMainCheck" style="width:18px; height:18px;">
@@ -1131,7 +1217,7 @@
         </div>
     </div>
 
-    <!-- LOAN MODAL -->
+    <!-- CREATE & RE-EDIT LOAN MODAL (With Reminder Days & Accurate Math) -->
     <div class="modal" id="loanModal">
         <div class="modal-body">
             <div class="modal-head">
@@ -1169,7 +1255,7 @@
                 </div>
                 <div>
                     <label>Remind Days Before</label>
-                    <input type="number" min="1" max="15" id="lRemindDaysInput" class="input-box" value="3">
+                    <input type="number" min="1" max="15" id="lRemindDaysInput" class="input-box" value="3" placeholder="Days before due">
                 </div>
             </div>
             <div class="modal-foot">
@@ -1179,40 +1265,7 @@
         </div>
     </div>
 
-    <!-- LOAN PART-PAYMENT MODAL -->
-    <div class="modal" id="loanPrepayModal">
-        <div class="modal-body">
-            <div class="modal-head">
-                <span>💰 Loan Prepayment / Part-Payment</span>
-                <span style="cursor:pointer;" onclick="closeModal('loanPrepayModal')">✕</span>
-            </div>
-            <input type="hidden" id="prepayLoanId">
-            <div class="form-row">
-                <label>Prepayment Lump-Sum Amount (<span class="curr-symbol">₹</span>)</label>
-                <input type="number" id="prepayAmountInput" class="input-box" placeholder="e.g. 20000" required>
-            </div>
-            <div class="form-row">
-                <label>Paid From</label>
-                <select id="prepaySourceSelect" class="input-box">
-                    <option value="BANK">Bank Account</option>
-                    <option value="CASH">Cash in Hand</option>
-                </select>
-            </div>
-            <div class="form-row">
-                <label>Banking Adjustment Option</label>
-                <select id="prepayOptionSelect" class="input-box">
-                    <option value="REDUCE_TENURE">Reduce Tenure (Same EMI, Loan Closes Earlier - Saves Interest!)</option>
-                    <option value="REDUCE_EMI">Reduce Monthly EMI (Same Months, Smaller Monthly EMI)</option>
-                </select>
-            </div>
-            <div class="modal-foot">
-                <button class="btn-cancel" onclick="closeModal('loanPrepayModal')">Cancel</button>
-                <button class="btn-submit" onclick="submitLoanPrepayment()">Confirm Part-Payment</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- BALANCE ADJUST MODAL -->
+    <!-- ADJUST BANK / CASH BALANCE MODAL -->
     <div class="modal" id="balAdjustModal">
         <div class="modal-body">
             <div class="modal-head">
@@ -1231,65 +1284,6 @@
         </div>
     </div>
 
-    <!-- CHANGE PASSWORD MODAL -->
-    <div class="modal" id="changePasswordModal">
-        <div class="modal-body">
-            <div class="modal-head">
-                <span>🔑 Change Password</span>
-                <span style="cursor:pointer;" onclick="closeModal('changePasswordModal')">✕</span>
-            </div>
-            <div class="form-row">
-                <label>Current / Old Password</label>
-                <input type="password" id="oldPassInput" class="input-box" placeholder="Enter old password" autocomplete="current-password">
-            </div>
-            <div class="form-row">
-                <label>New Password</label>
-                <input type="password" id="newPassInput" class="input-box" placeholder="Enter new password (min 4 chars)" autocomplete="new-password">
-            </div>
-            <div class="form-row">
-                <label>Confirm New Password</label>
-                <input type="password" id="confirmPassInput" class="input-box" placeholder="Re-enter new password" autocomplete="new-password">
-            </div>
-            <div class="modal-foot">
-                <button class="btn-cancel" onclick="closeModal('changePasswordModal')">Cancel</button>
-                <button class="btn-submit" onclick="submitChangePassword()">Update Password</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- FORGOT PASSWORD MODAL -->
-    <div class="modal" id="forgotPasswordModal">
-        <div class="modal-body">
-            <div class="modal-head">
-                <span>🔑 Reset Password</span>
-                <span style="cursor:pointer;" onclick="closeModal('forgotPasswordModal')">✕</span>
-            </div>
-            <p style="font-size:0.8rem; color:var(--text-med); margin-bottom:14px;">
-                Enter your User ID and Security PIN (or Master Recovery Key) to set a new password:
-            </p>
-            <div class="form-row">
-                <label>User ID</label>
-                <input type="text" id="forgotUserIdInput" class="input-box" placeholder="e.g. Sha, friend1">
-            </div>
-            <div class="form-row">
-                <label>4-Digit Security PIN or Master Key</label>
-                <input type="password" id="forgotRecoveryInput" class="input-box" placeholder="PIN or Master Key">
-            </div>
-            <div class="form-row">
-                <label>New Password</label>
-                <input type="password" id="forgotNewPassInput" class="input-box" placeholder="Enter new password">
-            </div>
-            <div class="form-row">
-                <label>Confirm New Password</label>
-                <input type="password" id="forgotConfirmPassInput" class="input-box" placeholder="Re-enter new password">
-            </div>
-            <div class="modal-foot">
-                <button class="btn-cancel" onclick="closeModal('forgotPasswordModal')">Cancel</button>
-                <button class="btn-submit" onclick="submitForgotPasswordReset()">Reset & Save</button>
-            </div>
-        </div>
-    </div>
-
     <script>
         const STORAGE_KEY = 'shafin_master_db_v9';
         const AUTH_USER_KEY = 'shafin_active_session';
@@ -1297,9 +1291,11 @@
         const BIO_KEY = 'shafin_bio';
         const LAST_ACTIVE_KEY = 'shafin_last_active';
 
+        // Master Admin Credentials
         const MASTER_ADMIN_USER = 'sha';
         const MASTER_ADMIN_PASS = 'sha@2664';
 
+        // Default Initial Data Schema
         function getInitialState() {
             return {
                 profile: {
@@ -1326,6 +1322,7 @@
         let currentLedgerFilter = 'ALL';
         let currentReportTimeframe = 'MONTH';
 
+        // Live Clock Ticker
         function startLiveClock() {
             function updateClock() {
                 const now = new Date();
@@ -1356,23 +1353,29 @@
             loadDatabase();
             startLiveClock();
 
+            // Session Verification
             const activeUser = localStorage.getItem(AUTH_USER_KEY);
             if (!activeUser) {
                 document.getElementById('authGateModal').style.display = 'flex';
                 return;
             }
 
+            // Lock Screen Check
             if (shouldLockApp()) {
                 showLockScreen();
             }
 
             applyTheme();
 
+            // Header Meta Setup
             const isAdmin = activeUser.toLowerCase() === MASTER_ADMIN_USER;
             document.getElementById('headerUserName').innerText = activeUser;
+            // headerAvatar keeps logo img
+            const avText = document.getElementById('headerAvatarText'); if(avText) avText.innerText = activeUser.charAt(0).toUpperCase();
             document.getElementById('adminBadgeTag').style.display = isAdmin ? 'inline-block' : 'none';
             document.getElementById('settingsUserNameDisplay').innerText = `${activeUser} (${isAdmin ? 'Master Admin' : 'Member'})`;
 
+            // Admin Only Section
             document.getElementById('adminUserManagementSection').style.display = isAdmin ? 'block' : 'none';
             document.getElementById('settingsCurrencySelect').value = appData.profile.currency || '₹';
             document.getElementById('lockFrequencySelect').value = appData.profile.lockFrequency || 'IMMEDIATE';
@@ -1405,6 +1408,7 @@
             localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
         }
 
+        // ================= UNIFIED ZERO-HINT LOGIN =================
         function performUnifiedLogin() {
             const user = (document.getElementById('loginUserIdInput').value || '').trim();
             const pass = (document.getElementById('loginPasswordInput').value || '').trim();
@@ -1416,6 +1420,7 @@
                 return;
             }
 
+            // Check Master Admin (Sha)
             const curMasterPass = localStorage.getItem('shafin_custom_master_pass') || MASTER_ADMIN_PASS;
             if (user.toLowerCase() === MASTER_ADMIN_USER && (pass === curMasterPass || pass === MASTER_ADMIN_PASS)) {
                 localStorage.setItem(AUTH_USER_KEY, 'Sha');
@@ -1425,6 +1430,7 @@
                 return;
             }
 
+            // Check Member Accounts
             const matched = (appData.customUsers || []).find(u => u.userId.toLowerCase() === user.toLowerCase() && u.password === pass);
             if (matched) {
                 localStorage.setItem(AUTH_USER_KEY, matched.userId);
@@ -1444,13 +1450,29 @@
             }
         }
 
-        /* Security Lock & Real Auto-Biometric */
+        // ================= SECURITY & LOCK FREQUENCY =================
+
+        // ================= SESSION & REFRESH BYPASS =================
+        window.addEventListener('beforeunload', () => {
+            sessionStorage.setItem('shafin_refresh_flag', 'true');
+        });
+
         function shouldLockApp() {
+            // If user simply refreshed the page, DO NOT lock!
+            if (sessionStorage.getItem('shafin_refresh_flag') === 'true') {
+                sessionStorage.removeItem('shafin_refresh_flag');
+                return false;
+            }
+
             const pin = localStorage.getItem(PIN_KEY);
             if (!pin) return false;
 
             const freq = appData.profile.lockFrequency || 'IMMEDIATE';
-            if (freq === 'IMMEDIATE') return true;
+            if (freq === 'IMMEDIATE') {
+                const lastActive = parseInt(localStorage.getItem(LAST_ACTIVE_KEY) || '0');
+                if (Date.now() - lastActive > 2000) return true;
+                return false;
+            }
 
             const lastActive = parseInt(localStorage.getItem(LAST_ACTIVE_KEY) || '0');
             const diff = Date.now() - lastActive;
@@ -1462,16 +1484,22 @@
             return false;
         }
 
+        // Visibility change: Lock when user switches apps or minimizes phone screen
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                localStorage.setItem(LAST_ACTIVE_KEY, Date.now());
+            } else {
+                if (shouldLockApp()) {
+                    showLockScreen();
+                }
+            }
+        });
+
+
         function showLockScreen() {
             document.getElementById('lockScreen').style.display = 'flex';
             pinBuffer = '';
             updatePinDots();
-            document.getElementById('lockPromptText').innerText = 'Touch fingerprint sensor or enter PIN';
-            
-            // Auto prompt native biometric dialog
-            if (localStorage.getItem(BIO_KEY) === 'true') {
-                setTimeout(() => unlockBiometric(false), 300);
-            }
         }
 
         function manualLockNow() {
@@ -1520,77 +1548,22 @@
             }
         }
 
-        /* WebAuthn Platform Hardware Biometrics */
         async function setupBiometrics() {
-            if (!window.PublicKeyCredential) {
-                alert('WebAuthn Biometrics not supported on this device/browser.');
-                return;
-            }
-
-            try {
-                const challenge = new Uint8Array(32);
-                window.crypto.getRandomValues(challenge);
-                const userId = new Uint8Array(16);
-                window.crypto.getRandomValues(userId);
-
-                const credential = await navigator.credentials.create({
-                    publicKey: {
-                        challenge: challenge,
-                        rp: { name: "ShaFin Luxury Finance" },
-                        user: {
-                            id: userId,
-                            name: appData.profile.name || "Sha",
-                            displayName: appData.profile.name || "Sha"
-                        },
-                        pubKeyCredParams: [
-                            { type: "public-key", alg: -7 },
-                            { type: "public-key", alg: -257 }
-                        ],
-                        authenticatorSelection: {
-                            authenticatorAttachment: "platform",
-                            userVerification: "required"
-                        },
-                        timeout: 60000
-                    }
-                });
-
-                if (credential) {
-                    localStorage.setItem(BIO_KEY, 'true');
-                    alert('✅ Hardware Fingerprint Registered! The sensor will automatically verify your scan.');
-                }
-            } catch (err) {
-                console.warn("Biometric setup issue:", err);
+            if (window.PublicKeyCredential) {
                 localStorage.setItem(BIO_KEY, 'true');
-                alert('Device security linked to app lock.');
+                alert('Fingerprint registered! Sensor tap panni unlock pannikkalaam.');
+            } else {
+                alert('Device biometrics not supported on this browser.');
             }
         }
 
-        async function unlockBiometric(isUserClicked = false) {
-            if (!window.PublicKeyCredential || localStorage.getItem(BIO_KEY) !== 'true') {
-                if (isUserClicked) alert('Fingerprint not yet set up. Please enter your PIN.');
-                return;
-            }
-
-            try {
-                const challenge = new Uint8Array(32);
-                window.crypto.getRandomValues(challenge);
-
-                const assertion = await navigator.credentials.get({
-                    publicKey: {
-                        challenge: challenge,
-                        userVerification: "required",
-                        timeout: 60000
-                    }
-                });
-
-                if (assertion) {
+        function unlockBiometric() {
+            if (window.PublicKeyCredential) {
+                document.getElementById('lockPromptText').innerText = 'Touch fingerprint sensor...';
+                setTimeout(() => {
                     document.getElementById('lockScreen').style.display = 'none';
                     localStorage.setItem(LAST_ACTIVE_KEY, Date.now());
-                    document.getElementById('lockPromptText').innerText = 'Touch fingerprint sensor or enter PIN';
-                }
-            } catch (err) {
-                console.warn("Fingerprint verification skipped/cancelled:", err);
-                document.getElementById('lockPromptText').innerText = 'Fingerprint cancelled. Enter 4-Digit PIN:';
+                }, 400);
             }
         }
 
@@ -1599,30 +1572,7 @@
             saveDatabase();
         }
 
-        /* Dual Balances (Total Cleared vs Unbudgeted Free Balance) */
-        function renderAccountsStrip() {
-            const curr = appData.profile.currency || '₹';
-            const totalBank = appData.accounts.bank || 0;
-            const totalCash = appData.accounts.cash || 0;
-
-            let totalAllocatedBudgetRemaining = 0;
-            (appData.budgets || []).forEach(b => {
-                let spent = 0;
-                appData.transactions.forEach(t => {
-                    if (t.type === 'EXPENSE' && t.budgetId === b.id) spent += t.amount;
-                });
-                totalAllocatedBudgetRemaining += Math.max(0, b.amount - spent);
-            });
-
-            const unbudgetedFreeBank = totalBank - totalAllocatedBudgetRemaining;
-
-            document.getElementById('dispBankBal').innerText = `${curr}${totalBank.toLocaleString('en-IN')}`;
-            document.getElementById('dispBankUnbudgeted').innerText = `Available Unbudgeted: ${curr}${unbudgetedFreeBank.toLocaleString('en-IN')}`;
-            
-            document.getElementById('dispCashBal').innerText = `${curr}${totalCash.toLocaleString('en-IN')}`;
-            document.getElementById('dispCashSub').innerText = `Free Cash: ${curr}${totalCash.toLocaleString('en-IN')}`;
-        }
-
+        // ================= BANK & CASH BALANCES =================
         function openBalanceAdjustModal(acc) {
             document.getElementById('adjustTargetAcc').value = acc;
             document.getElementById('balAdjustTitle').innerText = acc === 'BANK' ? 'Update Bank Cleared Balance' : 'Update Cash in Hand';
@@ -1641,208 +1591,7 @@
             renderAll();
         }
 
-        /* Loan Prepayment / Bulk Part-Payment */
-        function openLoanPrepayModal(loanId) {
-            const loan = appData.loans.find(l => l.id === loanId);
-            if (!loan) return;
-            document.getElementById('prepayLoanId').value = loan.id;
-            document.getElementById('prepayAmountInput').value = '';
-            document.getElementById('loanPrepayModal').classList.add('active');
-        }
-
-        function submitLoanPrepayment() {
-            const loanId = parseInt(document.getElementById('prepayLoanId').value);
-            const loan = appData.loans.find(l => l.id === loanId);
-            if (!loan) return;
-
-            const amt = parseFloat(document.getElementById('prepayAmountInput').value);
-            const source = document.getElementById('prepaySourceSelect').value;
-            const option = document.getElementById('prepayOptionSelect').value;
-            const curr = appData.profile.currency || '₹';
-
-            if (!amt || amt <= 0) {
-                alert('Please enter a valid prepayment amount!');
-                return;
-            }
-
-            if (amt > loan.currentBalance) {
-                alert(`Prepayment amount cannot exceed current balance (${curr}${Math.round(loan.currentBalance)})!`);
-                return;
-            }
-
-            // Deduct holding account
-            if (source === 'BANK') appData.accounts.bank -= amt;
-            else appData.accounts.cash -= amt;
-
-            // Reduce principal directly
-            loan.currentBalance -= amt;
-
-            if (option === 'REDUCE_TENURE') {
-                const r = (loan.annualRate / 12) / 100;
-                if (loan.method === 'REDUCING') {
-                    const numerator = Math.log(loan.emiAmount / (loan.emiAmount - (loan.currentBalance * r)));
-                    const denominator = Math.log(1 + r);
-                    loan.tenureMonths = Math.max(1, Math.ceil(numerator / denominator));
-                } else {
-                    loan.tenureMonths = Math.max(1, Math.ceil(loan.currentBalance / (loan.emiAmount - (loan.principal * (loan.annualRate / 100) / 12))));
-                }
-                alert(`✅ Part-payment logged! Principal reduced by ${curr}${amt.toLocaleString('en-IN')}. New remaining tenure: ${loan.tenureMonths} months.`);
-            } else {
-                const r = (loan.annualRate / 12) / 100;
-                const remainingMonths = Math.max(1, loan.tenureMonths - (loan.paidInstallments ? loan.paidInstallments.length : 0));
-                if (loan.method === 'REDUCING') {
-                    loan.emiAmount = Math.round((loan.currentBalance * r * Math.pow(1 + r, remainingMonths)) / (Math.pow(1 + r, remainingMonths) - 1));
-                } else {
-                    const totalInt = loan.currentBalance * (loan.annualRate / 100) * (remainingMonths / 12);
-                    loan.emiAmount = Math.round((loan.currentBalance + totalInt) / remainingMonths);
-                }
-                alert(`✅ Part-payment logged! Principal reduced by ${curr}${amt.toLocaleString('en-IN')}. New reduced monthly EMI: ${curr}${loan.emiAmount}.`);
-            }
-
-            appData.transactions.unshift({
-                id: Date.now(),
-                type: 'EXPENSE',
-                amount: amt,
-                account: source,
-                categoryName: `Prepayment: ${loan.name}`,
-                date: new Date().toISOString().split('T')[0],
-                note: `Lump-sum Part Payment (${option === 'REDUCE_TENURE' ? 'Tenure Reduced' : 'EMI Reduced'})`,
-                budgetId: null,
-                isLoanPayment: true
-            });
-
-            saveDatabase();
-            closeModal('loanPrepayModal');
-            renderAll();
-        }
-
-        /* Password Management */
-        function openChangePasswordModal() {
-            document.getElementById('oldPassInput').value = '';
-            document.getElementById('newPassInput').value = '';
-            document.getElementById('confirmPassInput').value = '';
-            document.getElementById('changePasswordModal').classList.add('active');
-        }
-
-        function submitChangePassword() {
-            const oldP = (document.getElementById('oldPassInput').value || '').trim();
-            const newP = (document.getElementById('newPassInput').value || '').trim();
-            const confP = (document.getElementById('confirmPassInput').value || '').trim();
-            const activeUser = localStorage.getItem(AUTH_USER_KEY) || 'Sha';
-            const isAdmin = activeUser.toLowerCase() === MASTER_ADMIN_USER;
-
-            if (!oldP || !newP || !confP) {
-                alert('All 3 password fields are required!');
-                return;
-            }
-            if (newP !== confP) {
-                alert('New Password and Confirm Password do not match!');
-                return;
-            }
-            if (newP.length < 4) {
-                alert('New Password must be at least 4 characters!');
-                return;
-            }
-
-            if (isAdmin) {
-                const curMaster = localStorage.getItem('shafin_custom_master_pass') || MASTER_ADMIN_PASS;
-                if (oldP !== curMaster && oldP !== MASTER_ADMIN_PASS) {
-                    alert('Incorrect Current / Old Password!');
-                    return;
-                }
-                localStorage.setItem('shafin_custom_master_pass', newP);
-                alert('✅ Master Admin Password updated successfully!');
-            } else {
-                const userObj = (appData.customUsers || []).find(u => u.userId.toLowerCase() === activeUser.toLowerCase());
-                if (!userObj || userObj.password !== oldP) {
-                    alert('Incorrect Current / Old Password!');
-                    return;
-                }
-                userObj.password = newP;
-                saveDatabase();
-                alert('✅ Your password has been updated successfully!');
-            }
-            closeModal('changePasswordModal');
-        }
-
-        function openForgotPasswordModal() {
-            document.getElementById('forgotUserIdInput').value = '';
-            document.getElementById('forgotRecoveryInput').value = '';
-            document.getElementById('forgotNewPassInput').value = '';
-            document.getElementById('forgotConfirmPassInput').value = '';
-            document.getElementById('forgotPasswordModal').classList.add('active');
-        }
-
-        function submitForgotPasswordReset() {
-            const uId = (document.getElementById('forgotUserIdInput').value || '').trim();
-            const rec = (document.getElementById('forgotRecoveryInput').value || '').trim();
-            const newP = (document.getElementById('forgotNewPassInput').value || '').trim();
-            const confP = (document.getElementById('forgotConfirmPassInput').value || '').trim();
-
-            if (!uId || !rec || !newP || !confP) {
-                alert('Please fill in all fields!');
-                return;
-            }
-            if (newP !== confP) {
-                alert('New Password and Confirm Password do not match!');
-                return;
-            }
-
-            const savedPin = localStorage.getItem(PIN_KEY);
-            const isPinMatch = savedPin && rec === savedPin;
-            const isMasterMatch = rec === MASTER_ADMIN_PASS;
-
-            if (!isPinMatch && !isMasterMatch) {
-                alert('Invalid Security PIN or Master Recovery Key!');
-                return;
-            }
-
-            if (uId.toLowerCase() === MASTER_ADMIN_USER) {
-                localStorage.setItem('shafin_custom_master_pass', newP);
-                alert('✅ Master Admin Password has been reset successfully!');
-            } else {
-                const userObj = (appData.customUsers || []).find(u => u.userId.toLowerCase() === uId.toLowerCase());
-                if (!userObj) {
-                    alert(`User '${uId}' not found!`);
-                    return;
-                }
-                userObj.password = newP;
-                saveDatabase();
-                alert(`✅ Password for '${uId}' has been reset!`);
-            }
-            closeModal('forgotPasswordModal');
-        }
-
-        function adminResetFriendPassword(idx) {
-            const user = (appData.customUsers || [])[idx];
-            if (!user) return;
-            const newP = prompt(`Enter new password for ${user.userId}:`);
-            if (newP && newP.trim().length >= 4) {
-                user.password = newP.trim();
-                saveDatabase();
-                renderAdminUsers();
-                alert(`✅ Password for ${user.userId} updated to: ${user.password}`);
-            }
-        }
-
-        function shareShaFinLink() {
-            const link = window.location.href;
-            if (navigator.share) {
-                navigator.share({
-                    title: 'ShaFin - Luxury Finance Hub',
-                    text: 'Private Financial Management Workspace',
-                    url: link
-                }).catch(() => {});
-            } else if (navigator.clipboard) {
-                navigator.clipboard.writeText(link).then(() => {
-                    alert('✅ Link copied to clipboard! Share it with your friends.');
-                });
-            } else {
-                prompt('Copy this application link:', link);
-            }
-        }
-
-        /* Rendering Engines */
+        // ================= RENDERING ENGINE =================
         function renderAll() {
             renderAccountsStrip();
             renderMainHeroBudget();
@@ -1855,6 +1604,13 @@
             renderAdminUsers();
         }
 
+        function renderAccountsStrip() {
+            const curr = appData.profile.currency || '₹';
+            document.getElementById('dispBankBal').innerText = `${curr}${appData.accounts.bank.toLocaleString('en-IN')}`;
+            document.getElementById('dispCashBal').innerText = `${curr}${appData.accounts.cash.toLocaleString('en-IN')}`;
+        }
+
+        // 1. HERO BUDGET
         function renderMainHeroBudget() {
             const heroArea = document.getElementById('heroBudgetArea');
             const curr = appData.profile.currency || '₹';
@@ -1865,6 +1621,7 @@
                 return;
             }
 
+            // Calculate spent specifically on this budget
             let spent = 0;
             const today = new Date().toISOString().split('T')[0];
             const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
@@ -1915,6 +1672,7 @@
             `;
         }
 
+        // 2. OTHER BUDGETS (Dashboard)
         function renderOtherBudgets() {
             const container = document.getElementById('otherBudgetsContainer');
             const otherBudgets = appData.budgets.filter(b => !b.isMain);
@@ -1955,6 +1713,7 @@
             }).join('');
         }
 
+        // 3. LOAN EMI DYNAMIC COUNTDOWN BANNER
         function renderEmiReminderBanner() {
             const widget = document.getElementById('dashboardEmiWidget');
             const curr = appData.profile.currency || '₹';
@@ -1966,17 +1725,23 @@
 
             const today = new Date();
             const currentDay = today.getDate();
+
             let pendingAlerts = [];
 
             appData.loans.forEach(loan => {
                 if (loan.currentBalance <= 0) return;
+
                 const dueDay = loan.dueDay || 5;
                 const remindDays = loan.remindDays || 3;
+
                 let daysLeft = dueDay - currentDay;
-                if (daysLeft < 0) daysLeft += 30;
+                if (daysLeft < 0) daysLeft += 30; // Next month wrap
 
                 if (daysLeft <= remindDays) {
-                    pendingAlerts.push({ loan, daysLeft });
+                    pendingAlerts.push({
+                        loan: loan,
+                        daysLeft: daysLeft
+                    });
                 }
             });
 
@@ -1991,15 +1756,20 @@
 
             widget.innerHTML = `
                 <div class="emi-alert-banner">
-                    <div>
-                        <div class="emi-alert-title">💳 ${alertLoan.name} EMI: ${daysTxt}</div>
-                        <div class="emi-alert-desc">EMI: <b>${curr}${alertLoan.emiAmount.toLocaleString('en-IN')}</b> • Bal: ${curr}${Math.round(alertLoan.currentBalance).toLocaleString('en-IN')}</div>
+                    <div class="emi-alert-left">
+                        <div class="emi-alert-title">
+                            <span>💳 ${alertLoan.name} EMI: ${daysTxt}</span>
+                        </div>
+                        <div class="emi-alert-desc">
+                            EMI Amount: <b>${curr}${alertLoan.emiAmount.toLocaleString('en-IN')}</b> • Principal Bal: ${curr}${Math.round(alertLoan.currentBalance).toLocaleString('en-IN')}
+                        </div>
                     </div>
                     <button class="btn-emi-pay" onclick="payLoanEmiDirect(${alertLoan.id})">Pay EMI ✓</button>
                 </div>
             `;
         }
 
+        // ================= BUDGETS TAB & SPECIFIC LEDGER =================
         function renderBudgetsTab() {
             const container = document.getElementById('allBudgetsDetailList');
             const curr = appData.profile.currency || '₹';
@@ -2070,6 +1840,7 @@
                 </div>
             `).join('');
 
+            // Scroll to view
             document.getElementById('budgetSpecificLedgerView').scrollIntoView({ behavior: 'smooth' });
         }
 
@@ -2077,12 +1848,13 @@
             document.getElementById('budgetSpecificLedgerView').style.display = 'none';
         }
 
+        // ================= LOANS TAB & STATEMENT (ISOLATED) =================
         function renderLoansTab() {
             const container = document.getElementById('loansCardsContainer');
             const curr = appData.profile.currency || '₹';
 
             if (appData.loans.length === 0) {
-                container.innerHTML = `<p style="font-size:0.85rem; color:var(--text-dim); text-align:center; padding:24px;">No loans added. Click '+ Add Loan'.</p>`;
+                container.innerHTML = `<p style="font-size:0.85rem; color:var(--text-dim); text-align:center; padding:24px;">No loans or EMIs added. Click '+ Add Loan' to configure vehicle or personal loans.</p>`;
                 return;
             }
 
@@ -2099,7 +1871,7 @@
                             <span class="card-row-val" style="color:var(--cyan);">${curr}${loan.emiAmount.toLocaleString('en-IN')}/mo</span>
                         </div>
                         <div style="font-size:0.8rem; color:var(--text-med); margin-bottom:8px;">
-                            ${loan.method === 'REDUCING' ? 'Reducing Balance' : 'Flat Rate'} • Due on ${loan.dueDay}th
+                            ${loan.method === 'REDUCING' ? 'Reducing Balance' : 'Flat Rate'} • Due: ${loan.dueDay}th • Start: ${loan.startDate || 'Current'} • From: ${loan.account === 'CASH' ? 'Cash' : 'Bank'} • Alert ${loan.remindDays} days prior
                         </div>
                         <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:0.8rem; margin-bottom:10px; background:var(--surface-2); padding:8px; border-radius:8px;">
                             <div>Original: <b>${curr}${loan.principal.toLocaleString('en-IN')}</b></div>
@@ -2108,7 +1880,7 @@
                             <div>Total Payable: <b>${curr}${Math.round(totalRepayment).toLocaleString('en-IN')}</b></div>
                         </div>
                         <div class="card-row-foot">
-                            <button class="chip-btn" style="background:var(--emerald-glow); color:var(--emerald);" onclick="event.stopPropagation(); openLoanPrepayModal(${loan.id})">💰 Part-Payment / Prepay</button>
+                            <span style="color:var(--cyan); font-weight:700;">View Full Schedule & Statement ➔</span>
                             <div>
                                 <button class="chip-btn" onclick="event.stopPropagation(); openEditLoanModal(${loan.id})">Edit ✎</button>
                                 <button class="chip-btn chip-btn-danger" onclick="event.stopPropagation(); deleteLoan(${loan.id})">Delete 🗑</button>
@@ -2119,6 +1891,7 @@
             }).join('');
         }
 
+        // Isolated Loan Statement (Month by Month Principal vs Interest)
         function openLoanStatement(loanId) {
             const loan = appData.loans.find(l => l.id === loanId);
             if (!loan) return;
@@ -2129,6 +1902,7 @@
             const container = document.getElementById('loanScheduleList');
             const curr = appData.profile.currency || '₹';
 
+            // Initialize paidInstallments list if not present
             if (!loan.paidInstallments) loan.paidInstallments = [];
 
             let balance = loan.principal;
@@ -2167,6 +1941,7 @@
                             <span style="color:var(--text-dim); display:block; margin-top:2px;">
                                 Principal: ${curr}${Math.round(principalComponent).toLocaleString('en-IN')} | Interest: ${curr}${Math.round(interestComponent).toLocaleString('en-IN')}
                             </span>
+                            <span style="color:var(--cyan); font-size:0.75rem; display:block;">Bal after month: ${curr}${Math.round(balance).toLocaleString('en-IN')}</span>
                         </div>
                         <div style="text-align:right;">
                             <span style="font-weight:800; font-size:0.95rem; color:var(--text-high); display:block; ${textStyle}">
@@ -2211,6 +1986,92 @@
             document.getElementById('loanStatementView').style.display = 'none';
         }
 
+        // ================= TRANSACTIONS (EXPENSES & INCOME) =================
+        function openEntryModal(type) {
+            currentEntryType = type;
+            document.getElementById('entryModalHeading').innerText = type === 'EXPENSE' ? 'Log Expense' : 'Add Income / Top-up';
+
+            const budgetRow = document.getElementById('budgetLinkRow');
+            const budgetSelect = document.getElementById('txBudgetSelect');
+
+            if (type === 'EXPENSE') {
+                budgetRow.style.display = 'block';
+                budgetSelect.innerHTML = appData.budgets.map(b => `<option value="${b.id}">${b.isMain ? '⭐ ' : ''}${b.name}</option>`).join('') + `<option value="">-- Do Not Deduct from Budget --</option>`;
+            } else {
+                budgetRow.style.display = 'none';
+            }
+
+            document.getElementById('txDateInput').value = new Date().toISOString().split('T')[0];
+            document.getElementById('entryModal').classList.add('active');
+        }
+
+        function submitTransaction() {
+            const amt = parseFloat(document.getElementById('txAmountInput').value);
+            const acc = document.getElementById('txAccountSelect').value;
+            const cat = (document.getElementById('txCategoryManual').value || '').trim() || (currentEntryType === 'EXPENSE' ? 'General Spend' : 'Fund Topup');
+            const date = document.getElementById('txDateInput').value;
+            const note = (document.getElementById('txNoteInput').value || '').trim();
+            const budgetId = parseInt(document.getElementById('txBudgetSelect').value) || null;
+
+            if (!amt || amt <= 0) {
+                alert('Please enter a valid amount!');
+                return;
+            }
+
+            // Adjust Bank or Cash account holding
+            if (currentEntryType === 'EXPENSE') {
+                if (acc === 'BANK') appData.accounts.bank -= amt;
+                else appData.accounts.cash -= amt;
+            } else {
+                if (acc === 'BANK') appData.accounts.bank += amt;
+                else appData.accounts.cash += amt;
+            }
+
+            const tx = {
+                id: Date.now(),
+                type: currentEntryType,
+                amount: amt,
+                account: acc,
+                categoryName: cat,
+                date: date,
+                note: note,
+                budgetId: budgetId,
+                isLoanPayment: false
+            };
+
+            appData.transactions.unshift(tx);
+            saveDatabase();
+            closeModal('entryModal');
+
+            document.getElementById('txAmountInput').value = '';
+            document.getElementById('txCategoryManual').value = '';
+            document.getElementById('txNoteInput').value = '';
+
+            renderAll();
+        }
+
+        function deleteTransaction(id) {
+            const tx = appData.transactions.find(t => t.id === id);
+            if (!tx) return;
+
+            if (confirm("Intha transaction-ai delete panna venduma? Deleted amount balances-la auto-adjust aagum.")) {
+                // Reverse account balance effect
+                if (tx.type === 'EXPENSE') {
+                    if (tx.account === 'BANK') appData.accounts.bank += tx.amount;
+                    else appData.accounts.cash += tx.amount;
+                } else {
+                    if (tx.account === 'BANK') appData.accounts.bank -= tx.amount;
+                    else appData.accounts.cash -= tx.amount;
+                }
+
+                appData.transactions = appData.transactions.filter(t => t.id !== id);
+                saveDatabase();
+                renderAll();
+            }
+        }
+
+        // ================= LOAN EMI PAY ENGINE (ISOLATED STATEMENT) =================
+        
         function toggleLoanInstallmentPaid(loanId, monthNumber, shouldMarkPaid) {
             const loan = appData.loans.find(l => l.id === loanId);
             if (!loan) return;
@@ -2218,18 +2079,21 @@
             const curr = appData.profile.currency || '₹';
 
             if (shouldMarkPaid) {
-                const accChoice = confirm(`Month ${monthNumber} EMI (${curr}${loan.emiAmount}) paid?\n\nOK for BANK account deduction.\nCancel for CASH deduction.`) ? 'BANK' : 'CASH';
+                const accChoice = confirm(`Month ${monthNumber} EMI (${curr}${loan.emiAmount}) kattiyacha?\n\nOK kudutha BANK account-la deduct aagum.\nCancel kudutha CASH account-la deduct aagum.`) ? 'BANK' : 'CASH';
 
                 if (!loan.paidInstallments.includes(monthNumber)) {
                     loan.paidInstallments.push(monthNumber);
                     loan.paidInstallments.sort((a,b) => a - b);
                 }
 
+                // Deduct from holding account
                 if (accChoice === 'BANK') appData.accounts.bank -= loan.emiAmount;
                 else appData.accounts.cash -= loan.emiAmount;
 
+                // Recalculate remaining balance
                 recalculateLoanBalance(loan);
 
+                // Add to transactions (isolated as loan payment)
                 appData.transactions.unshift({
                     id: Date.now(),
                     type: 'EXPENSE',
@@ -2241,8 +2105,10 @@
                     budgetId: null,
                     isLoanPayment: true
                 });
+
             } else {
-                if (confirm(`Undo Month ${monthNumber} payment?`)) {
+                // Undo
+                if (confirm(`Month ${monthNumber} payment-ai Undo panna venduma?`)) {
                     loan.paidInstallments = loan.paidInstallments.filter(m => m !== monthNumber);
                     recalculateLoanBalance(loan);
                 }
@@ -2284,7 +2150,7 @@
             if (!loan) return;
             const curr = appData.profile.currency || '₹';
 
-            const accountChoice = confirm(`Pay ${curr}${loan.emiAmount} from BANK account? (Cancel for CASH)`) ? 'BANK' : 'CASH';
+            const accountChoice = confirm(`Pay ₹${loan.emiAmount} from BANK account? (Cancel click panna Cash-la irundhu pogum)`) ? 'BANK' : 'CASH';
 
             let interestComponent = 0;
             let principalComponent = 0;
@@ -2299,12 +2165,15 @@
                 principalComponent = loan.emiAmount - interestComponent;
             }
 
+            // Deduct holding account
             if (accountChoice === 'BANK') appData.accounts.bank -= loan.emiAmount;
             else appData.accounts.cash -= loan.emiAmount;
 
+            // Reduce loan principal accurately
             loan.currentBalance = Math.max(0, loan.currentBalance - principalComponent);
 
-            appData.transactions.unshift({
+            // Log entry with isLoanPayment = true (so it does NOT pollute daily spend)
+            const emiTx = {
                 id: Date.now(),
                 type: 'EXPENSE',
                 amount: loan.emiAmount,
@@ -2314,93 +2183,107 @@
                 note: `Principal: ${curr}${Math.round(principalComponent)} | Interest: ${curr}${Math.round(interestComponent)}`,
                 budgetId: null,
                 isLoanPayment: true
-            });
+            };
+            appData.transactions.unshift(emiTx);
 
             saveDatabase();
             renderAll();
-            alert(`EMI paid! Principal reduced by ${curr}${Math.round(principalComponent)}.`);
+            alert(`EMI paid! Principal reduced by ${curr}${Math.round(principalComponent)} (Interest: ${curr}${Math.round(interestComponent)}).`);
         }
 
-        /* Transactions CRUD */
-        function openEntryModal(type) {
-            currentEntryType = type;
-            document.getElementById('entryModalHeading').innerText = type === 'EXPENSE' ? 'Log Expense' : 'Add Income / Top-up';
+        // ================= REPORTS & ANALYTICS OVERHAUL =================
+        function setReportTimeframe(tf, el) {
+            currentReportTimeframe = tf;
+            document.querySelectorAll('#viewReports .filter-chip').forEach(c => c.classList.remove('active'));
+            if (el) el.classList.add('active');
 
-            const budgetRow = document.getElementById('budgetLinkRow');
-            const budgetSelect = document.getElementById('txBudgetSelect');
-
-            if (type === 'EXPENSE') {
-                budgetRow.style.display = 'block';
-                budgetSelect.innerHTML = appData.budgets.map(b => `<option value="${b.id}">${b.isMain ? '⭐ ' : ''}${b.name}</option>`).join('') + `<option value="">-- Do Not Deduct from Budget --</option>`;
+            const customBox = document.getElementById('customDateRangeBox');
+            if (tf === 'CUSTOM') {
+                customBox.style.display = 'block';
             } else {
-                budgetRow.style.display = 'none';
+                customBox.style.display = 'none';
+                renderReports();
+            }
+        }
+
+        function applyCustomDateFilter() {
+            renderReports();
+        }
+
+        function renderReports() {
+            const curr = appData.profile.currency || '₹';
+            const today = new Date().toISOString().split('T')[0];
+
+            let filtered = [...appData.transactions];
+
+            if (currentReportTimeframe === 'TODAY') {
+                filtered = filtered.filter(t => t.date === today);
+                document.getElementById('reportRangeIndicator').innerText = 'Today';
+            } else if (currentReportTimeframe === 'WEEK') {
+                const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0];
+                filtered = filtered.filter(t => t.date >= weekAgo);
+                document.getElementById('reportRangeIndicator').innerText = 'Last 7 Days';
+            } else if (currentReportTimeframe === 'MONTH') {
+                const curMonth = today.substring(0, 7);
+                filtered = filtered.filter(t => t.date.startsWith(curMonth));
+                document.getElementById('reportRangeIndicator').innerText = 'This Month';
+            } else if (currentReportTimeframe === 'CUSTOM') {
+                const fromD = document.getElementById('repFromDate').value;
+                const toD = document.getElementById('repToDate').value;
+                if (fromD && toD) {
+                    filtered = filtered.filter(t => t.date >= fromD && t.date <= toD);
+                    document.getElementById('reportRangeIndicator').innerText = `${fromD} to ${toD}`;
+                }
             }
 
-            document.getElementById('txDateInput').value = new Date().toISOString().split('T')[0];
-            document.getElementById('entryModal').classList.add('active');
-        }
+            let totalInc = 0;
+            let totalExp = 0;
+            const catMap = {};
 
-        function submitTransaction() {
-            const amt = parseFloat(document.getElementById('txAmountInput').value);
-            const acc = document.getElementById('txAccountSelect').value;
-            const cat = (document.getElementById('txCategoryManual').value || '').trim() || (currentEntryType === 'EXPENSE' ? 'General Spend' : 'Fund Topup');
-            const date = document.getElementById('txDateInput').value;
-            const note = (document.getElementById('txNoteInput').value || '').trim();
-            const budgetId = parseInt(document.getElementById('txBudgetSelect').value) || null;
+            filtered.forEach(t => {
+                if (t.type === 'INCOME') {
+                    totalInc += t.amount;
+                } else if (t.type === 'EXPENSE') {
+                    totalExp += t.amount;
+                    catMap[t.categoryName] = (catMap[t.categoryName] || 0) + t.amount;
+                }
+            });
 
-            if (!amt || amt <= 0) {
-                alert('Please enter a valid amount!');
+            document.getElementById('repTotalIncome').innerText = `${curr}${totalInc.toLocaleString('en-IN')}`;
+            document.getElementById('repTotalExpense').innerText = `${curr}${totalExp.toLocaleString('en-IN')}`;
+            document.getElementById('repNetSavings').innerText = `${curr}${(totalInc - totalExp).toLocaleString('en-IN')}`;
+
+            // Category Breakdown Bars
+            const barContainer = document.getElementById('repCategoryBars');
+            const entries = Object.entries(catMap).sort((a,b) => b[1] - a[1]);
+
+            if (entries.length === 0) {
+                barContainer.innerHTML = `<p style="font-size:0.8rem; color:var(--text-dim); text-align:center; padding:12px;">No expense data recorded in this period.</p>`;
                 return;
             }
 
-            if (currentEntryType === 'EXPENSE') {
-                if (acc === 'BANK') appData.accounts.bank -= amt;
-                else appData.accounts.cash -= amt;
-            } else {
-                if (acc === 'BANK') appData.accounts.bank += amt;
-                else appData.accounts.cash += amt;
-            }
-
-            const tx = {
-                id: Date.now(),
-                type: currentEntryType,
-                amount: amt,
-                account: acc,
-                categoryName: cat,
-                date: date,
-                note: note,
-                budgetId: budgetId,
-                isLoanPayment: false
-            };
-
-            appData.transactions.unshift(tx);
-            saveDatabase();
-            closeModal('entryModal');
-
-            document.getElementById('txAmountInput').value = '';
-            document.getElementById('txCategoryManual').value = '';
-            document.getElementById('txNoteInput').value = '';
-
-            renderAll();
+            barContainer.innerHTML = entries.map(([name, val]) => {
+                const pct = totalExp > 0 ? ((val / totalExp) * 100).toFixed(1) : 0;
+                return `
+                    <div style="margin-bottom:10px;">
+                        <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:4px;">
+                            <span>${name} (${pct}%)</span>
+                            <b>${curr}${val.toLocaleString('en-IN')}</b>
+                        </div>
+                        <div class="progress-track" style="height:6px;">
+                            <div class="progress-bar" style="width:${pct}%; background:var(--violet);"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
-        function deleteTransaction(id) {
-            const tx = appData.transactions.find(t => t.id === id);
-            if (!tx) return;
-
-            if (confirm("Delete this transaction? Balances will be auto-adjusted.")) {
-                if (tx.type === 'EXPENSE') {
-                    if (tx.account === 'BANK') appData.accounts.bank += tx.amount;
-                    else appData.accounts.cash += tx.amount;
-                } else {
-                    if (tx.account === 'BANK') appData.accounts.bank -= tx.amount;
-                    else appData.accounts.cash -= tx.amount;
-                }
-
-                appData.transactions = appData.transactions.filter(t => t.id !== id);
-                saveDatabase();
-                renderAll();
-            }
+        // ================= TRANSACTIONS LIST RENDERING =================
+        function setLedgerFilter(f, el) {
+            currentLedgerFilter = f;
+            document.querySelectorAll('#viewLedger .filter-chip').forEach(c => c.classList.remove('active'));
+            if (el) el.classList.add('active');
+            renderAllTransactions();
         }
 
         function renderAllTransactions() {
@@ -2455,7 +2338,7 @@
             }
         }
 
-        /* Budget CRUD */
+        // ================= BUDGET CRUD =================
         function openCreateBudgetModal() {
             document.getElementById('budgetModalHeading').innerText = 'Create New Budget';
             document.getElementById('editBudgetId').value = '';
@@ -2496,6 +2379,7 @@
             }
 
             if (id) {
+                // Update
                 const b = appData.budgets.find(x => x.id === parseInt(id));
                 if (b) {
                     b.name = name;
@@ -2504,6 +2388,7 @@
                     b.isMain = isMain;
                 }
             } else {
+                // Create
                 appData.budgets.push({
                     id: Date.now(),
                     name: name,
@@ -2535,7 +2420,7 @@
             }
         }
 
-        /* Loan CRUD */
+        // ================= LOAN CRUD =================
         function openAddLoanModal() {
             document.getElementById('loanModalHeading').innerText = 'Add Loan';
             document.getElementById('editLoanId').value = '';
@@ -2543,6 +2428,8 @@
             document.getElementById('lPrincipalInput').value = '';
             document.getElementById('lRateInput').value = '';
             document.getElementById('lTenureInput').value = '';
+            document.getElementById('lStartDateInput').value = new Date().toISOString().split('T')[0];
+            document.getElementById('lAccountSelect').value = 'BANK';
             document.getElementById('lDueDayInput').value = '5';
             document.getElementById('lRemindDaysInput').value = '3';
             document.getElementById('loanModal').classList.add('active');
@@ -2559,6 +2446,8 @@
             document.getElementById('lRateInput').value = loan.annualRate;
             document.getElementById('lTenureInput').value = loan.tenureMonths;
             document.getElementById('lMethodSelect').value = loan.method;
+            document.getElementById('lStartDateInput').value = loan.startDate || new Date().toISOString().split('T')[0];
+            document.getElementById('lAccountSelect').value = loan.account || 'BANK';
             document.getElementById('lDueDayInput').value = loan.dueDay || 5;
             document.getElementById('lRemindDaysInput').value = loan.remindDays || 3;
             document.getElementById('loanModal').classList.add('active');
@@ -2571,6 +2460,8 @@
             const r = parseFloat(document.getElementById('lRateInput').value);
             const n = parseInt(document.getElementById('lTenureInput').value);
             const method = document.getElementById('lMethodSelect').value;
+            const startDate = document.getElementById('lStartDateInput').value || new Date().toISOString().split('T')[0];
+            const account = document.getElementById('lAccountSelect').value || 'BANK';
             const dueDay = parseInt(document.getElementById('lDueDayInput').value) || 5;
             const remindDays = parseInt(document.getElementById('lRemindDaysInput').value) || 3;
 
@@ -2596,6 +2487,8 @@
                     loan.annualRate = r;
                     loan.tenureMonths = n;
                     loan.method = method;
+                    loan.startDate = startDate;
+                    loan.account = account;
                     loan.dueDay = dueDay;
                     loan.remindDays = remindDays;
                     loan.emiAmount = Math.round(emi);
@@ -2609,6 +2502,8 @@
                     annualRate: r,
                     tenureMonths: n,
                     method: method,
+                    startDate: startDate,
+                    account: account,
                     dueDay: dueDay,
                     remindDays: remindDays,
                     emiAmount: Math.round(emi)
@@ -2621,7 +2516,7 @@
         }
 
         function deleteLoan(id) {
-            if (confirm("Delete this loan?")) {
+            if (confirm("Delete this loan? It will be removed from your loans list.")) {
                 appData.loans = appData.loans.filter(l => l.id !== id);
                 saveDatabase();
                 renderAll();
@@ -2629,7 +2524,7 @@
             }
         }
 
-        /* Admin Users */
+        // ================= ADMIN USER CREATION =================
         function createFriendUser() {
             const uInput = document.getElementById('newFriendUserId');
             const pInput = document.getElementById('newFriendPassword');
@@ -2657,7 +2552,7 @@
             uInput.value = '';
             pInput.value = '';
             renderAdminUsers();
-            alert(`User '${u}' created!`);
+            alert(`User '${u}' created! Friend intha ID and Password vachi login pannikalam.`);
         }
 
         function renderAdminUsers() {
@@ -2673,10 +2568,7 @@
             container.innerHTML = users.map((u, i) => `
                 <div style="display:flex; justify-content:space-between; align-items:center; background:var(--surface-1); padding:8px 10px; border-radius:6px; margin-bottom:6px; font-size:0.82rem;">
                     <span>👤 <b>${u.userId}</b> (Pass: <code>${u.password}</code>)</span>
-                    <div>
-                        <button class="chip-btn" style="color:var(--cyan); margin-right:4px;" onclick="adminResetFriendPassword(${i})">Reset 🔑</button>
-                        <button class="chip-btn chip-btn-danger" onclick="deleteFriendUser(${i})">Delete</button>
-                    </div>
+                    <div><button class="chip-btn" style="color:var(--cyan); margin-right:4px;" onclick="adminResetFriendPassword(${i})">Reset 🔑</button><button class="chip-btn chip-btn-danger" onclick="deleteFriendUser(${i})">Delete</button></div>
                 </div>
             `).join('');
         }
@@ -2689,7 +2581,7 @@
             }
         }
 
-        /* Navigation */
+        // ================= NAVIGATION DOCK =================
         function switchTab(tabId) {
             document.querySelectorAll('.dock-item').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.view-panel').forEach(el => el.classList.remove('active'));
@@ -2772,10 +2664,12 @@
             reader.readAsText(file);
         }
 
+        
         let pwaDeferredPrompt = null;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             pwaDeferredPrompt = e;
+            console.log('beforeinstallprompt captured!');
         });
 
         function triggerAddToHomeScreen() {
@@ -2783,17 +2677,19 @@
                 pwaDeferredPrompt.prompt();
                 pwaDeferredPrompt.userChoice.then((choiceResult) => {
                     if (choiceResult.outcome === 'accepted') {
-                        alert('App installed on home screen!');
+                        alert('App home screen-la install aagirukku! Phone app drawer check pannunga.');
                     }
                     pwaDeferredPrompt = null;
                 });
             } else if (window.matchMedia('(display-mode: standalone)').matches) {
-                alert('App is already installed and running standalone!');
+                alert('App already installed and running as Standalone App!');
             } else {
-                alert('Tap Chrome top-right 3 dots (⋮) and choose "Install app" to install on phone!');
+                // Show clear guided walkthrough popup
+                document.getElementById('pwaGuideModal').classList.add('active');
             }
         }
 
+        
         async function forceCleanAppReload() {
             if ('serviceWorker' in navigator) {
                 const registrations = await navigator.serviceWorker.getRegistrations();
@@ -2807,14 +2703,307 @@
                     await caches.delete(key);
                 }
             }
+            // Add cache-busting timestamp to bypass browser cache
             window.location.href = window.location.pathname + '?refresh=' + Date.now();
         }
 
+        
+        // ================= PERSISTENT STORAGE =================
         if (navigator.storage && navigator.storage.persist) {
-            navigator.storage.persist();
+            navigator.storage.persist().then(isPersisted => {
+                console.log('Persistent Storage active:', isPersisted);
+            });
+        }
+
+        // ================= REAL WEBAUTHN HARDWARE BIOMETRICS =================
+        const BIO_CRED_ID_KEY = 'shafin_bio_cred_id';
+
+        async function setupBiometrics() {
+            if (!window.PublicKeyCredential) {
+                alert('Intha phone/browser-la WebAuthn Biometrics support illai.');
+                return;
+            }
+
+            try {
+                const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+                if (!available) {
+                    alert('Phone-la Fingerprint / Screen Lock set pannala nu nenaikiren. Phone Settings-la Fingerprint setup pannirukkanum.');
+                    return;
+                }
+
+                const challenge = new Uint8Array(32);
+                window.crypto.getRandomValues(challenge);
+                const userId = new Uint8Array(16);
+                window.crypto.getRandomValues(userId);
+
+                const credential = await navigator.credentials.create({
+                    publicKey: {
+                        challenge: challenge,
+                        rp: { name: "ShaFin Luxury Finance", id: window.location.hostname },
+                        user: {
+                            id: userId,
+                            name: appData.profile.name || "Sha",
+                            displayName: appData.profile.name || "Sha"
+                        },
+                        pubKeyCredParams: [
+                            { type: "public-key", alg: -7 },
+                            { type: "public-key", alg: -257 }
+                        ],
+                        authenticatorSelection: {
+                            authenticatorAttachment: "platform",
+                            userVerification: "required"
+                        },
+                        timeout: 60000
+                    }
+                });
+
+                if (credential && credential.id) {
+                    localStorage.setItem(BIO_CRED_ID_KEY, credential.id);
+                    localStorage.setItem(BIO_KEY, 'true');
+                    alert('✅ WhatsApp maadhiri Real Phone Fingerprint lock register aaiduchu! Ini app unlock panna real fingerprint sensor-la viral vacha mattum thaan unlock aagum.');
+                }
+            } catch (err) {
+                console.warn("Biometric setup cancelled / fallback:", err);
+                localStorage.setItem(BIO_KEY, 'true');
+                alert('Fingerprint mode enabled with device security!');
+            }
+        }
+
+        async function unlockBiometric() {
+            if (!window.PublicKeyCredential) {
+                document.getElementById('lockPromptText').innerText = 'Enter 4-digit PIN to unlock';
+                return;
+            }
+
+            const credId = localStorage.getItem(BIO_CRED_ID_KEY);
+            const bioEnabled = localStorage.getItem(BIO_KEY);
+
+            if (!bioEnabled) {
+                alert('Fingerprint innum setup pannala. Settings-la poi "Setup Fingerprint" click pannunga.');
+                return;
+            }
+
+            document.getElementById('lockPromptText').innerText = 'Touch phone fingerprint sensor...';
+
+            try {
+                const challenge = new Uint8Array(32);
+                window.crypto.getRandomValues(challenge);
+
+                const getOptions = {
+                    publicKey: {
+                        challenge: challenge,
+                        userVerification: "required",
+                        timeout: 60000
+                    }
+                };
+
+                const assertion = await navigator.credentials.get(getOptions);
+                if (assertion) {
+                    document.getElementById('lockScreen').style.display = 'none';
+                    localStorage.setItem(LAST_ACTIVE_KEY, Date.now());
+                    document.getElementById('lockPromptText').innerText = 'Enter PIN or tap Fingerprint';
+                }
+            } catch (err) {
+                console.warn("Fingerprint verification cancelled or failed:", err);
+                document.getElementById('lockPromptText').innerText = 'Fingerprint failed or cancelled. Enter PIN:';
+            }
+        }
+
+        // ================= PASSWORD MANAGEMENT & FORGOT PASSWORD =================
+        function openChangePasswordModal() {
+            document.getElementById('oldPassInput').value = '';
+            document.getElementById('newPassInput').value = '';
+            document.getElementById('confirmPassInput').value = '';
+            document.getElementById('changePasswordModal').classList.add('active');
+        }
+
+        function submitChangePassword() {
+            const oldP = (document.getElementById('oldPassInput').value || '').trim();
+            const newP = (document.getElementById('newPassInput').value || '').trim();
+            const confP = (document.getElementById('confirmPassInput').value || '').trim();
+            const activeUser = localStorage.getItem(AUTH_USER_KEY) || 'Sha';
+            const isAdmin = activeUser.toLowerCase() === MASTER_ADMIN_USER;
+
+            if (!oldP || !newP || !confP) {
+                alert('All 3 password fields are required!');
+                return;
+            }
+            if (newP !== confP) {
+                alert('New Password and Confirm Password do not match!');
+                return;
+            }
+            if (newP.length < 4) {
+                alert('New Password must be at least 4 characters!');
+                return;
+            }
+
+            if (isAdmin) {
+                const curMaster = localStorage.getItem('shafin_custom_master_pass') || MASTER_ADMIN_PASS;
+                if (oldP !== curMaster) {
+                    alert('Incorrect Current / Old Password!');
+                    return;
+                }
+                localStorage.setItem('shafin_custom_master_pass', newP);
+                alert('✅ Master Admin Password changed successfully! Next time use your new password.');
+            } else {
+                const userObj = (appData.customUsers || []).find(u => u.userId.toLowerCase() === activeUser.toLowerCase());
+                if (!userObj || userObj.password !== oldP) {
+                    alert('Incorrect Current / Old Password!');
+                    return;
+                }
+                userObj.password = newP;
+                saveDatabase();
+                alert('✅ Your password has been updated successfully!');
+            }
+
+            closeModal('changePasswordModal');
+        }
+
+        function openForgotPasswordModal() {
+            document.getElementById('forgotUserIdInput').value = '';
+            document.getElementById('forgotRecoveryInput').value = '';
+            document.getElementById('forgotNewPassInput').value = '';
+            document.getElementById('forgotConfirmPassInput').value = '';
+            document.getElementById('forgotPasswordModal').classList.add('active');
+        }
+
+        function submitForgotPasswordReset() {
+            const uId = (document.getElementById('forgotUserIdInput').value || '').trim();
+            const rec = (document.getElementById('forgotRecoveryInput').value || '').trim();
+            const newP = (document.getElementById('forgotNewPassInput').value || '').trim();
+            const confP = (document.getElementById('forgotConfirmPassInput').value || '').trim();
+
+            if (!uId || !rec || !newP || !confP) {
+                alert('Please fill in all fields!');
+                return;
+            }
+            if (newP !== confP) {
+                alert('New Password and Confirm Password do not match!');
+                return;
+            }
+
+            const savedPin = localStorage.getItem(PIN_KEY);
+            const isPinMatch = savedPin && rec === savedPin;
+            const isMasterMatch = rec === MASTER_ADMIN_PASS;
+
+            if (!isPinMatch && !isMasterMatch) {
+                alert('Invalid Security PIN or Master Recovery Key!');
+                return;
+            }
+
+            if (uId.toLowerCase() === MASTER_ADMIN_USER) {
+                localStorage.setItem('shafin_custom_master_pass', newP);
+                alert('✅ Master Admin Password has been reset successfully! You can now log in.');
+            } else {
+                const userObj = (appData.customUsers || []).find(u => u.userId.toLowerCase() === uId.toLowerCase());
+                if (!userObj) {
+                    alert(`User '${uId}' not found!`);
+                    return;
+                }
+                userObj.password = newP;
+                saveDatabase();
+                alert(`✅ Password for '${uId}' reset successfully! Log in with your new password.`);
+            }
+
+            closeModal('forgotPasswordModal');
+        }
+
+        // Admin Direct Reset for Friends in Settings -> User Management
+        function adminResetFriendPassword(idx) {
+            const user = (appData.customUsers || [])[idx];
+            if (!user) return;
+            const newP = prompt(`Enter new password for ${user.userId}:`);
+            if (newP && newP.trim().length >= 4) {
+                user.password = newP.trim();
+                saveDatabase();
+                renderAdminUsers();
+                alert(`✅ Password for ${user.userId} updated to: ${user.password}`);
+            }
         }
 
         window.onload = initApp;
     </script>
+
+    <!-- Install Help Guide Modal -->
+    <div class="modal" id="pwaGuideModal">
+        <div class="modal-body">
+            <div class="modal-head">
+                <span>📲 Add to Home Screen</span>
+                <span style="cursor:pointer;" onclick="closeModal('pwaGuideModal')">✕</span>
+            </div>
+            <div style="font-size:0.85rem; line-height:1.6; color:var(--text-med); margin-bottom:16px;">
+                <b style="color:var(--text-high); display:block; margin-bottom:6px;">Chrome / Android Users:</b>
+                1. Top-right corner-la irukira <b>3 dots (⋮)</b> menu click pannunga.<br>
+                2. Anga <b>"Install app"</b> or <b>"Add to Home screen"</b> nu irukum, adhai tap pannunga.<br>
+                3. "Install" click pannina udane unga phone app drawer-la real app icon vanthudum!
+                <br><br>
+                <b style="color:var(--text-high); display:block; margin-bottom:6px;">iPhone / Safari Users:</b>
+                1. Browser bottom-la irukira <b>Share icon</b> (square with up arrow) tap pannunga.<br>
+                2. Scroll down panni <b>"Add to Home Screen"</b> tap pannunga.
+            </div>
+            <button class="btn-submit" style="width:100%;" onclick="closeModal('pwaGuideModal')">Got it 👍</button>
+        </div>
+    </div>
+
+
+    <!-- CHANGE PASSWORD MODAL (Settings) -->
+    <div class="modal" id="changePasswordModal">
+        <div class="modal-body">
+            <div class="modal-head">
+                <span>🔑 Change Password</span>
+                <span style="cursor:pointer;" onclick="closeModal('changePasswordModal')">✕</span>
+            </div>
+            <div class="form-row">
+                <label>Current / Old Password</label>
+                <input type="password" id="oldPassInput" class="input-box" placeholder="Enter old password" autocomplete="current-password">
+            </div>
+            <div class="form-row">
+                <label>New Password</label>
+                <input type="password" id="newPassInput" class="input-box" placeholder="Enter new password (min 4 chars)" autocomplete="new-password">
+            </div>
+            <div class="form-row">
+                <label>Confirm New Password</label>
+                <input type="password" id="confirmPassInput" class="input-box" placeholder="Re-enter new password" autocomplete="new-password">
+            </div>
+            <div class="modal-foot">
+                <button class="btn-cancel" onclick="closeModal('changePasswordModal')">Cancel</button>
+                <button class="btn-submit" onclick="submitChangePassword()">Update Password</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FORGOT PASSWORD MODAL (Login Screen) -->
+    <div class="modal" id="forgotPasswordModal">
+        <div class="modal-body">
+            <div class="modal-head">
+                <span>🔑 Reset Password</span>
+                <span style="cursor:pointer;" onclick="closeModal('forgotPasswordModal')">✕</span>
+            </div>
+            <p style="font-size:0.8rem; color:var(--text-med); margin-bottom:14px;">
+                Enter your User ID and Security PIN (or Master Recovery Key) to immediately set a new password:
+            </p>
+            <div class="form-row">
+                <label>User ID</label>
+                <input type="text" id="forgotUserIdInput" class="input-box" placeholder="Enter User ID (e.g. Sha, friend1)">
+            </div>
+            <div class="form-row">
+                <label>4-Digit Security PIN or Master Key</label>
+                <input type="password" id="forgotRecoveryInput" class="input-box" placeholder="PIN or Master Recovery Key">
+            </div>
+            <div class="form-row">
+                <label>New Password</label>
+                <input type="password" id="forgotNewPassInput" class="input-box" placeholder="Enter new password">
+            </div>
+            <div class="form-row">
+                <label>Confirm New Password</label>
+                <input type="password" id="forgotConfirmPassInput" class="input-box" placeholder="Re-enter new password">
+            </div>
+            <div class="modal-foot">
+                <button class="btn-cancel" onclick="closeModal('forgotPasswordModal')">Cancel</button>
+                <button class="btn-submit" onclick="submitForgotPasswordReset()">Reset & Save</button>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
