@@ -1,4 +1,4 @@
-const CACHE_NAME = 'shafin-v15-real-app';
+const CACHE_NAME = 'shafin-v16-pro';
 const PRECACHE_ASSETS = [
   './',
   './index.html',
@@ -28,7 +28,6 @@ self.addEventListener('activate', (e) => {
   );
 });
 
-// Network-first strategy with offline cache fallback
 self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET') return;
 
