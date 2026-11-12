@@ -977,9 +977,12 @@
 
             <div class="card-row" style="cursor:default;">
                 <div style="font-size:1rem; font-weight:800; margin-bottom:10px; color:var(--cyan);">👤 Account & Profile</div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.88rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:0.88rem;">
                     <span>Logged User</span>
-                    <b id="settingsUserNameDisplay">Sha (Admin)</b>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <b id="settingsUserNameDisplay">Sha (Admin)</b>
+                        <button class="pill-action" id="btnRenameUserId" style="padding:3px 8px; font-size:0.7rem;" onclick="openRenameUserIdModal()">Rename ✏️</button>
+                    </div>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; padding-top:10px; border-top:1px solid var(--border-subtle);">
                     <span>Login Password</span>
@@ -1036,7 +1039,10 @@
             </div>
 
             <div class="card-row" style="cursor:default; border-color:rgba(244,63,94,0.3);">
-                <button class="btn-action btn-exp" style="width:100%;" onclick="logoutCurrentSession()">Logout Session</button>
+                <button class="btn-action btn-exp" style="width:100%; margin-bottom:10px;" onclick="logoutCurrentSession()">Logout Session</button>
+                <button class="btn-action" id="btnDeleteAccount" style="width:100%; background:transparent; border:1px solid rgba(244,63,94,0.35); color:var(--rose); font-size:0.82rem; padding:10px;" onclick="deleteCurrentAccountAndData()">
+                    🗑️ Delete Account & Wipe All Data
+                </button>
             </div>
         </div>
     </main>
@@ -1263,6 +1269,31 @@
         </div>
     </div>
 
+    <!-- RENAME USER ID MODAL (CENTERED) -->
+    <div class="modal modal-center" id="renameUserIdModal">
+        <div class="modal-body">
+            <div class="modal-head">
+                <span>✏️ Change User ID</span>
+                <span style="cursor:pointer;" onclick="closeModal('renameUserIdModal')">✕</span>
+            </div>
+            <p style="font-size:0.8rem; color:var(--text-med); margin-bottom:14px;">
+                All your existing bank balances, budgets, loans, and ledger entries will safely transfer to your new User ID:
+            </p>
+            <div class="form-row">
+                <label>New User ID</label>
+                <input type="text" id="newUserIdInput" class="input-box" placeholder="Enter new User ID">
+            </div>
+            <div class="form-row">
+                <label>Current Login Password</label>
+                <input type="password" id="renameUserPassInput" class="input-box" placeholder="Verify your password">
+            </div>
+            <div class="modal-foot">
+                <button class="btn-cancel" onclick="closeModal('renameUserIdModal')">Cancel</button>
+                <button class="btn-submit" onclick="submitRenameUserId()">Update User ID</button>
+            </div>
+        </div>
+    </div>
+
     <!-- CHANGE LOGIN PASSWORD MODAL -->
     <div class="modal" id="changePasswordModal">
         <div class="modal-body">
@@ -1330,7 +1361,6 @@
                 <span style="cursor:pointer;" onclick="closeModal('pinManageModal')">✕</span>
             </div>
 
-            <!-- Old PIN field (Shown only when changing PIN and not using Forgot mode) -->
             <div class="form-row" id="oldPinRow" style="display:none;">
                 <label>Current / Old 4-Digit PIN</label>
                 <input type="password" maxlength="4" inputmode="numeric" id="oldPinInput" class="input-box" placeholder="Enter current 4-digit PIN">
@@ -1346,7 +1376,6 @@
                 <input type="password" maxlength="4" inputmode="numeric" id="confirmPinInput" class="input-box" placeholder="Re-enter 4 digits">
             </div>
 
-            <!-- Master Key field (Shown only in Forgot PIN mode) -->
             <div class="form-row" id="pinMasterKeyRow" style="display:none;">
                 <label>Admin Master Recovery Key</label>
                 <input type="password" id="pinMasterKeyInput" class="input-box" placeholder="Enter Master Key">
@@ -1402,10 +1431,13 @@
         const MASTER_ADMIN_USER = 'sha';
         const MASTER_ADMIN_PASS = 'sha@2664';
 
-        // Per-User Isolated Database Key
+        function getStorageKeyForUser(uName) {
+            const lower = (uName || 'sha').toLowerCase();
+            return lower === 'sha' ? 'shafin_master_db_v9' : `shafin_user_db_${lower}`;
+        }
+
         function getUserStorageKey() {
-            const activeUser = (localStorage.getItem(AUTH_USER_KEY) || 'sha').toLowerCase();
-            return activeUser === 'sha' ? 'shafin_master_db_v9' : `shafin_user_db_${activeUser}`;
+            return getStorageKeyForUser(localStorage.getItem(AUTH_USER_KEY) || 'sha');
         }
 
         function getInitialState(userName = 'Sha') {
@@ -1433,7 +1465,7 @@
         let pinBuffer = '';
         let currentLedgerFilter = 'ALL';
         let currentReportTimeframe = 'MONTH';
-        let pinModalMode = 'SET'; // 'SET', 'CHANGE', 'FORGOT'
+        let pinModalMode = 'SET';
 
         function startLiveClock() {
             function updateClock() {
@@ -1483,6 +1515,15 @@
             document.getElementById('headerUserName').innerText = activeUser;
             document.getElementById('adminBadgeTag').style.display = isAdmin ? 'inline-block' : 'none';
             document.getElementById('settingsUserNameDisplay').innerText = `${activeUser} (${isAdmin ? 'Master Admin' : 'Member'})`;
+            
+            // Hide Rename button for Sha Master Admin; update Delete button text for Admin vs Member
+            const renameBtn = document.getElementById('btnRenameUserId');
+            if (renameBtn) renameBtn.style.display = isAdmin ? 'none' : 'inline-block';
+
+            const delBtn = document.getElementById('btnDeleteAccount');
+            if (delBtn) {
+                delBtn.innerText = isAdmin ? '🗑️ Reset & Wipe Admin Data' : '🗑️ Delete Account & Wipe All Data';
+            }
 
             document.getElementById('settingsCurrencySelect').value = appData.profile.currency || '₹';
             document.getElementById('lockFrequencySelect').value = appData.profile.lockFrequency || 'IMMEDIATE';
@@ -1518,7 +1559,6 @@
             localStorage.setItem(getUserStorageKey(), JSON.stringify(appData));
         }
 
-        // Global Registered Users Registry on Device
         function getRegisteredUsers() {
             try {
                 return JSON.parse(localStorage.getItem('shafin_registered_users') || '[]');
@@ -1564,6 +1604,113 @@
         function logoutCurrentSession() {
             if (confirm("Logout current workspace session?")) {
                 localStorage.removeItem(AUTH_USER_KEY);
+                location.reload();
+            }
+        }
+
+        // ================= RENAME USER ID & DELETE ACCOUNT =================
+        function openRenameUserIdModal() {
+            const activeUser = localStorage.getItem(AUTH_USER_KEY) || '';
+            if (activeUser.toLowerCase() === MASTER_ADMIN_USER) {
+                alert('Master Admin User ID cannot be renamed.');
+                return;
+            }
+            document.getElementById('newUserIdInput').value = activeUser;
+            document.getElementById('renameUserPassInput').value = '';
+            document.getElementById('renameUserIdModal').classList.add('active');
+        }
+
+        function submitRenameUserId() {
+            const oldUser = localStorage.getItem(AUTH_USER_KEY) || '';
+            const newUser = (document.getElementById('newUserIdInput').value || '').trim();
+            const pass = (document.getElementById('renameUserPassInput').value || '').trim();
+
+            if (!newUser || !pass) {
+                alert('Please enter new User ID and your current password!');
+                return;
+            }
+            if (newUser.toLowerCase() === MASTER_ADMIN_USER) {
+                alert("'Sha' is reserved for Master Admin!");
+                return;
+            }
+            if (newUser.toLowerCase() === oldUser.toLowerCase()) {
+                alert('Please enter a different User ID!');
+                return;
+            }
+
+            const regUsers = getRegisteredUsers();
+            if (regUsers.some(u => u.userId.toLowerCase() === newUser.toLowerCase())) {
+                alert('This User ID already exists! Choose another one.');
+                return;
+            }
+
+            const userObj = regUsers.find(u => u.userId.toLowerCase() === oldUser.toLowerCase());
+            if (!userObj || userObj.password !== pass) {
+                alert('Incorrect login password!');
+                return;
+            }
+
+            // Migrate existing database to the new User ID key safely
+            const oldKey = getStorageKeyForUser(oldUser);
+            const newKey = getStorageKeyForUser(newUser);
+            appData.profile.name = newUser;
+            localStorage.setItem(newKey, JSON.stringify(appData));
+            localStorage.removeItem(oldKey);
+
+            // Update user registry and session
+            userObj.userId = newUser;
+            saveRegisteredUsers(regUsers);
+            localStorage.setItem(AUTH_USER_KEY, newUser);
+
+            closeModal('renameUserIdModal');
+            initApp();
+            alert(`✅ User ID changed to '${newUser}'! All your financial data has been preserved.`);
+        }
+
+        function deleteCurrentAccountAndData() {
+            const activeUser = localStorage.getItem(AUTH_USER_KEY) || '';
+            const isAdmin = activeUser.toLowerCase() === MASTER_ADMIN_USER;
+
+            const confirmMsg = isAdmin
+                ? "⚠️ WARNING: This will permanently wipe all financial records (bank balance, budgets, loans, ledger) in your Admin account. Your Admin login access will remain active.\n\nEnter Admin Password or Master Key to confirm:"
+                : `⚠️ WARNING: This will permanently delete User ID '${activeUser}' and wipe ALL financial data stored in this account.\n\nEnter your Password or Admin Master Key to confirm:`;
+
+            const entered = prompt(confirmMsg);
+            if (!entered) return;
+
+            const curMaster = localStorage.getItem('shafin_custom_master_pass') || MASTER_ADMIN_PASS;
+            const isMasterKeyValid = (entered === curMaster || entered === MASTER_ADMIN_PASS);
+
+            if (isAdmin) {
+                if (!isMasterKeyValid) {
+                    alert('Incorrect password. Data was not deleted.');
+                    return;
+                }
+                localStorage.removeItem(getUserStorageKey());
+                appData = getInitialState('Sha');
+                saveDatabase();
+                renderAll();
+                alert('✅ Admin financial data wiped clean!');
+            } else {
+                const regUsers = getRegisteredUsers();
+                const userObj = regUsers.find(u => u.userId.toLowerCase() === activeUser.toLowerCase());
+                const isUserPassValid = userObj && entered === userObj.password;
+
+                if (!isUserPassValid && !isMasterKeyValid) {
+                    alert('Incorrect password or Master Key. Account was not deleted.');
+                    return;
+                }
+
+                // Delete user's isolated data
+                localStorage.removeItem(getUserStorageKey());
+
+                // Remove user from registered users list
+                const updatedUsers = regUsers.filter(u => u.userId.toLowerCase() !== activeUser.toLowerCase());
+                saveRegisteredUsers(updatedUsers);
+
+                // Clear active session and return to login screen
+                localStorage.removeItem(AUTH_USER_KEY);
+                alert(`✅ User ID '${activeUser}' and all associated data have been permanently deleted.`);
                 location.reload();
             }
         }
