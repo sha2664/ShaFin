@@ -529,14 +529,19 @@
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(8px);
-            z-index: 100;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 200;
             align-items: flex-end;
             justify-content: center;
             padding: 0;
         }
         .modal.active { display: flex; }
+        .modal-center {
+            align-items: center !important;
+            padding: 20px !important;
+            z-index: 10005 !important;
+        }
         .modal-body {
             background: var(--surface-1);
             border: 1px solid var(--border-subtle);
@@ -547,6 +552,12 @@
             padding: 24px 20px;
             max-height: 90vh;
             overflow-y: auto;
+        }
+        .modal-center .modal-body {
+            border-radius: var(--radius-xl) !important;
+            max-width: 380px !important;
+            border: 1px solid var(--border-glow) !important;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.75) !important;
         }
         .modal-head {
             font-size: 1.2rem;
@@ -765,6 +776,9 @@
             <button class="num-btn" onclick="pressPin(0)">0</button>
             <button class="num-btn" style="font-size: 1.1rem; color:var(--rose);" onclick="clearPin()">⌫</button>
         </div>
+        <button type="button" style="margin-top:24px; background:transparent; border:none; color:var(--cyan); font-size:0.8rem; font-weight:700; cursor:pointer;" onclick="openPinModal(true)">
+            Forgot PIN? Reset with Master Key 🔑
+        </button>
     </div>
 
     <!-- 3. TOP APP BAR -->
@@ -968,7 +982,7 @@
                     <b id="settingsUserNameDisplay">Sha (Admin)</b>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; padding-top:10px; border-top:1px solid var(--border-subtle);">
-                    <span>Security Password</span>
+                    <span>Login Password</span>
                     <button class="pill-action" onclick="openChangePasswordModal()">Change Password 🔑</button>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; padding-top:10px; border-top:1px solid var(--border-subtle);">
@@ -999,24 +1013,13 @@
                     </select>
                 </div>
                 <div style="display:flex; gap:8px; margin-bottom:8px;">
-                    <button class="pill-action" style="flex:1;" onclick="promptSetPin()">Set / Change PIN</button>
+                    <button class="pill-action" id="btnSetChangePin" style="flex:1;" onclick="openPinModal(false)">Set PIN</button>
                     <button class="pill-action" style="flex:1;" onclick="manualLockNow()">Lock App Now 🔒</button>
                 </div>
-                <div>
+                <div id="removePinRow" style="display:none;">
                     <button class="pill-action" style="width:100%; color:var(--rose); border-color:rgba(244,63,94,0.3);" onclick="removePinCompletely()">
                         🚫 Remove PIN Lock (Turn Off)
                     </button>
-                </div>
-            </div>
-
-            <div class="card-row" id="adminUserManagementSection" style="cursor:default;">
-                <div style="font-size:1rem; font-weight:800; margin-bottom:8px; color:var(--emerald);">👑 User Management (Admin Only)</div>
-                <p style="font-size:0.78rem; color:var(--text-dim); margin-bottom:12px;">Create credentials for friends or reset passwords directly:</p>
-                <div id="adminUsersList" style="margin-bottom:12px;"></div>
-                <div style="background:var(--surface-2); padding:10px; border-radius:8px;">
-                    <input type="text" id="newFriendUserId" placeholder="User ID (e.g. friend1)" class="input-box" style="margin-bottom:8px;">
-                    <input type="text" id="newFriendPassword" placeholder="Password (e.g. pass123)" class="input-box" style="margin-bottom:10px;">
-                    <button class="btn-submit" style="width:100%; padding:10px;" onclick="createFriendUser()">Create Friend User</button>
                 </div>
             </div>
 
@@ -1027,7 +1030,7 @@
                     <button class="btn-action" style="flex:1; background:var(--surface-2); border:1px solid var(--cyan); color:var(--cyan);" onclick="exportJsonBackup()">Download Backup</button>
                     <label class="btn-action" style="flex:1; background:var(--surface-2); border:1px solid var(--violet); color:var(--violet); text-align:center; cursor:pointer;">
                         Restore Backup
-                        <input type="file" id="restoreFilePicker" style="display:none;" accept=".json" onchange="restoreJsonBackup(event)">
+                        <input type="file" id="restoreFilePicker" style="display:none;" accept="*/*" onchange="restoreJsonBackup(event)">
                     </label>
                 </div>
             </div>
@@ -1260,11 +1263,11 @@
         </div>
     </div>
 
-    <!-- CHANGE PASSWORD MODAL -->
+    <!-- CHANGE LOGIN PASSWORD MODAL -->
     <div class="modal" id="changePasswordModal">
         <div class="modal-body">
             <div class="modal-head">
-                <span>🔑 Change Password</span>
+                <span>🔑 Change Login Password</span>
                 <span style="cursor:pointer;" onclick="closeModal('changePasswordModal')">✕</span>
             </div>
             <div class="form-row">
@@ -1286,23 +1289,19 @@
         </div>
     </div>
 
-    <!-- FORGOT PASSWORD MODAL -->
-    <div class="modal" id="forgotPasswordModal">
+    <!-- FORGOT LOGIN PASSWORD MODAL (CENTERED) -->
+    <div class="modal modal-center" id="forgotPasswordModal">
         <div class="modal-body">
             <div class="modal-head">
-                <span>🔑 Reset Password</span>
+                <span>🔑 Reset Login Password</span>
                 <span style="cursor:pointer;" onclick="closeModal('forgotPasswordModal')">✕</span>
             </div>
             <p style="font-size:0.8rem; color:var(--text-med); margin-bottom:14px;">
-                Enter your User ID and Security PIN (or Master Recovery Key) to set a new password:
+                Enter your User ID and Admin Master Recovery Key to set a new login password:
             </p>
             <div class="form-row">
                 <label>User ID</label>
                 <input type="text" id="forgotUserIdInput" class="input-box" placeholder="e.g. Sha, friend1">
-            </div>
-            <div class="form-row">
-                <label>4-Digit Security PIN or Master Key</label>
-                <input type="password" id="forgotRecoveryInput" class="input-box" placeholder="PIN or Master Key">
             </div>
             <div class="form-row">
                 <label>New Password</label>
@@ -1312,6 +1311,10 @@
                 <label>Confirm New Password</label>
                 <input type="password" id="forgotConfirmPassInput" class="input-box" placeholder="Re-enter new password">
             </div>
+            <div class="form-row">
+                <label>Admin Master Key</label>
+                <input type="password" id="forgotRecoveryInput" class="input-box" placeholder="Enter Master Key">
+            </div>
             <div class="modal-foot">
                 <button class="btn-cancel" onclick="closeModal('forgotPasswordModal')">Cancel</button>
                 <button class="btn-submit" onclick="submitForgotPasswordReset()">Reset & Save</button>
@@ -1319,15 +1322,58 @@
         </div>
     </div>
 
-    <!-- SELF-REGISTER MODAL FOR FRIENDS -->
-    <div class="modal" id="registerFriendModal">
+    <!-- SET / CHANGE / FORGOT PIN MODAL (CENTERED) -->
+    <div class="modal modal-center" id="pinManageModal">
+        <div class="modal-body">
+            <div class="modal-head">
+                <span id="pinModalTitle">🔐 Set 4-Digit PIN</span>
+                <span style="cursor:pointer;" onclick="closeModal('pinManageModal')">✕</span>
+            </div>
+
+            <!-- Old PIN field (Shown only when changing PIN and not using Forgot mode) -->
+            <div class="form-row" id="oldPinRow" style="display:none;">
+                <label>Current / Old 4-Digit PIN</label>
+                <input type="password" maxlength="4" inputmode="numeric" id="oldPinInput" class="input-box" placeholder="Enter current 4-digit PIN">
+            </div>
+
+            <div class="form-row">
+                <label>New 4-Digit PIN</label>
+                <input type="password" maxlength="4" inputmode="numeric" id="newPinInput" class="input-box" placeholder="Enter 4 digits">
+            </div>
+
+            <div class="form-row">
+                <label>Confirm New 4-Digit PIN</label>
+                <input type="password" maxlength="4" inputmode="numeric" id="confirmPinInput" class="input-box" placeholder="Re-enter 4 digits">
+            </div>
+
+            <!-- Master Key field (Shown only in Forgot PIN mode) -->
+            <div class="form-row" id="pinMasterKeyRow" style="display:none;">
+                <label>Admin Master Recovery Key</label>
+                <input type="password" id="pinMasterKeyInput" class="input-box" placeholder="Enter Master Key">
+            </div>
+
+            <div id="forgotPinToggleRow" style="text-align:right; margin-top:-6px; margin-bottom:10px; display:none;">
+                <button type="button" style="background:transparent; border:none; color:var(--cyan); font-size:0.75rem; font-weight:700; cursor:pointer;" onclick="switchToForgotPinMode()">
+                    Forgot Old PIN? Use Master Key 🔑
+                </button>
+            </div>
+
+            <div class="modal-foot">
+                <button class="btn-cancel" onclick="closeModal('pinManageModal')">Cancel</button>
+                <button class="btn-submit" onclick="submitPinManagement()">Save PIN</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SELF-REGISTER MODAL FOR FRIENDS (EXACT CENTER POPUP) -->
+    <div class="modal modal-center" id="registerFriendModal">
         <div class="modal-body">
             <div class="modal-head">
                 <span>👥 Register Friend Account</span>
                 <span style="cursor:pointer;" onclick="closeModal('registerFriendModal')">✕</span>
             </div>
             <p style="font-size:0.8rem; color:var(--text-med); margin-bottom:14px;">
-                Enter your chosen User ID, Password, and Sha's Master Invite Key to setup access on this device:
+                Choose your User ID, Password, and enter Sha's Master Invite Key to start:
             </p>
             <div class="form-row">
                 <label>Choose User ID</label>
@@ -1349,7 +1395,6 @@
     </div>
 
     <script>
-        const STORAGE_KEY = 'shafin_master_db_v9';
         const AUTH_USER_KEY = 'shafin_active_session';
         const PIN_KEY = 'shafin_pin';
         const LAST_ACTIVE_KEY = 'shafin_last_active';
@@ -1357,10 +1402,16 @@
         const MASTER_ADMIN_USER = 'sha';
         const MASTER_ADMIN_PASS = 'sha@2664';
 
-        function getInitialState() {
+        // Per-User Isolated Database Key
+        function getUserStorageKey() {
+            const activeUser = (localStorage.getItem(AUTH_USER_KEY) || 'sha').toLowerCase();
+            return activeUser === 'sha' ? 'shafin_master_db_v9' : `shafin_user_db_${activeUser}`;
+        }
+
+        function getInitialState(userName = 'Sha') {
             return {
                 profile: {
-                    name: 'Sha',
+                    name: userName,
                     currency: '₹',
                     lockFrequency: 'IMMEDIATE'
                 },
@@ -1382,6 +1433,7 @@
         let pinBuffer = '';
         let currentLedgerFilter = 'ALL';
         let currentReportTimeframe = 'MONTH';
+        let pinModalMode = 'SET'; // 'SET', 'CHANGE', 'FORGOT'
 
         function startLiveClock() {
             function updateClock() {
@@ -1410,7 +1462,6 @@
         }
 
         function initApp() {
-            loadDatabase();
             startLiveClock();
 
             const activeUser = localStorage.getItem(AUTH_USER_KEY);
@@ -1419,18 +1470,20 @@
                 return;
             }
 
+            loadDatabase();
+
             if (shouldLockApp()) {
                 showLockScreen();
             }
 
             applyTheme();
+            refreshPinSettingsUI();
 
             const isAdmin = activeUser.toLowerCase() === MASTER_ADMIN_USER;
             document.getElementById('headerUserName').innerText = activeUser;
             document.getElementById('adminBadgeTag').style.display = isAdmin ? 'inline-block' : 'none';
             document.getElementById('settingsUserNameDisplay').innerText = `${activeUser} (${isAdmin ? 'Master Admin' : 'Member'})`;
 
-            document.getElementById('adminUserManagementSection').style.display = isAdmin ? 'block' : 'none';
             document.getElementById('settingsCurrencySelect').value = appData.profile.currency || '₹';
             document.getElementById('lockFrequencySelect').value = appData.profile.lockFrequency || 'IMMEDIATE';
             document.querySelectorAll('.curr-symbol').forEach(el => el.innerText = appData.profile.currency || '₹');
@@ -1441,11 +1494,13 @@
         }
 
         function loadDatabase() {
-            const raw = localStorage.getItem(STORAGE_KEY);
+            const key = getUserStorageKey();
+            const activeUser = localStorage.getItem(AUTH_USER_KEY) || 'Sha';
+            const raw = localStorage.getItem(key);
             if (raw) {
                 try {
                     const parsed = JSON.parse(raw);
-                    appData = { ...getInitialState(), ...parsed };
+                    appData = { ...getInitialState(activeUser), ...parsed };
                     if (!appData.accounts) appData.accounts = { bank: 0, cash: 0 };
                     if (!appData.budgets || appData.budgets.length === 0) {
                         appData.budgets = [{ id: 1, name: 'Travel & Daily Expenses', amount: 7000.00, duration: '5 Months', isMain: true }];
@@ -1454,12 +1509,23 @@
                     console.error('Database load error', e);
                 }
             } else {
+                appData = getInitialState(activeUser);
                 saveDatabase();
             }
         }
 
         function saveDatabase() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+            localStorage.setItem(getUserStorageKey(), JSON.stringify(appData));
+        }
+
+        // Global Registered Users Registry on Device
+        function getRegisteredUsers() {
+            try {
+                return JSON.parse(localStorage.getItem('shafin_registered_users') || '[]');
+            } catch(e) { return []; }
+        }
+        function saveRegisteredUsers(list) {
+            localStorage.setItem('shafin_registered_users', JSON.stringify(list));
         }
 
         function performUnifiedLogin() {
@@ -1482,7 +1548,8 @@
                 return;
             }
 
-            const matched = (appData.customUsers || []).find(u => u.userId.toLowerCase() === user.toLowerCase() && u.password === pass);
+            const regUsers = getRegisteredUsers();
+            const matched = regUsers.find(u => u.userId.toLowerCase() === user.toLowerCase() && u.password === pass);
             if (matched) {
                 localStorage.setItem(AUTH_USER_KEY, matched.userId);
                 localStorage.setItem(LAST_ACTIVE_KEY, Date.now());
@@ -1490,7 +1557,7 @@
                 initApp();
             } else {
                 err.style.display = 'block';
-                err.innerText = "❌ Invalid User ID or Password. Friend users please register first.";
+                err.innerText = "❌ Invalid User ID or Password. New users please tap '+ Register Friend User'.";
             }
         }
 
@@ -1501,7 +1568,7 @@
             }
         }
 
-        // ================= FRIEND SELF-REGISTRATION =================
+        // ================= FRIEND SELF-REGISTRATION (DIRECT CENTER POPUP) =================
         function openRegisterFriendModal() {
             document.getElementById('regUserIdInput').value = '';
             document.getElementById('regPasswordInput').value = '';
@@ -1515,7 +1582,7 @@
             const key = (document.getElementById('regAdminKeyInput').value || '').trim();
 
             if (!uId || !pass || !key) {
-                alert('Please fill in User ID, Password and Admin Key!');
+                alert('Please fill in User ID, Password and Admin Invite Key!');
                 return;
             }
 
@@ -1530,14 +1597,14 @@
                 return;
             }
 
-            if (!appData.customUsers) appData.customUsers = [];
-            const existing = appData.customUsers.find(u => u.userId.toLowerCase() === uId.toLowerCase());
+            const regUsers = getRegisteredUsers();
+            const existing = regUsers.find(u => u.userId.toLowerCase() === uId.toLowerCase());
             if (existing) {
                 existing.password = pass;
             } else {
-                appData.customUsers.push({ userId: uId, password: pass });
+                regUsers.push({ userId: uId, password: pass });
             }
-            saveDatabase();
+            saveRegisteredUsers(regUsers);
 
             closeModal('registerFriendModal');
             localStorage.setItem(AUTH_USER_KEY, uId);
@@ -1547,7 +1614,7 @@
             alert(`✅ Account '${uId}' registered and logged in successfully!`);
         }
 
-        // ================= SECURITY & LOCK FREQUENCY =================
+        // ================= SECURITY PIN MANAGEMENT (SET / CHANGE / FORGOT / REMOVE) =================
         window.addEventListener('beforeunload', () => {
             sessionStorage.setItem('shafin_refresh_flag', 'true');
         });
@@ -1597,7 +1664,7 @@
         function manualLockNow() {
             const pin = localStorage.getItem(PIN_KEY);
             if (!pin) {
-                alert("Security PIN is currently turned off. Click 'Set / Change PIN' to set a new PIN.");
+                alert("Security PIN is currently turned off. Click 'Set PIN' to create one.");
                 return;
             }
             showLockScreen();
@@ -1637,26 +1704,99 @@
             }
         }
 
-        function promptSetPin() {
-            const p = prompt('Set a 4-digit security PIN:');
-            if (p && p.length === 4 && !isNaN(p)) {
-                localStorage.setItem(PIN_KEY, p);
-                alert('Security PIN updated successfully!');
+        function refreshPinSettingsUI() {
+            const hasPin = !!localStorage.getItem(PIN_KEY);
+            const btn = document.getElementById('btnSetChangePin');
+            const remRow = document.getElementById('removePinRow');
+            if (btn) btn.innerText = hasPin ? 'Change PIN' : 'Set PIN';
+            if (remRow) remRow.style.display = hasPin ? 'block' : 'none';
+        }
+
+        function openPinModal(forceForgot = false) {
+            const hasPin = !!localStorage.getItem(PIN_KEY);
+            document.getElementById('oldPinInput').value = '';
+            document.getElementById('newPinInput').value = '';
+            document.getElementById('confirmPinInput').value = '';
+            document.getElementById('pinMasterKeyInput').value = '';
+
+            if (forceForgot) {
+                pinModalMode = 'FORGOT';
+                document.getElementById('pinModalTitle').innerText = '🔑 Reset PIN with Master Key';
+                document.getElementById('oldPinRow').style.display = 'none';
+                document.getElementById('pinMasterKeyRow').style.display = 'block';
+                document.getElementById('forgotPinToggleRow').style.display = 'none';
+            } else if (hasPin) {
+                pinModalMode = 'CHANGE';
+                document.getElementById('pinModalTitle').innerText = '🔐 Change 4-Digit PIN';
+                document.getElementById('oldPinRow').style.display = 'block';
+                document.getElementById('pinMasterKeyRow').style.display = 'none';
+                document.getElementById('forgotPinToggleRow').style.display = 'block';
+            } else {
+                pinModalMode = 'SET';
+                document.getElementById('pinModalTitle').innerText = '🔐 Set New 4-Digit PIN';
+                document.getElementById('oldPinRow').style.display = 'none';
+                document.getElementById('pinMasterKeyRow').style.display = 'none';
+                document.getElementById('forgotPinToggleRow').style.display = 'none';
             }
+
+            document.getElementById('pinManageModal').classList.add('active');
+        }
+
+        function switchToForgotPinMode() {
+            openPinModal(true);
+        }
+
+        function submitPinManagement() {
+            const oldPin = (document.getElementById('oldPinInput').value || '').trim();
+            const newPin = (document.getElementById('newPinInput').value || '').trim();
+            const confPin = (document.getElementById('confirmPinInput').value || '').trim();
+            const masterKey = (document.getElementById('pinMasterKeyInput').value || '').trim();
+            const savedPin = localStorage.getItem(PIN_KEY);
+
+            if (!newPin || newPin.length !== 4 || isNaN(newPin)) {
+                alert('New PIN must be exactly 4 digits!');
+                return;
+            }
+            if (newPin !== confPin) {
+                alert('New PIN and Confirm PIN do not match!');
+                return;
+            }
+
+            if (pinModalMode === 'CHANGE') {
+                if (oldPin !== savedPin) {
+                    alert('Incorrect Current / Old PIN!');
+                    return;
+                }
+            } else if (pinModalMode === 'FORGOT') {
+                const curMaster = localStorage.getItem('shafin_custom_master_pass') || MASTER_ADMIN_PASS;
+                if (masterKey !== curMaster && masterKey !== MASTER_ADMIN_PASS) {
+                    alert('Invalid Admin Master Key!');
+                    return;
+                }
+            }
+
+            localStorage.setItem(PIN_KEY, newPin);
+            refreshPinSettingsUI();
+            closeModal('pinManageModal');
+            
+            document.getElementById('lockScreen').style.display = 'none';
+            localStorage.setItem(LAST_ACTIVE_KEY, Date.now());
+            alert('✅ 4-Digit Security PIN saved successfully!');
         }
 
         function removePinCompletely() {
             const saved = localStorage.getItem(PIN_KEY);
-            if (!saved) {
-                alert('PIN lock is already turned off!');
-                return;
-            }
-            const entered = prompt('Enter your current 4-digit PIN to turn off lock:');
-            if (entered === saved) {
+            if (!saved) return;
+            const entered = prompt('Enter current 4-digit PIN (or Admin Master Key) to turn off lock:');
+            if (!entered) return;
+
+            const curMaster = localStorage.getItem('shafin_custom_master_pass') || MASTER_ADMIN_PASS;
+            if (entered === saved || entered === curMaster || entered === MASTER_ADMIN_PASS) {
                 localStorage.removeItem(PIN_KEY);
-                alert('✅ PIN lock turned off successfully! The app will not ask for a PIN anymore.');
-            } else if (entered) {
-                alert('Incorrect PIN. Lock was not removed.');
+                refreshPinSettingsUI();
+                alert('✅ PIN lock turned off successfully!');
+            } else {
+                alert('Incorrect PIN or Master Key. Lock was not removed.');
             }
         }
 
@@ -1780,7 +1920,7 @@
             renderAll();
         }
 
-        /* Password Management */
+        /* Login Password Management */
         function openChangePasswordModal() {
             document.getElementById('oldPassInput').value = '';
             document.getElementById('newPassInput').value = '';
@@ -1817,14 +1957,15 @@
                 localStorage.setItem('shafin_custom_master_pass', newP);
                 alert('✅ Master Admin Password updated successfully!');
             } else {
-                const userObj = (appData.customUsers || []).find(u => u.userId.toLowerCase() === activeUser.toLowerCase());
+                const regUsers = getRegisteredUsers();
+                const userObj = regUsers.find(u => u.userId.toLowerCase() === activeUser.toLowerCase());
                 if (!userObj || userObj.password !== oldP) {
                     alert('Incorrect Current / Old Password!');
                     return;
                 }
                 userObj.password = newP;
-                saveDatabase();
-                alert('✅ Your password has been updated successfully!');
+                saveRegisteredUsers(regUsers);
+                alert('✅ Your login password has been updated successfully!');
             }
             closeModal('changePasswordModal');
         }
@@ -1852,12 +1993,9 @@
                 return;
             }
 
-            const savedPin = localStorage.getItem(PIN_KEY);
-            const isPinMatch = savedPin && rec === savedPin;
-            const isMasterMatch = rec === MASTER_ADMIN_PASS;
-
-            if (!isPinMatch && !isMasterMatch) {
-                alert('Invalid Security PIN or Master Recovery Key!');
+            const curMaster = localStorage.getItem('shafin_custom_master_pass') || MASTER_ADMIN_PASS;
+            if (rec !== curMaster && rec !== MASTER_ADMIN_PASS) {
+                alert('Invalid Admin Master Key!');
                 return;
             }
 
@@ -1865,28 +2003,17 @@
                 localStorage.setItem('shafin_custom_master_pass', newP);
                 alert('✅ Master Admin Password has been reset successfully!');
             } else {
-                const userObj = (appData.customUsers || []).find(u => u.userId.toLowerCase() === uId.toLowerCase());
+                const regUsers = getRegisteredUsers();
+                const userObj = regUsers.find(u => u.userId.toLowerCase() === uId.toLowerCase());
                 if (!userObj) {
-                    alert(`User '${uId}' not found!`);
+                    alert(`User '${uId}' not found on this device!`);
                     return;
                 }
                 userObj.password = newP;
-                saveDatabase();
-                alert(`✅ Password for '${uId}' has been reset!`);
+                saveRegisteredUsers(regUsers);
+                alert(`✅ Login password for '${uId}' has been reset!`);
             }
             closeModal('forgotPasswordModal');
-        }
-
-        function adminResetFriendPassword(idx) {
-            const user = (appData.customUsers || [])[idx];
-            if (!user) return;
-            const newP = prompt(`Enter new password for ${user.userId}:`);
-            if (newP && newP.trim().length >= 4) {
-                user.password = newP.trim();
-                saveDatabase();
-                renderAdminUsers();
-                alert(`✅ Password for ${user.userId} updated to: ${user.password}`);
-            }
         }
 
         function shareShaFinLink() {
@@ -1916,7 +2043,6 @@
             renderBudgetsTab();
             renderLoansTab();
             renderReports();
-            renderAdminUsers();
         }
 
         function renderMainHeroBudget() {
@@ -2711,64 +2837,90 @@
             }
         }
 
-        /* Admin Users */
-        function createFriendUser() {
-            const uInput = document.getElementById('newFriendUserId');
-            const pInput = document.getElementById('newFriendPassword');
-            const u = (uInput.value || '').trim();
-            const p = (pInput.value || '').trim();
+        /* Reports Analytics */
+        function setReportTimeframe(tf, el) {
+            currentReportTimeframe = tf;
+            document.querySelectorAll('#viewReports .filter-chip').forEach(c => c.classList.remove('active'));
+            if (el) el.classList.add('active');
 
-            if (!u || !p) {
-                alert('Enter User ID and Password for friend!');
-                return;
+            const customBox = document.getElementById('customDateRangeBox');
+            if (tf === 'CUSTOM') {
+                customBox.style.display = 'block';
+            } else {
+                customBox.style.display = 'none';
+                renderReports();
             }
-
-            if (u.toLowerCase() === 'sha') {
-                alert("'Sha' is reserved for Master Admin!");
-                return;
-            }
-
-            if (!appData.customUsers) appData.customUsers = [];
-            if (appData.customUsers.some(x => x.userId.toLowerCase() === u.toLowerCase())) {
-                alert('User ID already exists!');
-                return;
-            }
-
-            appData.customUsers.push({ userId: u, password: p });
-            saveDatabase();
-            uInput.value = '';
-            pInput.value = '';
-            renderAdminUsers();
-            alert(`User '${u}' created!`);
         }
 
-        function renderAdminUsers() {
-            const container = document.getElementById('adminUsersList');
-            if (!container) return;
+        function applyCustomDateFilter() {
+            renderReports();
+        }
 
-            const users = appData.customUsers || [];
-            if (users.length === 0) {
-                container.innerHTML = `<p style="font-size:0.78rem; color:var(--text-dim);">No friend users added yet.</p>`;
+        function renderReports() {
+            const curr = appData.profile.currency || '₹';
+            const today = new Date().toISOString().split('T')[0];
+
+            let filtered = [...appData.transactions];
+
+            if (currentReportTimeframe === 'TODAY') {
+                filtered = filtered.filter(t => t.date === today);
+                document.getElementById('reportRangeIndicator').innerText = 'Today';
+            } else if (currentReportTimeframe === 'WEEK') {
+                const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0];
+                filtered = filtered.filter(t => t.date >= weekAgo);
+                document.getElementById('reportRangeIndicator').innerText = 'Last 7 Days';
+            } else if (currentReportTimeframe === 'MONTH') {
+                const curMonth = today.substring(0, 7);
+                filtered = filtered.filter(t => t.date.startsWith(curMonth));
+                document.getElementById('reportRangeIndicator').innerText = 'This Month';
+            } else if (currentReportTimeframe === 'CUSTOM') {
+                const fromD = document.getElementById('repFromDate').value;
+                const toD = document.getElementById('repToDate').value;
+                if (fromD && toD) {
+                    filtered = filtered.filter(t => t.date >= fromD && t.date <= toD);
+                    document.getElementById('reportRangeIndicator').innerText = `${fromD} to ${toD}`;
+                }
+            }
+
+            let totalInc = 0;
+            let totalExp = 0;
+            const catMap = {};
+
+            filtered.forEach(t => {
+                if (t.type === 'INCOME') {
+                    totalInc += t.amount;
+                } else if (t.type === 'EXPENSE') {
+                    totalExp += t.amount;
+                    catMap[t.categoryName] = (catMap[t.categoryName] || 0) + t.amount;
+                }
+            });
+
+            document.getElementById('repTotalIncome').innerText = `${curr}${totalInc.toLocaleString('en-IN')}`;
+            document.getElementById('repTotalExpense').innerText = `${curr}${totalExp.toLocaleString('en-IN')}`;
+            document.getElementById('repNetSavings').innerText = `${curr}${(totalInc - totalExp).toLocaleString('en-IN')}`;
+
+            const barContainer = document.getElementById('repCategoryBars');
+            const entries = Object.entries(catMap).sort((a,b) => b[1] - a[1]);
+
+            if (entries.length === 0) {
+                barContainer.innerHTML = `<p style="font-size:0.8rem; color:var(--text-dim); text-align:center; padding:12px;">No expense data recorded in this period.</p>`;
                 return;
             }
 
-            container.innerHTML = users.map((u, i) => `
-                <div style="display:flex; justify-content:space-between; align-items:center; background:var(--surface-1); padding:8px 10px; border-radius:6px; margin-bottom:6px; font-size:0.82rem;">
-                    <span>👤 <b>${u.userId}</b> (Pass: <code>${u.password}</code>)</span>
-                    <div>
-                        <button class="chip-btn" style="color:var(--cyan); margin-right:4px;" onclick="adminResetFriendPassword(${i})">Reset 🔑</button>
-                        <button class="chip-btn chip-btn-danger" onclick="deleteFriendUser(${i})">Delete</button>
+            barContainer.innerHTML = entries.map(([name, val]) => {
+                const pct = totalExp > 0 ? ((val / totalExp) * 100).toFixed(1) : 0;
+                return `
+                    <div style="margin-bottom:10px;">
+                        <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:4px;">
+                            <span>${name} (${pct}%)</span>
+                            <b>${curr}${val.toLocaleString('en-IN')}</b>
+                        </div>
+                        <div class="progress-track" style="height:6px;">
+                            <div class="progress-bar" style="width:${pct}%; background:var(--violet);"></div>
+                        </div>
                     </div>
-                </div>
-            `).join('');
-        }
-
-        function deleteFriendUser(i) {
-            if (confirm("Revoke this friend's access?")) {
-                appData.customUsers.splice(i, 1);
-                saveDatabase();
-                renderAdminUsers();
-            }
+                `;
+            }).join('');
         }
 
         /* Navigation */
@@ -2823,14 +2975,20 @@
             renderAll();
         }
 
+        /* FIXED BLOB EXPORT & SANITIZED RESTORE */
         function exportJsonBackup() {
-            const str = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
+            const jsonStr = JSON.stringify(appData, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.setAttribute("href", str);
-            a.setAttribute("download", `shafin_backup_${new Date().toISOString().split('T')[0]}.json`);
+            a.href = url;
+            a.download = `shafin_backup_${new Date().toISOString().split('T')[0]}.json`;
             document.body.appendChild(a);
             a.click();
-            a.remove();
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 200);
         }
 
         function restoreJsonBackup(event) {
@@ -2840,18 +2998,22 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
-                    const parsed = JSON.parse(e.target.result);
-                    if (parsed.budgets || parsed.accounts) {
-                        appData = parsed;
+                    const cleanText = e.target.result.replace(/^\uFEFF/, '').trim();
+                    const parsed = JSON.parse(cleanText);
+                    if (parsed && (parsed.budgets || parsed.accounts)) {
+                        appData = { ...getInitialState(localStorage.getItem(AUTH_USER_KEY) || 'Sha'), ...parsed };
                         saveDatabase();
                         renderAll();
-                        alert('Backup restored successfully!');
-                    } else alert('Invalid backup structure.');
+                        alert('✅ Backup restored successfully!');
+                    } else {
+                        alert('Invalid backup file format.');
+                    }
                 } catch(err) {
-                    alert('Error reading backup file.');
+                    alert('Error reading backup file: ' + err.message);
                 }
+                event.target.value = '';
             };
-            reader.readAsText(file);
+            reader.readAsText(file, 'UTF-8');
         }
 
         let pwaDeferredPrompt = null;
