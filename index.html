@@ -14,6 +14,9 @@
     <link rel="icon" type="image/png" href="./logo.png">
     <link rel="apple-touch-icon" href="./logo.png">
 
+    <!-- Google Identity Services for Direct Drive Sync -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
     <style>
         :root {
             --bg-base: #070b14;
@@ -191,6 +194,15 @@
             border: 1px solid var(--emerald);
             font-weight: 800;
         }
+        .badge-cloud {
+            font-size: 0.62rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: var(--cyan-glow);
+            color: var(--cyan);
+            border: 1px solid rgba(6, 182, 212, 0.4);
+            font-weight: 700;
+        }
 
         .header-actions {
             display: flex;
@@ -250,11 +262,20 @@
         .acc-bank-val { color: var(--cyan); }
         .acc-cash-val { color: var(--emerald); }
         .acc-sub-unbudgeted {
-            font-size: 0.72rem;
+            font-size: 0.71rem;
             color: var(--text-dim);
             margin-top: 4px;
             border-top: 1px solid var(--border-subtle);
             padding-top: 4px;
+            line-height: 1.45;
+        }
+        .acc-sub-unbudgeted div {
+            display: flex;
+            justify-content: space-between;
+        }
+        .acc-sub-unbudgeted b {
+            color: var(--text-med);
+            font-weight: 700;
         }
 
         .hero-budget-card {
@@ -473,18 +494,31 @@
             justify-content: space-between;
             align-items: center;
             width: 100% !important;
+            gap: 8px;
         }
-        .tx-left { display: flex; flex-direction: column; gap: 2px; }
+        .tx-left { display: flex; flex-direction: column; gap: 2px; flex: 1; }
         .tx-title { font-size: 0.92rem; font-weight: 700; }
         .tx-sub { font-size: 0.75rem; color: var(--text-dim); }
+        .tx-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
         .tx-amount { font-size: 1.05rem; font-weight: 800; }
         .val-neg { color: var(--rose); }
         .val-pos { color: var(--emerald); }
+        .tx-actions-row { display: flex; gap: 8px; align-items: center; }
+        .btn-mini-edit {
+            background: transparent;
+            border: none;
+            color: var(--cyan);
+            font-size: 0.72rem;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 2px 4px;
+        }
         .btn-mini-del {
             background: transparent;
             border: none;
-            color: var(--text-dim);
+            color: var(--rose);
             font-size: 0.72rem;
+            font-weight: 700;
             cursor: pointer;
             padding: 2px 4px;
         }
@@ -570,6 +604,7 @@
         .form-row {
             margin-bottom: 14px;
             width: 100% !important;
+            position: relative;
         }
         .form-row label {
             display: block;
@@ -594,6 +629,41 @@
             border-color: var(--cyan) !important;
             box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.25) !important;
         }
+
+        /* Smart Category Scroll-Down Suggestion Box */
+        .cat-dropdown-box {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--surface-2);
+            border: 1px solid var(--border-glow);
+            border-radius: var(--radius-md);
+            max-height: 165px;
+            overflow-y: auto;
+            z-index: 300;
+            margin-top: 4px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+        }
+        .cat-dropdown-box.open { display: block; }
+        .cat-dropdown-item {
+            padding: 10px 14px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-high);
+            border-bottom: 1px solid var(--border-subtle);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .cat-dropdown-item:last-child { border-bottom: none; }
+        .cat-dropdown-item:active, .cat-dropdown-item:hover {
+            background: var(--cyan-glow);
+            color: var(--cyan);
+        }
+
         .modal-foot {
             display: flex;
             gap: 10px;
@@ -744,8 +814,11 @@
 
             <div id="authErrorMessage" style="color:var(--rose); font-size:0.82rem; margin-top:14px; display:none; font-weight:700;"></div>
             
-            <div style="margin-top:16px; border-top:1px solid var(--border-subtle); padding-top:12px;">
-                <button type="button" style="background:transparent; border:none; color:var(--cyan); font-size:0.75rem; font-weight:700; cursor:pointer;" onclick="forceCleanAppReload()">
+            <div style="margin-top:16px; border-top:1px solid var(--border-subtle); padding-top:12px; display:flex; flex-direction:column; gap:10px;">
+                <button type="button" style="background:var(--surface-2); border:1px solid var(--cyan); color:var(--cyan); font-size:0.78rem; font-weight:800; padding:9px 12px; border-radius:10px; cursor:pointer;" onclick="restoreFromGoogleDriveLogin()">
+                    ☁️ Restore from Google Drive
+                </button>
+                <button type="button" style="background:transparent; border:none; color:var(--text-med); font-size:0.75rem; font-weight:700; cursor:pointer;" onclick="forceCleanAppReload()">
                     🔄 Check & Fetch Latest App Update
                 </button>
             </div>
@@ -795,6 +868,7 @@
                 <div class="user-title">
                     <span id="headerUserName">Sha</span>
                     <span id="adminBadgeTag" class="badge-admin">ADMIN</span>
+                    <span id="cloudSyncBadge" class="badge-cloud" style="display:none;">☁️ Synced</span>
                 </div>
             </div>
         </div>
@@ -808,7 +882,7 @@
         <!-- TAB 1: DASHBOARD -->
         <div class="view-panel active" id="viewDashboard">
             
-            <!-- Accounts Overview Strip with Dual Balances -->
+            <!-- Accounts Overview Strip with Dual Balances + Total Budget & Total Bal Budget -->
             <div class="accounts-overview-strip">
                 <div class="account-card" onclick="openBalanceAdjustModal('BANK')">
                     <div class="acc-top">
@@ -816,7 +890,11 @@
                         <span style="font-size:0.7rem; color:var(--cyan);">✎ Edit</span>
                     </div>
                     <div class="acc-val acc-bank-val" id="dispBankBal">₹0</div>
-                    <div class="acc-sub-unbudgeted" id="dispBankUnbudgeted">Available: ₹0</div>
+                    <div class="acc-sub-unbudgeted">
+                        <div><span>Available:</span> <b id="dispBankUnbudgeted">₹0</b></div>
+                        <div><span>Total Budget:</span> <b id="dispTotalBudgetBank">₹0</b></div>
+                        <div><span>Total Bal Budget:</span> <b id="dispTotalBalBudgetBank">₹0</b></div>
+                    </div>
                 </div>
                 <div class="account-card" onclick="openBalanceAdjustModal('CASH')">
                     <div class="acc-top">
@@ -824,7 +902,11 @@
                         <span style="font-size:0.7rem; color:var(--emerald);">✎ Edit</span>
                     </div>
                     <div class="acc-val acc-cash-val" id="dispCashBal">₹0</div>
-                    <div class="acc-sub-unbudgeted" id="dispCashSub">Free Cash</div>
+                    <div class="acc-sub-unbudgeted">
+                        <div><span>Available:</span> <b id="dispCashSub">₹0</b></div>
+                        <div><span>Total Budget:</span> <b id="dispTotalBudgetCash">₹0</b></div>
+                        <div><span>Total Bal Budget:</span> <b id="dispTotalBalBudgetCash">₹0</b></div>
+                    </div>
                 </div>
             </div>
 
@@ -1026,6 +1108,25 @@
                 </div>
             </div>
 
+            <!-- GOOGLE DRIVE AUTO-SYNC CARD (ABOVE BACKUP) -->
+            <div class="card-row" style="cursor:default; border: 1px solid var(--border-glow);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                    <div style="font-size:1rem; font-weight:800; color:var(--emerald);">☁️ Google Drive Cloud Auto-Sync</div>
+                    <span id="driveSyncStatusPill" style="font-size:0.7rem; padding:2px 8px; border-radius:12px; background:var(--surface-2); color:var(--text-dim); font-weight:700;">Not Connected</span>
+                </div>
+                <p id="driveAccountInfoText" style="font-size:0.78rem; color:var(--text-med); margin-bottom:12px; line-height:1.4;">
+                    Auto-syncs all entries into a dedicated <b>ShaFin</b> folder on your Google Drive so your data is never lost.
+                </p>
+                <div style="display:flex; gap:8px;">
+                    <button class="btn-submit" id="btnConnectDrive" style="flex:1; padding:11px; font-size:0.85rem;" onclick="connectGoogleDriveFromSettings()">
+                        ☁️ Connect & Auto-Sync Drive
+                    </button>
+                    <button class="pill-action" id="btnSyncNowDrive" style="display:none; padding:10px 14px;" onclick="syncToGoogleDriveNow(true)">
+                        Sync Now 🔄
+                    </button>
+                </div>
+            </div>
+
             <div class="card-row" style="cursor:default;">
                 <div style="font-size:1rem; font-weight:800; margin-bottom:8px;">💾 Backup & Data Portability</div>
                 <p style="font-size:0.78rem; color:var(--text-dim); margin-bottom:12px;">Download a JSON backup to protect your financial records:</p>
@@ -1077,13 +1178,14 @@
 
     <!-- MODALS -->
 
-    <!-- ENTRY MODAL -->
+    <!-- ENTRY MODAL (CREATE + RE-EDIT + SMART CATEGORY DROPDOWN) -->
     <div class="modal" id="entryModal">
         <div class="modal-body">
             <div class="modal-head">
                 <span id="entryModalHeading">Expenses</span>
                 <span style="cursor:pointer;" onclick="closeModal('entryModal')">✕</span>
             </div>
+            <input type="hidden" id="editTxId">
             <div class="form-row">
                 <label>Amount (<span class="curr-symbol">₹</span>)</label>
                 <input type="number" id="txAmountInput" class="input-box" placeholder="e.g. 150" inputmode="decimal" required>
@@ -1099,16 +1201,10 @@
                 <label>Deduct from Budget</label>
                 <select id="txBudgetSelect" class="input-box"></select>
             </div>
-            <div class="form-row">
-                <label>Category</label>
-                <input type="text" id="txCategoryManual" class="input-box" list="catSuggestions" placeholder="e.g. Metro, Lunch, Petrol...">
-                <datalist id="catSuggestions">
-                    <option value="Metro & Bus">
-                    <option value="Tea & Snacks">
-                    <option value="Lunch & Food">
-                    <option value="Bike Petrol">
-                    <option value="Salary Topup">
-                </datalist>
+            <div class="form-row" id="categoryFormRow">
+                <label>Category (Tap to select saved or type new)</label>
+                <input type="text" id="txCategoryManual" class="input-box" placeholder="e.g. Metro, Lunch, Petrol..." autocomplete="off" onfocus="openCategoryDropdown()" oninput="filterCategoryDropdown()">
+                <div class="cat-dropdown-box" id="catDropdownList"></div>
             </div>
             <div class="form-row">
                 <label>Date</label>
@@ -1120,7 +1216,7 @@
             </div>
             <div class="modal-foot">
                 <button class="btn-cancel" onclick="closeModal('entryModal')">Cancel</button>
-                <button class="btn-submit" onclick="submitTransaction()">Save Entry</button>
+                <button class="btn-submit" id="btnSubmitTx" onclick="submitTransaction()">Save Entry</button>
             </div>
         </div>
     </div>
@@ -1394,7 +1490,7 @@
         </div>
     </div>
 
-    <!-- SELF-REGISTER MODAL FOR FRIENDS (EXACT CENTER POPUP) -->
+    <!-- SELF-REGISTER MODAL FOR FRIENDS (EXACT CENTER POPUP + GOOGLE DRIVE SYNC OPTION) -->
     <div class="modal modal-center" id="registerFriendModal">
         <div class="modal-body">
             <div class="modal-head">
@@ -1416,6 +1512,15 @@
                 <label>Admin Master Invite Key</label>
                 <input type="password" id="regAdminKeyInput" class="input-box" placeholder="Ask Sha for Master Key">
             </div>
+            <div class="form-row" style="background:var(--surface-2); padding:10px; border-radius:var(--radius-md); border:1px solid var(--border-subtle);">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:0.76rem; color:var(--text-med);">Cloud Backup (Optional)</span>
+                    <span id="regDriveStatusBadge" style="font-size:0.72rem; color:var(--cyan); font-weight:700;">Not Linked</span>
+                </div>
+                <button type="button" class="pill-action" style="width:100%; margin-top:8px; text-align:center;" onclick="linkDriveDuringRegistration()">
+                    ☁️ Connect Gmail Drive for Auto-Sync
+                </button>
+            </div>
             <div class="modal-foot">
                 <button class="btn-cancel" onclick="closeModal('registerFriendModal')">Cancel</button>
                 <button class="btn-submit" onclick="submitFriendRegistration()">Create & Log In</button>
@@ -1424,6 +1529,10 @@
     </div>
 
     <script>
+        const GOOGLE_CLIENT_ID = '793277141301-0m4eainm6lu2desmnie5kp763402ui37.apps.googleusercontent.com';
+        const GOOGLE_DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
+        const DRIVE_FOLDER_NAME = 'ShaFin';
+
         const AUTH_USER_KEY = 'shafin_active_session';
         const PIN_KEY = 'shafin_pin';
         const LAST_ACTIVE_KEY = 'shafin_last_active';
@@ -1431,9 +1540,21 @@
         const MASTER_ADMIN_USER = 'sha';
         const MASTER_ADMIN_PASS = 'sha@2664';
 
+        const DEFAULT_CATEGORIES = ['Metro & Bus', 'Tea & Snacks', 'Lunch & Food', 'Bike Petrol', 'Salary Topup'];
+
         function getStorageKeyForUser(uName) {
             const lower = (uName || 'sha').toLowerCase();
             return lower === 'sha' ? 'shafin_master_db_v9' : `shafin_user_db_${lower}`;
+        }
+
+        function getDriveTokenKeyForUser(uName) {
+            const lower = (uName || 'sha').toLowerCase();
+            return `shafin_gdrive_token_${lower}`;
+        }
+
+        function getDriveEmailKeyForUser(uName) {
+            const lower = (uName || 'sha').toLowerCase();
+            return `shafin_gdrive_email_${lower}`;
         }
 
         function getUserStorageKey() {
@@ -1456,6 +1577,7 @@
                 ],
                 loans: [],
                 transactions: [],
+                savedCategories: [...DEFAULT_CATEGORIES],
                 customUsers: []
             };
         }
@@ -1466,6 +1588,8 @@
         let currentLedgerFilter = 'ALL';
         let currentReportTimeframe = 'MONTH';
         let pinModalMode = 'SET';
+        let pendingRegDriveToken = null;
+        let driveAutoSyncTimer = null;
 
         function startLiveClock() {
             function updateClock() {
@@ -1510,13 +1634,13 @@
 
             applyTheme();
             refreshPinSettingsUI();
+            refreshDriveSettingsUI();
 
             const isAdmin = activeUser.toLowerCase() === MASTER_ADMIN_USER;
             document.getElementById('headerUserName').innerText = activeUser;
             document.getElementById('adminBadgeTag').style.display = isAdmin ? 'inline-block' : 'none';
             document.getElementById('settingsUserNameDisplay').innerText = `${activeUser} (${isAdmin ? 'Master Admin' : 'Member'})`;
             
-            // Hide Rename button for Sha Master Admin; update Delete button text for Admin vs Member
             const renameBtn = document.getElementById('btnRenameUserId');
             if (renameBtn) renameBtn.style.display = isAdmin ? 'none' : 'inline-block';
 
@@ -1546,19 +1670,283 @@
                     if (!appData.budgets || appData.budgets.length === 0) {
                         appData.budgets = [{ id: 1, name: 'Travel & Daily Expenses', amount: 7000.00, duration: '5 Months', isMain: true }];
                     }
+                    // Scan existing transactions so older categories are automatically preserved
+                    if (!appData.savedCategories) appData.savedCategories = [...DEFAULT_CATEGORIES];
+                    (appData.transactions || []).forEach(t => {
+                        if (t.categoryName && !t.isLoanPayment && !appData.savedCategories.includes(t.categoryName)) {
+                            appData.savedCategories.push(t.categoryName);
+                        }
+                    });
                 } catch(e) {
                     console.error('Database load error', e);
                 }
             } else {
                 appData = getInitialState(activeUser);
-                saveDatabase();
+                saveDatabase(false);
             }
         }
 
-        function saveDatabase() {
+        function saveDatabase(triggerCloud = true) {
             localStorage.setItem(getUserStorageKey(), JSON.stringify(appData));
+            if (triggerCloud) {
+                scheduleGoogleDriveAutoSync();
+            }
         }
 
+        // ================= GOOGLE DRIVE API INTEGRATION =================
+        function requestGoogleAccessToken(callback) {
+            if (!window.google || !google.accounts || !google.accounts.oauth2) {
+                alert('Google Services script is still loading. Please check internet connection and try again.');
+                return;
+            }
+            const tokenClient = google.accounts.oauth2.initTokenClient({
+                client_id: GOOGLE_CLIENT_ID,
+                scope: GOOGLE_DRIVE_SCOPE,
+                callback: (tokenResponse) => {
+                    if (tokenResponse && tokenResponse.access_token) {
+                        callback(tokenResponse.access_token);
+                    } else {
+                        alert('Google sign-in was cancelled or failed.');
+                    }
+                }
+            });
+            tokenClient.requestAccessToken({ prompt: 'select_account' });
+        }
+
+        async function getOrCreateShaFinFolderId(accessToken) {
+            const query = encodeURIComponent(`name='${DRIVE_FOLDER_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed=false`);
+            const searchRes = await fetch(`https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)`, {
+                headers: { Authorization: `Bearer ${accessToken}` }
+            });
+            const searchData = await searchRes.json();
+            if (searchData.files && searchData.files.length > 0) {
+                return searchData.files[0].id;
+            }
+
+            const createRes = await fetch('https://www.googleapis.com/drive/v3/files', {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: DRIVE_FOLDER_NAME,
+                    mimeType: 'application/vnd.google-apps.folder'
+                })
+            });
+            const folderData = await createRes.json();
+            return folderData.id;
+        }
+
+        async function uploadUserJsonToDrive(accessToken, userId, dataObj) {
+            const folderId = await getOrCreateShaFinFolderId(accessToken);
+            const fileName = `ShaFin_Data_${userId.toLowerCase()}.json`;
+            const query = encodeURIComponent(`name='${fileName}' and '${folderId}' in parents and trashed=false`);
+
+            const searchRes = await fetch(`https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)`, {
+                headers: { Authorization: `Bearer ${accessToken}` }
+            });
+            const searchData = await searchRes.json();
+            const existingFileId = (searchData.files && searchData.files.length > 0) ? searchData.files[0].id : null;
+
+            const payload = {
+                ...dataObj,
+                _cloudMeta: {
+                    userId: userId,
+                    lastSynced: new Date().toISOString()
+                }
+            };
+            const jsonContent = JSON.stringify(payload, null, 2);
+
+            if (existingFileId) {
+                await fetch(`https://www.googleapis.com/upload/drive/v3/files/${existingFileId}?uploadType=media`, {
+                    method: 'PATCH',
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: jsonContent
+                });
+            } else {
+                const boundary = '-------shafin314159265358979323846';
+                const metadata = {
+                    name: fileName,
+                    parents: [folderId],
+                    mimeType: 'application/json'
+                };
+                const multipartBody =
+                    `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n` +
+                    JSON.stringify(metadata) +
+                    `\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n` +
+                    jsonContent +
+                    `\r\n--${boundary}--`;
+
+                await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+                    method: 'POST',
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                        'Content-Type': `multipart/related; boundary="${boundary}"`
+                    },
+                    body: multipartBody
+                });
+            }
+        }
+
+        function scheduleGoogleDriveAutoSync() {
+            const activeUser = localStorage.getItem(AUTH_USER_KEY);
+            if (!activeUser) return;
+            const token = localStorage.getItem(getDriveTokenKeyForUser(activeUser));
+            if (!token) return;
+
+            clearTimeout(driveAutoSyncTimer);
+            driveAutoSyncTimer = setTimeout(() => {
+                syncToGoogleDriveNow(false);
+            }, 1200);
+        }
+
+        async function syncToGoogleDriveNow(showAlerts = false) {
+            const activeUser = localStorage.getItem(AUTH_USER_KEY);
+            if (!activeUser) return;
+            const token = localStorage.getItem(getDriveTokenKeyForUser(activeUser));
+            if (!token) {
+                if (showAlerts) alert('Google Drive is not connected yet.');
+                return;
+            }
+
+            const badge = document.getElementById('cloudSyncBadge');
+            if (badge) {
+                badge.style.display = 'inline-block';
+                badge.innerText = '☁️ Syncing...';
+            }
+
+            try {
+                await uploadUserJsonToDrive(token, activeUser, appData);
+                if (badge) badge.innerText = '☁️ Synced';
+                refreshDriveSettingsUI();
+                if (showAlerts) alert(`✅ Synced to Google Drive (Folder: ShaFin / ShaFin_Data_${activeUser.toLowerCase()}.json)!`);
+            } catch (err) {
+                console.error('Drive sync error', err);
+                if (badge) badge.innerText = '⚠️ Sync Paused';
+                if (showAlerts) {
+                    if (confirm('Google Drive session expired. Reconnect now to sync?')) {
+                        connectGoogleDriveFromSettings();
+                    }
+                }
+            }
+        }
+
+        function connectGoogleDriveFromSettings() {
+            const activeUser = localStorage.getItem(AUTH_USER_KEY) || 'Sha';
+            requestGoogleAccessToken(async (accessToken) => {
+                localStorage.setItem(getDriveTokenKeyForUser(activeUser), accessToken);
+                localStorage.setItem(getDriveEmailKeyForUser(activeUser), 'Connected');
+                refreshDriveSettingsUI();
+                await syncToGoogleDriveNow(true);
+            });
+        }
+
+        function refreshDriveSettingsUI() {
+            const activeUser = localStorage.getItem(AUTH_USER_KEY);
+            if (!activeUser) return;
+            const isConnected = !!localStorage.getItem(getDriveTokenKeyForUser(activeUser));
+
+            const pill = document.getElementById('driveSyncStatusPill');
+            const btnConnect = document.getElementById('btnConnectDrive');
+            const btnSyncNow = document.getElementById('btnSyncNowDrive');
+            const badge = document.getElementById('cloudSyncBadge');
+
+            if (isConnected) {
+                if (pill) {
+                    pill.innerText = 'Auto-Sync Active ✓';
+                    pill.style.background = 'var(--emerald-glow)';
+                    pill.style.color = 'var(--emerald)';
+                }
+                if (btnConnect) btnConnect.innerText = '🔄 Switch / Reconnect Gmail';
+                if (btnSyncNow) btnSyncNow.style.display = 'inline-block';
+                if (badge) badge.style.display = 'inline-block';
+            } else {
+                if (pill) {
+                    pill.innerText = 'Not Connected';
+                    pill.style.background = 'var(--surface-2)';
+                    pill.style.color = 'var(--text-dim)';
+                }
+                if (btnConnect) btnConnect.innerText = '☁️ Connect & Auto-Sync Drive';
+                if (btnSyncNow) btnSyncNow.style.display = 'none';
+                if (badge) badge.style.display = 'none';
+            }
+        }
+
+        function linkDriveDuringRegistration() {
+            requestGoogleAccessToken((accessToken) => {
+                pendingRegDriveToken = accessToken;
+                const badge = document.getElementById('regDriveStatusBadge');
+                if (badge) {
+                    badge.innerText = 'Gmail Linked ✓';
+                    badge.style.color = 'var(--emerald)';
+                }
+            });
+        }
+
+        function restoreFromGoogleDriveLogin() {
+            requestGoogleAccessToken(async (accessToken) => {
+                try {
+                    const folderId = await getOrCreateShaFinFolderId(accessToken);
+                    const query = encodeURIComponent(`'${folderId}' in parents and mimeType='application/json' and trashed=false`);
+                    const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name,modifiedTime)`, {
+                        headers: { Authorization: `Bearer ${accessToken}` }
+                    });
+                    const listData = await res.json();
+                    const files = listData.files || [];
+
+                    if (files.length === 0) {
+                        alert('No ShaFin backup files found in this Google Drive account.');
+                        return;
+                    }
+
+                    let chosenFile = files[0];
+                    if (files.length > 1) {
+                        const namesList = files.map((f, idx) => `${idx + 1}. ${f.name.replace('ShaFin_Data_', '').replace('.json', '')}`).join('\n');
+                        const pick = prompt(`Multiple User IDs found in this Drive. Enter number to restore:\n${namesList}`, '1');
+                        const idx = (parseInt(pick) || 1) - 1;
+                        if (files[idx]) chosenFile = files[idx];
+                    }
+
+                    const fileRes = await fetch(`https://www.googleapis.com/drive/v3/files/${chosenFile.id}?alt=media`, {
+                        headers: { Authorization: `Bearer ${accessToken}` }
+                    });
+                    const restoredObj = await fileRes.json();
+
+                    const restoredUserId = (restoredObj._cloudMeta && restoredObj._cloudMeta.userId)
+                        || (restoredObj.profile && restoredObj.profile.name)
+                        || chosenFile.name.replace('ShaFin_Data_', '').replace('.json', '');
+
+                    // Ensure restored user is registered on this device if not Sha
+                    if (restoredUserId.toLowerCase() !== MASTER_ADMIN_USER) {
+                        const regUsers = getRegisteredUsers();
+                        if (!regUsers.some(u => u.userId.toLowerCase() === restoredUserId.toLowerCase())) {
+                            regUsers.push({ userId: restoredUserId, password: MASTER_ADMIN_PASS });
+                            saveRegisteredUsers(regUsers);
+                        }
+                    }
+
+                    localStorage.setItem(AUTH_USER_KEY, restoredUserId);
+                    localStorage.setItem(getDriveTokenKeyForUser(restoredUserId), accessToken);
+                    localStorage.setItem(LAST_ACTIVE_KEY, Date.now());
+
+                    appData = { ...getInitialState(restoredUserId), ...restoredObj };
+                    saveDatabase(false);
+
+                    document.getElementById('authGateModal').style.display = 'none';
+                    initApp();
+                    alert(`✅ Restored account '${restoredUserId}' from Google Drive successfully!`);
+                } catch (err) {
+                    console.error(err);
+                    alert('Error restoring from Google Drive: ' + err.message);
+                }
+            });
+        }
+
+        // ================= AUTH & USER MANAGEMENT =================
         function getRegisteredUsers() {
             try {
                 return JSON.parse(localStorage.getItem('shafin_registered_users') || '[]');
@@ -1608,7 +1996,6 @@
             }
         }
 
-        // ================= RENAME USER ID & DELETE ACCOUNT =================
         function openRenameUserIdModal() {
             const activeUser = localStorage.getItem(AUTH_USER_KEY) || '';
             if (activeUser.toLowerCase() === MASTER_ADMIN_USER) {
@@ -1650,20 +2037,26 @@
                 return;
             }
 
-            // Migrate existing database to the new User ID key safely
             const oldKey = getStorageKeyForUser(oldUser);
             const newKey = getStorageKeyForUser(newUser);
             appData.profile.name = newUser;
             localStorage.setItem(newKey, JSON.stringify(appData));
             localStorage.removeItem(oldKey);
 
-            // Update user registry and session
+            // Migrate Google Drive token if connected
+            const oldToken = localStorage.getItem(getDriveTokenKeyForUser(oldUser));
+            if (oldToken) {
+                localStorage.setItem(getDriveTokenKeyForUser(newUser), oldToken);
+                localStorage.removeItem(getDriveTokenKeyForUser(oldUser));
+            }
+
             userObj.userId = newUser;
             saveRegisteredUsers(regUsers);
             localStorage.setItem(AUTH_USER_KEY, newUser);
 
             closeModal('renameUserIdModal');
             initApp();
+            scheduleGoogleDriveAutoSync();
             alert(`✅ User ID changed to '${newUser}'! All your financial data has been preserved.`);
         }
 
@@ -1701,29 +2094,32 @@
                     return;
                 }
 
-                // Delete user's isolated data
                 localStorage.removeItem(getUserStorageKey());
+                localStorage.removeItem(getDriveTokenKeyForUser(activeUser));
 
-                // Remove user from registered users list
                 const updatedUsers = regUsers.filter(u => u.userId.toLowerCase() !== activeUser.toLowerCase());
                 saveRegisteredUsers(updatedUsers);
 
-                // Clear active session and return to login screen
                 localStorage.removeItem(AUTH_USER_KEY);
                 alert(`✅ User ID '${activeUser}' and all associated data have been permanently deleted.`);
                 location.reload();
             }
         }
 
-        // ================= FRIEND SELF-REGISTRATION (DIRECT CENTER POPUP) =================
         function openRegisterFriendModal() {
+            pendingRegDriveToken = null;
             document.getElementById('regUserIdInput').value = '';
             document.getElementById('regPasswordInput').value = '';
             document.getElementById('regAdminKeyInput').value = '';
+            const badge = document.getElementById('regDriveStatusBadge');
+            if (badge) {
+                badge.innerText = 'Not Linked';
+                badge.style.color = 'var(--cyan)';
+            }
             document.getElementById('registerFriendModal').classList.add('active');
         }
 
-        function submitFriendRegistration() {
+        async function submitFriendRegistration() {
             const uId = (document.getElementById('regUserIdInput').value || '').trim();
             const pass = (document.getElementById('regPasswordInput').value || '').trim();
             const key = (document.getElementById('regAdminKeyInput').value || '').trim();
@@ -1753,15 +2149,22 @@
             }
             saveRegisteredUsers(regUsers);
 
+            if (pendingRegDriveToken) {
+                localStorage.setItem(getDriveTokenKeyForUser(uId), pendingRegDriveToken);
+            }
+
             closeModal('registerFriendModal');
             localStorage.setItem(AUTH_USER_KEY, uId);
             localStorage.setItem(LAST_ACTIVE_KEY, Date.now());
             document.getElementById('authGateModal').style.display = 'none';
             initApp();
+            if (pendingRegDriveToken) {
+                await syncToGoogleDriveNow(false);
+            }
             alert(`✅ Account '${uId}' registered and logged in successfully!`);
         }
 
-        // ================= SECURITY PIN MANAGEMENT (SET / CHANGE / FORGOT / REMOVE) =================
+        // ================= SECURITY PIN MANAGEMENT =================
         window.addEventListener('beforeunload', () => {
             sessionStorage.setItem('shafin_refresh_flag', 'true');
         });
@@ -1952,28 +2355,35 @@
             saveDatabase();
         }
 
-        /* Dual Balances (Total Cleared vs Unbudgeted Free Balance) */
+        // ================= DUAL BALANCES + TOTAL BUDGET & BAL BUDGET =================
         function renderAccountsStrip() {
             const curr = appData.profile.currency || '₹';
             const totalBank = appData.accounts.bank || 0;
             const totalCash = appData.accounts.cash || 0;
 
-            let totalAllocatedBudgetRemaining = 0;
+            let totalAllocatedBudgets = 0;
+            let totalBalBudgets = 0;
+
             (appData.budgets || []).forEach(b => {
+                totalAllocatedBudgets += (b.amount || 0);
                 let spent = 0;
                 appData.transactions.forEach(t => {
                     if (t.type === 'EXPENSE' && t.budgetId === b.id) spent += t.amount;
                 });
-                totalAllocatedBudgetRemaining += Math.max(0, b.amount - spent);
+                totalBalBudgets += Math.max(0, (b.amount || 0) - spent);
             });
 
-            const unbudgetedFreeBank = totalBank - totalAllocatedBudgetRemaining;
+            const unbudgetedFreeBank = totalBank - totalBalBudgets;
 
             document.getElementById('dispBankBal').innerText = `${curr}${totalBank.toLocaleString('en-IN')}`;
-            document.getElementById('dispBankUnbudgeted').innerText = `Available: ${curr}${unbudgetedFreeBank.toLocaleString('en-IN')}`;
+            document.getElementById('dispBankUnbudgeted').innerText = `${curr}${unbudgetedFreeBank.toLocaleString('en-IN')}`;
+            document.getElementById('dispTotalBudgetBank').innerText = `${curr}${totalAllocatedBudgets.toLocaleString('en-IN')}`;
+            document.getElementById('dispTotalBalBudgetBank').innerText = `${curr}${totalBalBudgets.toLocaleString('en-IN')}`;
             
             document.getElementById('dispCashBal').innerText = `${curr}${totalCash.toLocaleString('en-IN')}`;
-            document.getElementById('dispCashSub').innerText = `Free Cash: ${curr}${totalCash.toLocaleString('en-IN')}`;
+            document.getElementById('dispCashSub').innerText = `${curr}${totalCash.toLocaleString('en-IN')}`;
+            document.getElementById('dispTotalBudgetCash').innerText = `${curr}${totalAllocatedBudgets.toLocaleString('en-IN')}`;
+            document.getElementById('dispTotalBalBudgetCash').innerText = `${curr}${totalBalBudgets.toLocaleString('en-IN')}`;
         }
 
         function openBalanceAdjustModal(acc) {
@@ -1994,7 +2404,7 @@
             renderAll();
         }
 
-        /* Loan Prepayment / Bulk Part-Payment */
+        // ================= LOAN PREPAYMENT =================
         function openLoanPrepayModal(loanId) {
             const loan = appData.loans.find(l => l.id === loanId);
             if (!loan) return;
@@ -2067,7 +2477,7 @@
             renderAll();
         }
 
-        /* Login Password Management */
+        // ================= PASSWORD MANAGEMENT =================
         function openChangePasswordModal() {
             document.getElementById('oldPassInput').value = '';
             document.getElementById('newPassInput').value = '';
@@ -2180,7 +2590,7 @@
             }
         }
 
-        /* Rendering Engines */
+        // ================= RENDERING ENGINES =================
         function renderAll() {
             renderAccountsStrip();
             renderMainHeroBudget();
@@ -2292,7 +2702,6 @@
             }).join('');
         }
 
-        /* Accurate Countdown Banner based on Start Date */
         function renderEmiReminderBanner() {
             const widget = document.getElementById('dashboardEmiWidget');
             const curr = appData.profile.currency || '₹';
@@ -2419,7 +2828,10 @@
                     </div>
                     <div class="tx-right">
                         <span class="tx-amount val-neg">-${curr}${t.amount.toLocaleString('en-IN')}</span>
-                        <button class="btn-mini-del" onclick="deleteTransaction(${t.id})">Delete</button>
+                        <div class="tx-actions-row">
+                            <button class="btn-mini-edit" onclick="openEditTransactionModal(${t.id})">Edit ✎</button>
+                            <button class="btn-mini-del" onclick="deleteTransaction(${t.id})">Delete</button>
+                        </div>
                     </div>
                 </div>
             `).join('');
@@ -2473,7 +2885,6 @@
             }).join('');
         }
 
-        /* Month-wise Statement with Exact Due Dates */
         function openLoanStatement(loanId) {
             const loan = appData.loans.find(l => l.id === loanId);
             if (!loan) return;
@@ -2570,12 +2981,10 @@
             document.getElementById('loanStatementView').style.display = 'none';
         }
 
-        /* Direct Account Deduction without Prompts */
         function toggleLoanInstallmentPaid(loanId, monthNumber, shouldMarkPaid) {
             const loan = appData.loans.find(l => l.id === loanId);
             if (!loan) return;
             if (!loan.paidInstallments) loan.paidInstallments = [];
-            const curr = appData.profile.currency || '₹';
             const accChoice = loan.account || 'BANK';
 
             if (shouldMarkPaid) {
@@ -2659,10 +3068,61 @@
             alert(`✅ Month ${nextMonth} EMI (${curr}${loan.emiAmount.toLocaleString('en-IN')}) deducted directly from ${accountChoice === 'BANK' ? 'Bank Account' : 'Cash in Hand'}!`);
         }
 
-        /* Transactions CRUD */
+        // ================= SMART CATEGORY DROPDOWN =================
+        function openCategoryDropdown() {
+            filterCategoryDropdown();
+            document.getElementById('catDropdownList').classList.add('open');
+        }
+
+        function closeCategoryDropdown() {
+            const box = document.getElementById('catDropdownList');
+            if (box) box.classList.remove('open');
+        }
+
+        function filterCategoryDropdown() {
+            const inputVal = (document.getElementById('txCategoryManual').value || '').trim().toLowerCase();
+            const list = appData.savedCategories || DEFAULT_CATEGORIES;
+            const matches = inputVal
+                ? list.filter(c => c.toLowerCase().includes(inputVal))
+                : list;
+
+            const box = document.getElementById('catDropdownList');
+            if (matches.length === 0) {
+                box.innerHTML = `<div class="cat-dropdown-item" style="color:var(--emerald);">+ Create new category "${document.getElementById('txCategoryManual').value.trim()}"</div>`;
+            } else {
+                box.innerHTML = matches.map(cat => `
+                    <div class="cat-dropdown-item" onclick="selectSavedCategory('${cat.replace(/'/g, "\\'")}')">
+                        <span>${cat}</span>
+                        <span style="font-size:0.7rem; color:var(--text-dim);">Tap</span>
+                    </div>
+                `).join('');
+            }
+            box.classList.add('open');
+        }
+
+        function selectSavedCategory(catName) {
+            document.getElementById('txCategoryManual').value = catName;
+            closeCategoryDropdown();
+        }
+
+        document.addEventListener('click', (e) => {
+            const row = document.getElementById('categoryFormRow');
+            if (row && !row.contains(e.target)) {
+                closeCategoryDropdown();
+            }
+        });
+
+        // ================= TRANSACTIONS CRUD + RE-EDIT =================
         function openEntryModal(type) {
             currentEntryType = type;
+            document.getElementById('editTxId').value = '';
             document.getElementById('entryModalHeading').innerText = type === 'EXPENSE' ? 'Log Expense' : 'Add Income / Top-up';
+            document.getElementById('btnSubmitTx').innerText = 'Save Entry';
+
+            document.getElementById('txAmountInput').value = '';
+            document.getElementById('txAccountSelect').value = 'BANK';
+            document.getElementById('txCategoryManual').value = '';
+            document.getElementById('txNoteInput').value = '';
 
             const budgetRow = document.getElementById('budgetLinkRow');
             const budgetSelect = document.getElementById('txBudgetSelect');
@@ -2675,51 +3135,128 @@
             }
 
             document.getElementById('txDateInput').value = new Date().toISOString().split('T')[0];
+            closeCategoryDropdown();
+            document.getElementById('entryModal').classList.add('active');
+        }
+
+        function openEditTransactionModal(id) {
+            const tx = appData.transactions.find(t => t.id === id);
+            if (!tx) return;
+
+            currentEntryType = tx.type;
+            document.getElementById('editTxId').value = tx.id;
+            document.getElementById('entryModalHeading').innerText = tx.type === 'EXPENSE' ? 'Re-Edit Expense' : 'Re-Edit Income';
+            document.getElementById('btnSubmitTx').innerText = 'Update Entry';
+
+            document.getElementById('txAmountInput').value = tx.amount;
+            document.getElementById('txAccountSelect').value = tx.account || 'BANK';
+            document.getElementById('txCategoryManual').value = tx.categoryName || '';
+            document.getElementById('txDateInput').value = tx.date || new Date().toISOString().split('T')[0];
+            document.getElementById('txNoteInput').value = tx.note || '';
+
+            const budgetRow = document.getElementById('budgetLinkRow');
+            const budgetSelect = document.getElementById('txBudgetSelect');
+
+            if (tx.type === 'EXPENSE') {
+                budgetRow.style.display = 'block';
+                budgetSelect.innerHTML = appData.budgets.map(b => `<option value="${b.id}">${b.isMain ? '⭐ ' : ''}${b.name}</option>`).join('') + `<option value="">-- Do Not Deduct from Budget --</option>`;
+                budgetSelect.value = tx.budgetId ? String(tx.budgetId) : '';
+            } else {
+                budgetRow.style.display = 'none';
+            }
+
+            closeCategoryDropdown();
             document.getElementById('entryModal').classList.add('active');
         }
 
         function submitTransaction() {
+            const editId = document.getElementById('editTxId').value;
             const amt = parseFloat(document.getElementById('txAmountInput').value);
             const acc = document.getElementById('txAccountSelect').value;
             const cat = (document.getElementById('txCategoryManual').value || '').trim() || (currentEntryType === 'EXPENSE' ? 'General Spend' : 'Fund Topup');
             const date = document.getElementById('txDateInput').value;
             const note = (document.getElementById('txNoteInput').value || '').trim();
-            const budgetId = parseInt(document.getElementById('txBudgetSelect').value) || null;
+            const budgetId = currentEntryType === 'EXPENSE' ? (parseInt(document.getElementById('txBudgetSelect').value) || null) : null;
 
             if (!amt || amt <= 0) {
                 alert('Please enter a valid amount!');
                 return;
             }
 
-            if (currentEntryType === 'EXPENSE') {
-                if (acc === 'BANK') appData.accounts.bank -= amt;
-                else appData.accounts.cash -= amt;
-            } else {
-                if (acc === 'BANK') appData.accounts.bank += amt;
-                else appData.accounts.cash += amt;
+            // Save category to auto-suggest list if new
+            if (!appData.savedCategories) appData.savedCategories = [...DEFAULT_CATEGORIES];
+            if (!appData.savedCategories.some(c => c.toLowerCase() === cat.toLowerCase())) {
+                appData.savedCategories.unshift(cat);
             }
 
-            const tx = {
-                id: Date.now(),
-                type: currentEntryType,
-                amount: amt,
-                account: acc,
-                categoryName: cat,
-                date: date,
-                note: note,
-                budgetId: budgetId,
-                isLoanPayment: false
-            };
+            if (editId) {
+                const existingTx = appData.transactions.find(t => t.id === parseInt(editId));
+                if (existingTx) {
+                    // 1. Revert old transaction's effect on Bank/Cash balance
+                    if (existingTx.type === 'EXPENSE') {
+                        if (existingTx.account === 'BANK') appData.accounts.bank += existingTx.amount;
+                        else appData.accounts.cash += existingTx.amount;
+                    } else {
+                        if (existingTx.account === 'BANK') appData.accounts.bank -= existingTx.amount;
+                        else appData.accounts.cash -= existingTx.amount;
+                    }
 
-            appData.transactions.unshift(tx);
+                    // 2. Apply updated transaction's effect on Bank/Cash balance
+                    if (currentEntryType === 'EXPENSE') {
+                        if (acc === 'BANK') appData.accounts.bank -= amt;
+                        else appData.accounts.cash -= amt;
+                    } else {
+                        if (acc === 'BANK') appData.accounts.bank += amt;
+                        else appData.accounts.cash += amt;
+                    }
+
+                    // 3. Update fields
+                    existingTx.amount = amt;
+                    existingTx.account = acc;
+                    existingTx.categoryName = cat;
+                    existingTx.date = date;
+                    existingTx.note = note;
+                    existingTx.budgetId = budgetId;
+                }
+            } else {
+                if (currentEntryType === 'EXPENSE') {
+                    if (acc === 'BANK') appData.accounts.bank -= amt;
+                    else appData.accounts.cash -= amt;
+                } else {
+                    if (acc === 'BANK') appData.accounts.bank += amt;
+                    else appData.accounts.cash += amt;
+                }
+
+                const tx = {
+                    id: Date.now(),
+                    type: currentEntryType,
+                    amount: amt,
+                    account: acc,
+                    categoryName: cat,
+                    date: date,
+                    note: note,
+                    budgetId: budgetId,
+                    isLoanPayment: false
+                };
+
+                appData.transactions.unshift(tx);
+            }
+
             saveDatabase();
             closeModal('entryModal');
 
+            document.getElementById('editTxId').value = '';
             document.getElementById('txAmountInput').value = '';
             document.getElementById('txCategoryManual').value = '';
             document.getElementById('txNoteInput').value = '';
 
             renderAll();
+
+            // Refresh open budget ledger if active
+            const bView = document.getElementById('budgetSpecificLedgerView');
+            if (bView && bView.style.display === 'block' && budgetId) {
+                openBudgetLedger(budgetId);
+            }
         }
 
         function deleteTransaction(id) {
@@ -2781,7 +3318,10 @@
                         <span class="tx-amount ${t.type === 'EXPENSE' ? 'val-neg' : 'val-pos'}">
                             ${t.type === 'EXPENSE' ? '-' : '+'}${curr}${t.amount.toLocaleString('en-IN')}
                         </span>
-                        <button class="btn-mini-del" onclick="deleteTransaction(${t.id})">Delete ✕</button>
+                        <div class="tx-actions-row">
+                            ${!t.isLoanPayment ? `<button class="btn-mini-edit" onclick="openEditTransactionModal(${t.id})">Edit ✎</button>` : ''}
+                            <button class="btn-mini-del" onclick="deleteTransaction(${t.id})">Delete ✕</button>
+                        </div>
                     </div>
                 </div>
             `;
@@ -2800,7 +3340,7 @@
             }
         }
 
-        /* Budget CRUD */
+        // ================= BUDGET CRUD =================
         function openCreateBudgetModal() {
             document.getElementById('budgetModalHeading').innerText = 'Create New Budget';
             document.getElementById('editBudgetId').value = '';
@@ -2880,7 +3420,7 @@
             }
         }
 
-        /* Loan CRUD */
+        // ================= LOAN CRUD =================
         function openAddLoanModal() {
             document.getElementById('loanModalHeading').innerText = 'Add Loan';
             document.getElementById('editLoanId').value = '';
@@ -2984,7 +3524,7 @@
             }
         }
 
-        /* Reports Analytics */
+        // ================= REPORTS ANALYTICS =================
         function setReportTimeframe(tf, el) {
             currentReportTimeframe = tf;
             document.querySelectorAll('#viewReports .filter-chip').forEach(c => c.classList.remove('active'));
@@ -3070,7 +3610,7 @@
             }).join('');
         }
 
-        /* Navigation */
+        // ================= NAVIGATION & UTILS =================
         function switchTab(tabId) {
             document.querySelectorAll('.dock-item').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.view-panel').forEach(el => el.classList.remove('active'));
@@ -3122,7 +3662,6 @@
             renderAll();
         }
 
-        /* FIXED BLOB EXPORT & SANITIZED RESTORE */
         function exportJsonBackup() {
             const jsonStr = JSON.stringify(appData, null, 2);
             const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8' });
