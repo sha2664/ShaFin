@@ -784,6 +784,104 @@
             transition: transform 0.15s ease;
         }
         .num-btn:active { transform: scale(0.92); background: var(--surface-2); }
+
+        /* JARVIS V10: NET WORTH BAR, UNDO TOAST, SELF TRANSFER & PC WIDE COMMAND CENTER */
+        .networth-strip {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.10), rgba(6, 182, 212, 0.08));
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 10px 14px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.78rem;
+        }
+        .nw-item { display: flex; flex-direction: column; }
+        .nw-item span { color: var(--text-dim); font-size: 0.68rem; font-weight: 700; text-transform: uppercase; }
+        .nw-item b { font-size: 0.92rem; font-weight: 800; margin-top: 1px; }
+
+        .actions-grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 0.85fr;
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+        .btn-xfer {
+            background: linear-gradient(135deg, rgba(139,92,246,0.18), rgba(6,182,212,0.08));
+            border: 1px solid var(--violet);
+            color: var(--violet);
+            padding: 14px 8px;
+            font-size: 0.85rem;
+        }
+
+        .undo-toast {
+            position: fixed;
+            bottom: 82px;
+            left: 50%;
+            transform: translateX(-50%) translateY(120px);
+            background: var(--surface-2);
+            border: 1px solid var(--cyan);
+            color: var(--text-high);
+            padding: 11px 16px;
+            border-radius: 30px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            z-index: 9500;
+            font-size: 0.84rem;
+            font-weight: 700;
+            transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+            max-width: 92vw;
+        }
+        .undo-toast.visible {
+            transform: translateX(-50%) translateY(0);
+        }
+        .btn-undo-toast {
+            background: var(--cyan);
+            color: #070b14;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 0.78rem;
+            cursor: pointer;
+        }
+
+        /* PC & TABLET WIDE SCREEN COMMAND CENTER */
+        @media (min-width: 840px) {
+            body { padding-bottom: 84px; }
+            header { padding: 14px 32px; }
+            main {
+                max-width: 1180px;
+                padding: 24px 32px;
+            }
+            .dash-desktop-grid {
+                display: grid;
+                grid-template-columns: 1.08fr 0.92fr;
+                gap: 24px;
+                align-items: start;
+            }
+            .budgets-desktop-grid, .loans-desktop-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 14px;
+            }
+            .budgets-desktop-grid .card-row, .loans-desktop-grid .card-row {
+                margin-bottom: 0;
+            }
+            .dock {
+                max-width: 680px;
+                left: 50%;
+                transform: translateX(-50%);
+                bottom: 12px;
+                border-radius: 20px;
+                border: 1px solid var(--border-glow);
+                box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -881,60 +979,94 @@
     <main>
         <!-- TAB 1: DASHBOARD -->
         <div class="view-panel active" id="viewDashboard">
-            
-            <!-- Accounts Overview Strip with Dual Balances + Total Budget & Total Bal Budget -->
-            <div class="accounts-overview-strip">
-                <div class="account-card" onclick="openBalanceAdjustModal('BANK')">
-                    <div class="acc-top">
-                        <span>🏦 Bank Balance</span>
-                        <span style="font-size:0.7rem; color:var(--cyan);">✎ Edit</span>
+            <div class="dash-desktop-grid">
+                <!-- LEFT COMMAND COLUMN -->
+                <div class="dash-col-left">
+                    <!-- Net Worth Intelligence Bar -->
+                    <div class="networth-strip">
+                        <div class="nw-item">
+                            <span>Total Liquid</span>
+                            <b style="color:var(--emerald);" id="nwLiquidVal">₹0</b>
+                        </div>
+                        <div class="nw-item" style="text-align:center;">
+                            <span>Active Loan Debt</span>
+                            <b style="color:var(--rose);" id="nwDebtVal">₹0</b>
+                        </div>
+                        <div class="nw-item" style="text-align:right;">
+                            <span>Net Worth</span>
+                            <b style="color:var(--cyan);" id="nwNetVal">₹0</b>
+                        </div>
                     </div>
-                    <div class="acc-val acc-bank-val" id="dispBankBal">₹0</div>
-                    <div class="acc-sub-unbudgeted">
-                        <div><span>Available:</span> <b id="dispBankUnbudgeted">₹0</b></div>
-                        <div><span>Total Budget:</span> <b id="dispTotalBudgetBank">₹0</b></div>
-                        <div><span>Total Bal Budget:</span> <b id="dispTotalBalBudgetBank">₹0</b></div>
+
+                    <!-- Accounts Overview Strip with Accurate Bank vs Cash Budgets -->
+                    <div class="accounts-overview-strip">
+                        <div class="account-card" onclick="openBalanceAdjustModal('BANK')">
+                            <div class="acc-top">
+                                <span>🏦 Bank Balance</span>
+                                <span style="font-size:0.7rem; color:var(--cyan);">✎ Edit</span>
+                            </div>
+                            <div class="acc-val acc-bank-val" id="dispBankBal">₹0</div>
+                            <div class="acc-sub-unbudgeted">
+                                <div><span>Available:</span> <b id="dispBankUnbudgeted">₹0</b></div>
+                                <div><span>Total Budget:</span> <b id="dispTotalBudgetBank">₹0</b></div>
+                                <div><span>Total Bal Budget:</span> <b id="dispTotalBalBudgetBank">₹0</b></div>
+                            </div>
+                        </div>
+                        <div class="account-card" onclick="openBalanceAdjustModal('CASH')">
+                            <div class="acc-top">
+                                <span>💵 Cash in Hand</span>
+                                <span style="font-size:0.7rem; color:var(--emerald);">✎ Edit</span>
+                            </div>
+                            <div class="acc-val acc-cash-val" id="dispCashBal">₹0</div>
+                            <div class="acc-sub-unbudgeted">
+                                <div><span>Available:</span> <b id="dispCashSub">₹0</b></div>
+                                <div><span>Total Budget:</span> <b id="dispTotalBudgetCash">₹0</b></div>
+                                <div><span>Total Bal Budget:</span> <b id="dispTotalBalBudgetCash">₹0</b></div>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Hero Budget Card -->
+                    <div id="heroBudgetArea" onclick="openBudgetLedgerFromHero()"></div>
+
+                    <!-- 3-Way Quick Action Bar -->
+                    <div class="actions-grid-3">
+                        <button class="btn-action btn-exp" onclick="openEntryModal('EXPENSE')">
+                            <span>➖</span> Expense
+                        </button>
+                        <button class="btn-action btn-inc" onclick="openEntryModal('INCOME')">
+                            <span>➕</span> Income
+                        </button>
+                        <button class="btn-action btn-xfer" onclick="openSelfTransferModal()">
+                            <span>🔄</span> Transfer
+                        </button>
+                    </div>
+
+                    <div id="dashboardEmiWidget"></div>
+                    <div id="dashboardRecurringWidget"></div>
                 </div>
-                <div class="account-card" onclick="openBalanceAdjustModal('CASH')">
-                    <div class="acc-top">
-                        <span>💵 Cash in Hand</span>
-                        <span style="font-size:0.7rem; color:var(--emerald);">✎ Edit</span>
+
+                <!-- RIGHT COMMAND COLUMN -->
+                <div class="dash-col-right">
+                    <div class="section-header" style="margin-top:0;">
+                        <span>Recurring Bills & Alerts</span>
+                        <span class="pill-action" onclick="openRecurringBillModal()">+ Add Bill</span>
                     </div>
-                    <div class="acc-val acc-cash-val" id="dispCashBal">₹0</div>
-                    <div class="acc-sub-unbudgeted">
-                        <div><span>Available:</span> <b id="dispCashSub">₹0</b></div>
-                        <div><span>Total Budget:</span> <b id="dispTotalBudgetCash">₹0</b></div>
-                        <div><span>Total Bal Budget:</span> <b id="dispTotalBalBudgetCash">₹0</b></div>
+                    <div id="recurringBillsListContainer"></div>
+
+                    <div class="section-header">
+                        <span>Other Budgets</span>
+                        <span class="pill-action" onclick="openCreateBudgetModal()">+ New Budget</span>
                     </div>
+                    <div id="otherBudgetsContainer"></div>
+
+                    <div class="section-header">
+                        <span>Recent Expenses & Income</span>
+                        <span class="pill-action" onclick="switchTab('tabLedger')">View All</span>
+                    </div>
+                    <div id="recentTxList"></div>
                 </div>
             </div>
-
-            <!-- Hero Budget Card -->
-            <div id="heroBudgetArea" onclick="openBudgetLedgerFromHero()"></div>
-
-            <div class="actions-grid">
-                <button class="btn-action btn-exp" onclick="openEntryModal('EXPENSE')">
-                    <span>➖</span> Expenses
-                </button>
-                <button class="btn-action btn-inc" onclick="openEntryModal('INCOME')">
-                    <span>➕</span> Income
-                </button>
-            </div>
-
-            <div id="dashboardEmiWidget"></div>
-
-            <div class="section-header">
-                <span>Other Budgets</span>
-                <span class="pill-action" onclick="openCreateBudgetModal()">+ New Budget</span>
-            </div>
-            <div id="otherBudgetsContainer"></div>
-
-            <div class="section-header">
-                <span>Recent Expenses & Income</span>
-                <span class="pill-action" onclick="switchTab('tabLedger')">View All</span>
-            </div>
-            <div id="recentTxList"></div>
         </div>
 
         <!-- TAB 2: BUDGETS -->
@@ -943,7 +1075,7 @@
                 <span>Multi-Budget Central</span>
                 <span class="pill-action" onclick="openCreateBudgetModal()">+ Create Budget</span>
             </div>
-            <div id="allBudgetsDetailList"></div>
+            <div id="allBudgetsDetailList" class="budgets-desktop-grid"></div>
 
             <div id="budgetSpecificLedgerView" style="display:none; margin-top:20px;">
                 <div class="section-header" style="border-top:1px solid var(--border-subtle); padding-top:16px;">
@@ -981,7 +1113,7 @@
                 <span>Loan & EMI Manager</span>
                 <span class="pill-action" onclick="openAddLoanModal()">+ Add Loan</span>
             </div>
-            <div id="loansCardsContainer"></div>
+            <div id="loansCardsContainer" class="loans-desktop-grid"></div>
 
             <div id="loanStatementView" style="display:none; margin-top:20px;">
                 <div class="section-header" style="border-top:1px solid var(--border-subtle); padding-top:16px;">
@@ -996,7 +1128,11 @@
         <div class="view-panel" id="viewReports">
             <div class="section-header">
                 <span>Financial Analytics</span>
-                <span class="pill-action" id="reportRangeIndicator">This Month</span>
+                <div style="display:flex; gap:6px; align-items:center;">
+                    <span class="pill-action" id="reportRangeIndicator">This Month</span>
+                    <button class="pill-action" style="background:var(--emerald-glow); color:var(--emerald); border-color:var(--emerald);" onclick="exportReportsCsv()">📥 CSV</button>
+                    <button class="pill-action" onclick="window.print()">🖨️ PDF</button>
+                </div>
             </div>
 
             <div class="filter-strip">
@@ -1108,15 +1244,22 @@
                 </div>
             </div>
 
-            <!-- GOOGLE DRIVE AUTO-SYNC CARD (ABOVE BACKUP) -->
+            <!-- GOOGLE DRIVE AUTO-SYNC CARD + AES-256 ENCRYPTION SHIELD -->
             <div class="card-row" style="cursor:default; border: 1px solid var(--border-glow);">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
                     <div style="font-size:1rem; font-weight:800; color:var(--emerald);">☁️ Google Drive Cloud Auto-Sync</div>
                     <span id="driveSyncStatusPill" style="font-size:0.7rem; padding:2px 8px; border-radius:12px; background:var(--surface-2); color:var(--text-dim); font-weight:700;">Not Connected</span>
                 </div>
-                <p id="driveAccountInfoText" style="font-size:0.78rem; color:var(--text-med); margin-bottom:12px; line-height:1.4;">
-                    Auto-syncs all entries into a dedicated <b>ShaFin</b> folder on your Google Drive so your data is never lost.
+                <p id="driveAccountInfoText" style="font-size:0.78rem; color:var(--text-med); margin-bottom:10px; line-height:1.4;">
+                    Auto-syncs all entries into a dedicated <b>ShaFin</b> folder on your Google Drive with SHA-256 credential protection.
                 </p>
+                <div style="background:var(--surface-2); padding:9px 12px; border-radius:var(--radius-md); border:1px solid var(--border-subtle); margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div style="font-size:0.8rem; font-weight:800; color:var(--cyan);">🔐 AES-256 Cloud Encryption</div>
+                        <div style="font-size:0.7rem; color:var(--text-dim);">Auto-encrypts Drive JSON & auto-unlocks on restore (zero prompts)</div>
+                    </div>
+                    <input type="checkbox" id="driveEncryptToggle" style="width:18px; height:18px; cursor:pointer;" onchange="toggleDriveEncryption(this.checked)">
+                </div>
                 <div style="display:flex; gap:8px;">
                     <button class="btn-submit" id="btnConnectDrive" style="flex:1; padding:11px; font-size:0.85rem;" onclick="connectGoogleDriveFromSettings()">
                         ☁️ Connect & Auto-Sync Drive
@@ -1237,9 +1380,22 @@
                 <label>Allocated Amount (<span class="curr-symbol">₹</span>)</label>
                 <input type="number" id="bAmountInput" class="input-box" placeholder="e.g. 7000">
             </div>
+            <div class="form-row" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <div>
+                    <label>Plan Duration Label</label>
+                    <input type="text" id="bDurationInput" class="input-box" placeholder="e.g. 5 Months">
+                </div>
+                <div>
+                    <label>Target End Date (Safe-to-Spend)</label>
+                    <input type="date" id="bEndDateInput" class="input-box">
+                </div>
+            </div>
             <div class="form-row">
-                <label>Plan Duration / Target</label>
-                <input type="text" id="bDurationInput" class="input-box" placeholder="e.g. 5 Months">
+                <label>Linked Account</label>
+                <select id="bAccountTypeSelect" class="input-box">
+                    <option value="BANK">🏦 Bank Account</option>
+                    <option value="CASH">💵 Cash in Hand</option>
+                </select>
             </div>
             <div class="form-row" style="display:flex; align-items:center; gap:10px; margin-top:8px;">
                 <input type="checkbox" id="bIsMainCheck" style="width:18px; height:18px;">
@@ -1528,6 +1684,90 @@
         </div>
     </div>
 
+
+    <!-- SELF TRANSFER MODAL (BANK <-> CASH) -->
+    <div class="modal modal-center" id="selfTransferModal">
+        <div class="modal-body">
+            <div class="modal-head">
+                <span>🔄 Self Transfer (Bank ⇄ Cash)</span>
+                <span style="cursor:pointer;" onclick="closeModal('selfTransferModal')">✕</span>
+            </div>
+            <p style="font-size:0.78rem; color:var(--text-med); margin-bottom:14px;">
+                Move funds between your Bank & Cash without inflating your Expense or Income reports:
+            </p>
+            <div class="form-row">
+                <label>Transfer Direction</label>
+                <select id="xferDirectionSelect" class="input-box">
+                    <option value="BANK_TO_CASH">🏦 Bank ➔ 💵 Cash (ATM Withdrawal)</option>
+                    <option value="CASH_TO_BANK">💵 Cash ➔ 🏦 Bank (Cash Deposit)</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <label>Transfer Amount (<span class="curr-symbol">₹</span>)</label>
+                <input type="number" id="xferAmountInput" class="input-box" placeholder="e.g. 2000" inputmode="decimal">
+            </div>
+            <div class="form-row">
+                <label>Date</label>
+                <input type="date" id="xferDateInput" class="input-box">
+            </div>
+            <div class="form-row">
+                <label>Note (Optional)</label>
+                <input type="text" id="xferNoteInput" class="input-box" placeholder="e.g. ATM cash withdrawal">
+            </div>
+            <div class="modal-foot">
+                <button class="btn-cancel" onclick="closeModal('selfTransferModal')">Cancel</button>
+                <button class="btn-submit" onclick="submitSelfTransfer()">Complete Transfer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- RECURRING BILL / SUBSCRIPTION MODAL -->
+    <div class="modal modal-center" id="recurringBillModal">
+        <div class="modal-body">
+            <div class="modal-head">
+                <span>🔔 Add Recurring Bill / Subscription</span>
+                <span style="cursor:pointer;" onclick="closeModal('recurringBillModal')">✕</span>
+            </div>
+            <div class="form-row">
+                <label>Bill / Subscription Name</label>
+                <input type="text" id="recBillNameInput" class="input-box" placeholder="e.g. Wi-Fi, Mobile Recharge, Rent">
+            </div>
+            <div class="form-row" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <div>
+                    <label>Monthly Amount (<span class="curr-symbol">₹</span>)</label>
+                    <input type="number" id="recBillAmountInput" class="input-box" placeholder="e.g. 599">
+                </div>
+                <div>
+                    <label>Due Day (1-31)</label>
+                    <input type="number" min="1" max="31" id="recBillDueDayInput" class="input-box" value="10">
+                </div>
+            </div>
+            <div class="form-row" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <div>
+                    <label>Pay From Account</label>
+                    <select id="recBillAccSelect" class="input-box">
+                        <option value="BANK">🏦 Bank Account</option>
+                        <option value="CASH">💵 Cash in Hand</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Link to Budget</label>
+                    <select id="recBillBudgetSelect" class="input-box"></select>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn-cancel" onclick="closeModal('recurringBillModal')">Cancel</button>
+                <button class="btn-submit" onclick="saveRecurringBill()">Save Recurring Bill</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5-SECOND UNDO TOAST -->
+    <div class="undo-toast" id="undoToastBar">
+        <span id="undoToastMsg">✅ Entry Saved</span>
+        <button class="btn-undo-toast" onclick="undoLastTransaction()">Undo ↺</button>
+    </div>
+
     <script>
         const GOOGLE_CLIENT_ID = '793277141301-0m4eainm6lu2desmnie5kp763402ui37.apps.googleusercontent.com';
         const GOOGLE_DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
@@ -1576,6 +1816,7 @@
                     { id: 1, name: 'Travel & Daily Expenses', amount: 7000.00, duration: '5 Months', isMain: true }
                 ],
                 loans: [],
+                recurringBills: [],
                 transactions: [],
                 savedCategories: [...DEFAULT_CATEGORIES],
                 customUsers: []
@@ -1702,6 +1943,93 @@
             }
         }
 
+
+        // ================= WEBCRYPTO SHA-256 & SEAMLESS ZERO-PROMPT AES-256 VAULT ENGINE =================
+        async function sha256Hex(text) {
+            if (!window.crypto || !window.crypto.subtle) return text;
+            const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+            return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        function getDriveEncryptKeyFlag(uName) {
+            return `shafin_drive_aes_${(uName || 'sha').toLowerCase()}`;
+        }
+
+        function isDriveEncryptionEnabled(uName) {
+            const val = localStorage.getItem(getDriveEncryptKeyFlag(uName));
+            return val === null ? true : val === 'true';
+        }
+
+        function toggleDriveEncryption(enabled) {
+            const activeUser = localStorage.getItem(AUTH_USER_KEY) || 'Sha';
+            localStorage.setItem(getDriveEncryptKeyFlag(activeUser), enabled ? 'true' : 'false');
+            scheduleGoogleDriveAutoSync();
+        }
+
+        function getActiveEncryptionSecret(userId) {
+            const cleanId = (userId || 'sha').trim().toLowerCase();
+            return `ShaFin_Vault_${cleanId}_${MASTER_ADMIN_PASS}_AES256`;
+        }
+
+        async function encryptPayloadAesGcm(plainJsonStr, secret) {
+            const enc = new TextEncoder();
+            const salt = crypto.getRandomValues(new Uint8Array(16));
+            const iv = crypto.getRandomValues(new Uint8Array(12));
+            const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(secret), { name: 'PBKDF2' }, false, ['deriveKey']);
+            const key = await crypto.subtle.deriveKey(
+                { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
+                keyMaterial,
+                { name: 'AES-GCM', length: 256 },
+                false,
+                ['encrypt']
+            );
+            const cipherBuf = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(plainJsonStr));
+            const toB64 = (arr) => btoa(String.fromCharCode(...new Uint8Array(arr)));
+            return JSON.stringify({
+                _shafinEncrypted: true,
+                alg: 'AES-256-GCM',
+                salt: toB64(salt),
+                iv: toB64(iv),
+                ciphertext: toB64(cipherBuf)
+            }, null, 2);
+        }
+
+        async function decryptPayloadAesGcm(parsedObj, secret) {
+            const fromB64 = (b64) => Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+            const salt = fromB64(parsedObj.salt);
+            const iv = fromB64(parsedObj.iv);
+            const ciphertext = fromB64(parsedObj.ciphertext);
+            const enc = new TextEncoder();
+            const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(secret), { name: 'PBKDF2' }, false, ['deriveKey']);
+            const key = await crypto.subtle.deriveKey(
+                { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
+                keyMaterial,
+                { name: 'AES-GCM', length: 256 },
+                false,
+                ['decrypt']
+            );
+            const plainBuf = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, ciphertext);
+            return JSON.parse(new TextDecoder().decode(plainBuf));
+        }
+
+        async function tryAutoDecryptShaFinObject(parsedObj, hintUserId = null) {
+            if (!parsedObj || !parsedObj._shafinEncrypted) return parsedObj;
+            const metaUser = (parsedObj._cloudMeta && parsedObj._cloudMeta.userId) || hintUserId || localStorage.getItem(AUTH_USER_KEY) || 'sha';
+            const candidates = [
+                getActiveEncryptionSecret(metaUser),
+                getActiveEncryptionSecret('sha'),
+                localStorage.getItem(PIN_KEY) || '',
+                MASTER_ADMIN_PASS
+            ].filter(Boolean);
+
+            for (const sec of candidates) {
+                try {
+                    return await decryptPayloadAesGcm(parsedObj, sec);
+                } catch (e) {}
+            }
+            throw new Error('Could not auto-decrypt backup file.');
+        }
+
         // ================= GOOGLE DRIVE API INTEGRATION (WITH OVERWRITE SHIELD & SILENT REFRESH) =================
         function getDriveTokenExpKeyForUser(uName) {
             const lower = (uName || 'sha').toLowerCase();
@@ -1822,11 +2150,14 @@
                 headers: { Authorization: `Bearer ${accessToken}` }
             });
             if (!contentRes.ok) return { fileId, data: null };
-            const parsed = await contentRes.json();
+            let parsed = await contentRes.json();
+            if (parsed && parsed._shafinEncrypted) {
+                parsed = await tryAutoDecryptShaFinObject(parsed, userId);
+            }
             return { fileId, data: parsed };
         }
 
-        async function uploadUserJsonToDrive(accessToken, userId, dataObj, knownFileId = null) {
+        async function uploadUserJsonToDrive(accessToken, userId, dataObj, knownFileId = null, skipConflictCheck = false) {
             const folderId = await getOrCreateShaFinFolderId(accessToken);
             const fileName = `ShaFin_Data_${userId.toLowerCase()}.json`;
             let existingFileId = knownFileId;
@@ -1841,14 +2172,57 @@
                 existingFileId = (searchData.files && searchData.files.length > 0) ? searchData.files[0].id : null;
             }
 
+            // MULTI-DEVICE CONFLICT & MERGE GUARD
+            if (existingFileId && !skipConflictCheck) {
+                try {
+                    const checkRes = await fetch(`https://www.googleapis.com/drive/v3/files/${existingFileId}?alt=media`, {
+                        headers: { Authorization: `Bearer ${accessToken}` }
+                    });
+                    if (checkRes.ok) {
+                        const cloudObj = await checkRes.json();
+                        const cloudSyncTime = cloudObj._cloudMeta && cloudObj._cloudMeta.lastSynced ? new Date(cloudObj._cloudMeta.lastSynced).getTime() : 0;
+                        const localKnownSyncTime = parseInt(localStorage.getItem(`shafin_last_cloud_ts_${userId.toLowerCase()}`) || '0', 10);
+                        if (cloudSyncTime > 0 && localKnownSyncTime > 0 && cloudSyncTime > localKnownSyncTime + 2000) {
+                            const localIds = new Set((dataObj.transactions || []).map(t => t.id));
+                            const newerCloudTxs = (cloudObj.transactions || []).filter(t => !localIds.has(t.id));
+                            if (newerCloudTxs.length > 0) {
+                                if (confirm(`🔄 Multi-Device Sync Guard:\nAnother device added ${newerCloudTxs.length} newer entry(s) to Google Drive.\n\nTap OK to MERGE those entries safely before syncing!`)) {
+                                    newerCloudTxs.forEach(nt => {
+                                        dataObj.transactions.unshift(nt);
+                                        if (nt.type === 'EXPENSE') {
+                                            if (nt.account === 'BANK') dataObj.accounts.bank -= nt.amount;
+                                            else dataObj.accounts.cash -= nt.amount;
+                                        } else if (nt.type === 'INCOME') {
+                                            if (nt.account === 'BANK') dataObj.accounts.bank += nt.amount;
+                                            else dataObj.accounts.cash += nt.amount;
+                                        }
+                                    });
+                                    saveDatabase(false);
+                                    renderAll();
+                                }
+                            }
+                        }
+                    }
+                } catch (mergeErr) { console.warn('Conflict check skipped', mergeErr); }
+            }
+
+            const nowIso = new Date().toISOString();
+            localStorage.setItem(`shafin_last_cloud_ts_${userId.toLowerCase()}`, String(new Date(nowIso).getTime()));
             const payload = {
                 ...dataObj,
                 _cloudMeta: {
                     userId: userId,
-                    lastSynced: new Date().toISOString()
+                    lastSynced: nowIso
                 }
             };
-            const jsonContent = JSON.stringify(payload, null, 2);
+            let jsonContent = JSON.stringify(payload, null, 2);
+            if (isDriveEncryptionEnabled(userId) && window.crypto && window.crypto.subtle) {
+                const secret = getActiveEncryptionSecret(userId);
+                const encryptedEnvelope = await encryptPayloadAesGcm(jsonContent, secret);
+                const envObj = JSON.parse(encryptedEnvelope);
+                envObj._cloudMeta = payload._cloudMeta;
+                jsonContent = JSON.stringify(envObj, null, 2);
+            }
 
             if (existingFileId) {
                 const patchRes = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${existingFileId}?uploadType=media`, {
@@ -2025,6 +2399,8 @@
             const isConnected = !!localStorage.getItem(getDriveTokenKeyForUser(activeUser));
             const isPending = localStorage.getItem(getDrivePendingSyncKeyForUser(activeUser)) === 'true';
 
+            const encChk = document.getElementById('driveEncryptToggle');
+            if (encChk) encChk.checked = isDriveEncryptionEnabled(activeUser);
             const pill = document.getElementById('driveSyncStatusPill');
             const btnConnect = document.getElementById('btnConnectDrive');
             const btnSyncNow = document.getElementById('btnSyncNowDrive');
@@ -2089,7 +2465,11 @@
                     const fileRes = await fetch(`https://www.googleapis.com/drive/v3/files/${chosenFile.id}?alt=media`, {
                         headers: { Authorization: `Bearer ${accessToken}` }
                     });
-                    const restoredObj = await fileRes.json();
+                    let restoredObj = await fileRes.json();
+                    if (restoredObj && restoredObj._shafinEncrypted) {
+                        const guessUser = (restoredObj._cloudMeta && restoredObj._cloudMeta.userId) || chosenFile.name.replace('ShaFin_Data_', '').replace('.json', '');
+                        restoredObj = await tryAutoDecryptShaFinObject(restoredObj, guessUser);
+                    }
 
                     const restoredUserId = (restoredObj._cloudMeta && restoredObj._cloudMeta.userId)
                         || (restoredObj.profile && restoredObj.profile.name)
@@ -2131,7 +2511,7 @@
             localStorage.setItem('shafin_registered_users', JSON.stringify(list));
         }
 
-        function performUnifiedLogin() {
+        async function performUnifiedLogin() {
             const user = (document.getElementById('loginUserIdInput').value || '').trim();
             const pass = (document.getElementById('loginPasswordInput').value || '').trim();
             const err = document.getElementById('authErrorMessage');
@@ -2152,7 +2532,8 @@
             }
 
             const regUsers = getRegisteredUsers();
-            const matched = regUsers.find(u => u.userId.toLowerCase() === user.toLowerCase() && u.password === pass);
+            const hashedInput = await sha256Hex(pass);
+            const matched = regUsers.find(u => u.userId.toLowerCase() === user.toLowerCase() && (u.password === hashedInput || u.password === pass));
             if (matched) {
                 localStorage.setItem(AUTH_USER_KEY, matched.userId);
                 localStorage.setItem(LAST_ACTIVE_KEY, Date.now());
@@ -2182,7 +2563,7 @@
             document.getElementById('renameUserIdModal').classList.add('active');
         }
 
-        function submitRenameUserId() {
+        async function submitRenameUserId() {
             const oldUser = localStorage.getItem(AUTH_USER_KEY) || '';
             const newUser = (document.getElementById('newUserIdInput').value || '').trim();
             const pass = (document.getElementById('renameUserPassInput').value || '').trim();
@@ -2206,8 +2587,9 @@
                 return;
             }
 
+            const hashedPass = await sha256Hex(pass);
             const userObj = regUsers.find(u => u.userId.toLowerCase() === oldUser.toLowerCase());
-            if (!userObj || userObj.password !== pass) {
+            if (!userObj || (userObj.password !== hashedPass && userObj.password !== pass)) {
                 alert('Incorrect login password!');
                 return;
             }
@@ -2235,7 +2617,7 @@
             alert(`✅ User ID changed to '${newUser}'! All your financial data has been preserved.`);
         }
 
-        function deleteCurrentAccountAndData() {
+        async function deleteCurrentAccountAndData() {
             const activeUser = localStorage.getItem(AUTH_USER_KEY) || '';
             const isAdmin = activeUser.toLowerCase() === MASTER_ADMIN_USER;
 
@@ -2261,8 +2643,9 @@
                 alert('✅ Admin financial data wiped clean!');
             } else {
                 const regUsers = getRegisteredUsers();
+                const hashedEntered = await sha256Hex(entered);
                 const userObj = regUsers.find(u => u.userId.toLowerCase() === activeUser.toLowerCase());
-                const isUserPassValid = userObj && entered === userObj.password;
+                const isUserPassValid = userObj && (entered === userObj.password || hashedEntered === userObj.password);
 
                 if (!isUserPassValid && !isMasterKeyValid) {
                     alert('Incorrect password or Master Key. Account was not deleted.');
@@ -2316,11 +2699,12 @@
             }
 
             const regUsers = getRegisteredUsers();
+            const hashedPass = await sha256Hex(pass);
             const existing = regUsers.find(u => u.userId.toLowerCase() === uId.toLowerCase());
             if (existing) {
-                existing.password = pass;
+                existing.password = hashedPass;
             } else {
-                regUsers.push({ userId: uId, password: pass });
+                regUsers.push({ userId: uId, password: hashedPass });
             }
             saveRegisteredUsers(regUsers);
 
@@ -2534,35 +2918,61 @@
             saveDatabase();
         }
 
-        // ================= DUAL BALANCES + TOTAL BUDGET & BAL BUDGET =================
+        // ================= DUAL BALANCES + BANK/CASH DEDICATED BUDGETS + NET WORTH =================
         function renderAccountsStrip() {
             const curr = appData.profile.currency || '₹';
             const totalBank = appData.accounts.bank || 0;
             const totalCash = appData.accounts.cash || 0;
 
-            let totalAllocatedBudgets = 0;
-            let totalBalBudgets = 0;
+            let bankAllocated = 0;
+            let bankBalBudgets = 0;
+            let cashAllocated = 0;
+            let cashBalBudgets = 0;
 
             (appData.budgets || []).forEach(b => {
-                totalAllocatedBudgets += (b.amount || 0);
+                const accType = b.accountType || 'BANK';
                 let spent = 0;
                 appData.transactions.forEach(t => {
                     if (t.type === 'EXPENSE' && t.budgetId === b.id) spent += t.amount;
                 });
-                totalBalBudgets += Math.max(0, (b.amount || 0) - spent);
+                const rem = Math.max(0, (b.amount || 0) - spent);
+
+                if (accType === 'CASH') {
+                    cashAllocated += (b.amount || 0);
+                    cashBalBudgets += rem;
+                } else {
+                    bankAllocated += (b.amount || 0);
+                    bankBalBudgets += rem;
+                }
             });
 
-            const unbudgetedFreeBank = totalBank - totalBalBudgets;
+            const unbudgetedFreeBank = totalBank - bankBalBudgets;
+            const unbudgetedFreeCash = totalCash - cashBalBudgets;
 
             document.getElementById('dispBankBal').innerText = `${curr}${totalBank.toLocaleString('en-IN')}`;
             document.getElementById('dispBankUnbudgeted').innerText = `${curr}${unbudgetedFreeBank.toLocaleString('en-IN')}`;
-            document.getElementById('dispTotalBudgetBank').innerText = `${curr}${totalAllocatedBudgets.toLocaleString('en-IN')}`;
-            document.getElementById('dispTotalBalBudgetBank').innerText = `${curr}${totalBalBudgets.toLocaleString('en-IN')}`;
+            document.getElementById('dispTotalBudgetBank').innerText = `${curr}${bankAllocated.toLocaleString('en-IN')}`;
+            document.getElementById('dispTotalBalBudgetBank').innerText = `${curr}${bankBalBudgets.toLocaleString('en-IN')}`;
             
             document.getElementById('dispCashBal').innerText = `${curr}${totalCash.toLocaleString('en-IN')}`;
-            document.getElementById('dispCashSub').innerText = `${curr}${totalCash.toLocaleString('en-IN')}`;
-            document.getElementById('dispTotalBudgetCash').innerText = `${curr}${totalAllocatedBudgets.toLocaleString('en-IN')}`;
-            document.getElementById('dispTotalBalBudgetCash').innerText = `${curr}${totalBalBudgets.toLocaleString('en-IN')}`;
+            document.getElementById('dispCashSub').innerText = `${curr}${unbudgetedFreeCash.toLocaleString('en-IN')}`;
+            document.getElementById('dispTotalBudgetCash').innerText = `${curr}${cashAllocated.toLocaleString('en-IN')}`;
+            document.getElementById('dispTotalBalBudgetCash').innerText = `${curr}${cashBalBudgets.toLocaleString('en-IN')}`;
+
+            // Net Worth Strip Calculation
+            const totalLiquid = totalBank + totalCash;
+            const totalDebt = (appData.loans || []).reduce((sum, l) => sum + Math.max(0, l.currentBalance || 0), 0);
+            const netWorth = totalLiquid - totalDebt;
+
+            const nwLiq = document.getElementById('nwLiquidVal');
+            const nwDebt = document.getElementById('nwDebtVal');
+            const nwNet = document.getElementById('nwNetVal');
+            if (nwLiq) nwLiq.innerText = `${curr}${totalLiquid.toLocaleString('en-IN')}`;
+            if (nwDebt) nwDebt.innerText = `${curr}${Math.round(totalDebt).toLocaleString('en-IN')}`;
+            if (nwNet) {
+                nwNet.innerText = `${curr}${Math.round(netWorth).toLocaleString('en-IN')}`;
+                nwNet.style.color = netWorth < 0 ? 'var(--rose)' : 'var(--cyan)';
+            }
         }
 
         function openBalanceAdjustModal(acc) {
@@ -2664,7 +3074,7 @@
             document.getElementById('changePasswordModal').classList.add('active');
         }
 
-        function submitChangePassword() {
+        async function submitChangePassword() {
             const oldP = (document.getElementById('oldPassInput').value || '').trim();
             const newP = (document.getElementById('newPassInput').value || '').trim();
             const confP = (document.getElementById('confirmPassInput').value || '').trim();
@@ -2694,12 +3104,13 @@
                 alert('✅ Master Admin Password updated successfully!');
             } else {
                 const regUsers = getRegisteredUsers();
+                const hashedOld = await sha256Hex(oldP);
                 const userObj = regUsers.find(u => u.userId.toLowerCase() === activeUser.toLowerCase());
-                if (!userObj || userObj.password !== oldP) {
+                if (!userObj || (userObj.password !== hashedOld && userObj.password !== oldP)) {
                     alert('Incorrect Current / Old Password!');
                     return;
                 }
-                userObj.password = newP;
+                userObj.password = await sha256Hex(newP);
                 saveRegisteredUsers(regUsers);
                 alert('✅ Your login password has been updated successfully!');
             }
@@ -2714,7 +3125,7 @@
             document.getElementById('forgotPasswordModal').classList.add('active');
         }
 
-        function submitForgotPasswordReset() {
+        async function submitForgotPasswordReset() {
             const uId = (document.getElementById('forgotUserIdInput').value || '').trim();
             const rec = (document.getElementById('forgotRecoveryInput').value || '').trim();
             const newP = (document.getElementById('forgotNewPassInput').value || '').trim();
@@ -2745,7 +3156,7 @@
                     alert(`User '${uId}' not found on this device!`);
                     return;
                 }
-                userObj.password = newP;
+                userObj.password = await sha256Hex(newP);
                 saveRegisteredUsers(regUsers);
                 alert(`✅ Login password for '${uId}' has been reset!`);
             }
@@ -2775,10 +3186,261 @@
             renderMainHeroBudget();
             renderOtherBudgets();
             renderEmiReminderBanner();
+            renderRecurringBills();
             renderAllTransactions();
             renderBudgetsTab();
             renderLoansTab();
             renderReports();
+        }
+
+        // ================= SELF-TRANSFER (BANK <-> CASH) =================
+        function openSelfTransferModal() {
+            document.getElementById('xferAmountInput').value = '';
+            document.getElementById('xferNoteInput').value = '';
+            document.getElementById('xferDateInput').value = new Date().toISOString().split('T')[0];
+            document.getElementById('selfTransferModal').classList.add('active');
+        }
+
+        function submitSelfTransfer() {
+            const dir = document.getElementById('xferDirectionSelect').value;
+            const amt = parseFloat(document.getElementById('xferAmountInput').value);
+            const date = document.getElementById('xferDateInput').value || new Date().toISOString().split('T')[0];
+            const note = (document.getElementById('xferNoteInput').value || '').trim();
+            const curr = appData.profile.currency || '₹';
+
+            if (!amt || amt <= 0) {
+                alert('Please enter a valid transfer amount!');
+                return;
+            }
+
+            if (dir === 'BANK_TO_CASH') {
+                appData.accounts.bank -= amt;
+                appData.accounts.cash += amt;
+            } else {
+                appData.accounts.cash -= amt;
+                appData.accounts.bank += amt;
+            }
+
+            const txId = Date.now();
+            appData.transactions.unshift({
+                id: txId,
+                type: 'TRANSFER',
+                transferDir: dir,
+                amount: amt,
+                account: dir === 'BANK_TO_CASH' ? 'BANK ➔ CASH' : 'CASH ➔ BANK',
+                categoryName: dir === 'BANK_TO_CASH' ? 'Self Transfer: Bank to Cash' : 'Self Transfer: Cash to Bank',
+                date: date,
+                note: note || (dir === 'BANK_TO_CASH' ? 'ATM Withdrawal' : 'Cash Deposit'),
+                budgetId: null,
+                isLoanPayment: true
+            });
+
+            saveDatabase();
+            closeModal('selfTransferModal');
+            renderAll();
+            showUndoToast(txId, `🔄 Transferred ${curr}${amt.toLocaleString('en-IN')}`);
+        }
+
+        // ================= RECURRING BILLS & SUBSCRIPTIONS =================
+        function openRecurringBillModal() {
+            document.getElementById('recBillNameInput').value = '';
+            document.getElementById('recBillAmountInput').value = '';
+            document.getElementById('recBillDueDayInput').value = '10';
+            const bSel = document.getElementById('recBillBudgetSelect');
+            bSel.innerHTML = appData.budgets.map(b => `<option value="${b.id}">${b.name}</option>`).join('') + `<option value="">-- No Budget --</option>`;
+            document.getElementById('recurringBillModal').classList.add('active');
+        }
+
+        function saveRecurringBill() {
+            const name = (document.getElementById('recBillNameInput').value || '').trim();
+            const amt = parseFloat(document.getElementById('recBillAmountInput').value);
+            const dueDay = parseInt(document.getElementById('recBillDueDayInput').value) || 10;
+            const acc = document.getElementById('recBillAccSelect').value || 'BANK';
+            const budgetId = parseInt(document.getElementById('recBillBudgetSelect').value) || null;
+
+            if (!name || !amt || amt <= 0) {
+                alert('Enter valid bill name and amount!');
+                return;
+            }
+            if (!appData.recurringBills) appData.recurringBills = [];
+            appData.recurringBills.push({
+                id: Date.now(),
+                name,
+                amount: amt,
+                dueDay,
+                account: acc,
+                budgetId,
+                lastPaidMonth: ''
+            });
+            saveDatabase();
+            closeModal('recurringBillModal');
+            renderAll();
+        }
+
+        function payRecurringBillNow(billId) {
+            const bill = (appData.recurringBills || []).find(b => b.id === billId);
+            if (!bill) return;
+            const curMonth = new Date().toISOString().substring(0, 7);
+            const curr = appData.profile.currency || '₹';
+
+            if (bill.account === 'BANK') appData.accounts.bank -= bill.amount;
+            else appData.accounts.cash -= bill.amount;
+
+            bill.lastPaidMonth = curMonth;
+            const txId = Date.now();
+            appData.transactions.unshift({
+                id: txId,
+                type: 'EXPENSE',
+                amount: bill.amount,
+                account: bill.account,
+                categoryName: bill.name,
+                date: new Date().toISOString().split('T')[0],
+                note: 'Recurring Monthly Bill Paid',
+                budgetId: bill.budgetId,
+                isLoanPayment: false
+            });
+
+            saveDatabase();
+            renderAll();
+            showUndoToast(txId, `✅ Paid ${bill.name} (${curr}${bill.amount})`);
+        }
+
+        function deleteRecurringBill(billId) {
+            if (confirm('Remove this recurring bill reminder?')) {
+                appData.recurringBills = (appData.recurringBills || []).filter(b => b.id !== billId);
+                saveDatabase();
+                renderAll();
+            }
+        }
+
+        function renderRecurringBills() {
+            const listContainer = document.getElementById('recurringBillsListContainer');
+            const alertWidget = document.getElementById('dashboardRecurringWidget');
+            if (!listContainer) return;
+
+            const bills = appData.recurringBills || [];
+            const curr = appData.profile.currency || '₹';
+            const today = new Date();
+            const curMonth = today.toISOString().substring(0, 7);
+            const curDay = today.getDate();
+
+            if (bills.length === 0) {
+                listContainer.innerHTML = `<p style="font-size:0.78rem; color:var(--text-dim); text-align:center; padding:8px;">No recurring bills set. Tap '+ Add Bill' for Wi-Fi, Rent, or Recharge alerts.</p>`;
+                if (alertWidget) alertWidget.innerHTML = '';
+                return;
+            }
+
+            let dueSoonBill = null;
+            listContainer.innerHTML = bills.map(b => {
+                const isPaidThisMonth = b.lastPaidMonth === curMonth;
+                const diff = b.dueDay - curDay;
+                if (!isPaidThisMonth && diff >= -2 && diff <= 3 && !dueSoonBill) {
+                    dueSoonBill = b;
+                }
+                return `
+                    <div class="tx-item" style="padding:10px 12px;">
+                        <div class="tx-left">
+                            <span class="tx-title">🔔 ${b.name} ${isPaidThisMonth ? '<span style="color:var(--emerald); font-size:0.72rem;">(Paid ✓)</span>' : ''}</span>
+                            <span class="tx-sub">Due: ${b.dueDay}th of month • Via ${b.account}</span>
+                        </div>
+                        <div class="tx-right">
+                            <span class="tx-amount" style="font-size:0.95rem;">${curr}${b.amount.toLocaleString('en-IN')}</span>
+                            <div class="tx-actions-row">
+                                ${!isPaidThisMonth ? `<button class="btn-mini-edit" style="color:var(--emerald);" onclick="payRecurringBillNow(${b.id})">Pay Now ✓</button>` : ''}
+                                <button class="btn-mini-del" onclick="deleteRecurringBill(${b.id})">✕</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            if (alertWidget) {
+                if (dueSoonBill) {
+                    alertWidget.innerHTML = `
+                        <div class="emi-alert-banner" style="border-color:var(--cyan); background:linear-gradient(135deg, rgba(6,182,212,0.14), rgba(6,182,212,0.05));">
+                            <div>
+                                <div class="emi-alert-title" style="color:var(--cyan);">🔔 Bill Alert: ${dueSoonBill.name}</div>
+                                <div class="emi-alert-desc">Due on ${dueSoonBill.dueDay}th • Amount: <b>${curr}${dueSoonBill.amount.toLocaleString('en-IN')}</b></div>
+                            </div>
+                            <button class="btn-emi-pay" style="background:var(--cyan);" onclick="payRecurringBillNow(${dueSoonBill.id})">Pay Bill ✓</button>
+                        </div>
+                    `;
+                } else {
+                    alertWidget.innerHTML = '';
+                }
+            }
+        }
+
+        // ================= 5-SECOND UNDO TOAST =================
+        let lastUndoTxId = null;
+        let undoToastTimer = null;
+
+        function showUndoToast(txId, message) {
+            lastUndoTxId = txId;
+            const toast = document.getElementById('undoToastBar');
+            const msgEl = document.getElementById('undoToastMsg');
+            if (!toast || !msgEl) return;
+            msgEl.innerText = message;
+            toast.classList.add('visible');
+            clearTimeout(undoToastTimer);
+            undoToastTimer = setTimeout(() => {
+                toast.classList.remove('visible');
+                lastUndoTxId = null;
+            }, 5500);
+        }
+
+        function undoLastTransaction() {
+            if (!lastUndoTxId) return;
+            const tx = appData.transactions.find(t => t.id === lastUndoTxId);
+            if (tx) {
+                if (tx.type === 'TRANSFER') {
+                    if (tx.transferDir === 'BANK_TO_CASH') {
+                        appData.accounts.bank += tx.amount;
+                        appData.accounts.cash -= tx.amount;
+                    } else {
+                        appData.accounts.cash += tx.amount;
+                        appData.accounts.bank -= tx.amount;
+                    }
+                } else if (tx.type === 'EXPENSE') {
+                    if (tx.account === 'BANK') appData.accounts.bank += tx.amount;
+                    else appData.accounts.cash += tx.amount;
+                } else if (tx.type === 'INCOME') {
+                    if (tx.account === 'BANK') appData.accounts.bank -= tx.amount;
+                    else appData.accounts.cash -= tx.amount;
+                }
+                appData.transactions = appData.transactions.filter(t => t.id !== lastUndoTxId);
+                saveDatabase();
+                renderAll();
+            }
+            document.getElementById('undoToastBar').classList.remove('visible');
+            lastUndoTxId = null;
+        }
+
+        // ================= CSV STATEMENT EXPORT =================
+        function exportReportsCsv() {
+            const rows = [['Date', 'Type', 'Category', 'Account', 'Amount', 'Remarks']];
+            (appData.transactions || []).forEach(t => {
+                rows.push([
+                    t.date || '',
+                    t.type || '',
+                    `"${(t.categoryName || '').replace(/"/g, '""')}"`,
+                    t.account || '',
+                    t.amount || 0,
+                    `"${(t.note || '').replace(/"/g, '""')}"`
+                ]);
+            });
+            const csvString = rows.map(r => r.join(',')).join('\n');
+            const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ShaFin_Statement_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 200);
         }
 
         function renderMainHeroBudget() {
@@ -2827,16 +3489,29 @@
                         <span>Total: ${curr}${mainBudget.amount.toLocaleString('en-IN')} (${mainBudget.duration || 'Plan'})</span>
                     </div>
 
-                    <div class="hero-submetrics">
-                        <div class="submetric-box">
-                            Today's Daily Spend
-                            <b>${curr}${todaySpend.toLocaleString('en-IN')}</b>
-                        </div>
-                        <div class="submetric-box">
-                            Yesterday's Spend
-                            <b>${curr}${yesterdaySpend.toLocaleString('en-IN')}</b>
-                        </div>
-                    </div>
+                    ${(() => {
+                        const nowD = new Date(); nowD.setHours(0,0,0,0);
+                        let targetD = mainBudget.endDate ? new Date(mainBudget.endDate) : new Date(nowD.getFullYear(), nowD.getMonth() + 1, 0);
+                        targetD.setHours(0,0,0,0);
+                        const daysRem = Math.max(1, Math.ceil((targetD.getTime() - nowD.getTime()) / 86400000) + 1);
+                        const dailySafe = Math.floor(remaining / daysRem);
+                        const isOverToday = todaySpend > dailySafe && dailySafe > 0;
+                        return `
+                        <div class="hero-submetrics" style="grid-template-columns: 1fr 1fr 1.15fr;">
+                            <div class="submetric-box">
+                                Today Spend
+                                <b style="color:${isOverToday ? 'var(--rose)' : 'var(--text-high)'};">${curr}${todaySpend.toLocaleString('en-IN')}</b>
+                            </div>
+                            <div class="submetric-box">
+                                Yesterday
+                                <b>${curr}${yesterdaySpend.toLocaleString('en-IN')}</b>
+                            </div>
+                            <div class="submetric-box" style="background:rgba(6,182,212,0.1); padding:6px 8px; border-radius:8px; border:1px solid rgba(6,182,212,0.25);">
+                                🛡️ Safe / Day (${daysRem}d)
+                                <b style="color:var(--cyan);">${curr}${dailySafe.toLocaleString('en-IN')}</b>
+                            </div>
+                        </div>`;
+                    })()}
                 </div>
             `;
         }
@@ -3406,8 +4081,9 @@
                     else appData.accounts.cash += amt;
                 }
 
+                const newTxId = Date.now();
                 const tx = {
-                    id: Date.now(),
+                    id: newTxId,
                     type: currentEntryType,
                     amount: amt,
                     account: acc,
@@ -3419,6 +4095,8 @@
                 };
 
                 appData.transactions.unshift(tx);
+                const currSym = appData.profile.currency || '₹';
+                setTimeout(() => showUndoToast(newTxId, `${currentEntryType === 'EXPENSE' ? '➖' : '➕'} ${cat}: ${currSym}${amt.toLocaleString('en-IN')}`), 150);
             }
 
             saveDatabase();
@@ -3443,7 +4121,15 @@
             if (!tx) return;
 
             if (confirm("Delete this transaction? Balances will be auto-adjusted.")) {
-                if (tx.type === 'EXPENSE') {
+                if (tx.type === 'TRANSFER') {
+                    if (tx.transferDir === 'BANK_TO_CASH') {
+                        appData.accounts.bank += tx.amount;
+                        appData.accounts.cash -= tx.amount;
+                    } else {
+                        appData.accounts.cash += tx.amount;
+                        appData.accounts.bank -= tx.amount;
+                    }
+                } else if (tx.type === 'EXPENSE') {
                     if (tx.account === 'BANK') appData.accounts.bank += tx.amount;
                     else appData.accounts.cash += tx.amount;
                 } else {
@@ -3494,8 +4180,8 @@
                         <span class="tx-sub">📅 ${t.date} • Via ${t.account} ${t.note ? '• ' + t.note : ''}</span>
                     </div>
                     <div class="tx-right">
-                        <span class="tx-amount ${t.type === 'EXPENSE' ? 'val-neg' : 'val-pos'}">
-                            ${t.type === 'EXPENSE' ? '-' : '+'}${curr}${t.amount.toLocaleString('en-IN')}
+                        <span class="tx-amount ${t.type === 'TRANSFER' ? '' : (t.type === 'EXPENSE' ? 'val-neg' : 'val-pos')}" style="${t.type === 'TRANSFER' ? 'color:var(--violet);' : ''}">
+                            ${t.type === 'TRANSFER' ? '⇄ ' : (t.type === 'EXPENSE' ? '-' : '+')}${curr}${t.amount.toLocaleString('en-IN')}
                         </span>
                         <div class="tx-actions-row">
                             ${!t.isLoanPayment ? `<button class="btn-mini-edit" onclick="openEditTransactionModal(${t.id})">Edit ✎</button>` : ''}
@@ -3526,6 +4212,9 @@
             document.getElementById('bNameInput').value = '';
             document.getElementById('bAmountInput').value = '';
             document.getElementById('bDurationInput').value = '';
+            const defEnd = new Date(); defEnd.setMonth(defEnd.getMonth() + 1); defEnd.setDate(0);
+            document.getElementById('bEndDateInput').value = defEnd.toISOString().split('T')[0];
+            document.getElementById('bAccountTypeSelect').value = 'BANK';
             document.getElementById('bIsMainCheck').checked = appData.budgets.length === 0;
             document.getElementById('budgetModal').classList.add('active');
         }
@@ -3539,6 +4228,8 @@
             document.getElementById('bNameInput').value = b.name;
             document.getElementById('bAmountInput').value = b.amount;
             document.getElementById('bDurationInput').value = b.duration || '';
+            document.getElementById('bEndDateInput').value = b.endDate || '';
+            document.getElementById('bAccountTypeSelect').value = b.accountType || 'BANK';
             document.getElementById('bIsMainCheck').checked = b.isMain;
             document.getElementById('budgetModal').classList.add('active');
         }
@@ -3548,6 +4239,8 @@
             const name = (document.getElementById('bNameInput').value || '').trim();
             const amt = parseFloat(document.getElementById('bAmountInput').value);
             const duration = (document.getElementById('bDurationInput').value || '').trim();
+            const endDate = document.getElementById('bEndDateInput').value || '';
+            const accountType = document.getElementById('bAccountTypeSelect').value || 'BANK';
             const isMain = document.getElementById('bIsMainCheck').checked;
 
             if (!name || !amt || amt <= 0) {
@@ -3565,6 +4258,8 @@
                     b.name = name;
                     b.amount = amt;
                     b.duration = duration;
+                    b.endDate = endDate;
+                    b.accountType = accountType;
                     b.isMain = isMain;
                 }
             } else {
@@ -3573,6 +4268,8 @@
                     name: name,
                     amount: amt,
                     duration: duration,
+                    endDate: endDate,
+                    accountType: accountType,
                     isMain: isMain
                 });
             }
@@ -3861,10 +4558,14 @@
             if (!file) return;
 
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = async function(e) {
                 try {
                     const cleanText = e.target.result.replace(/^\uFEFF/, '').trim();
-                    const parsed = JSON.parse(cleanText);
+                    let parsed = JSON.parse(cleanText);
+                    if (parsed && parsed._shafinEncrypted) {
+                        const activeU = localStorage.getItem(AUTH_USER_KEY) || 'Sha';
+                        parsed = await tryAutoDecryptShaFinObject(parsed, activeU);
+                    }
                     if (parsed && (parsed.budgets || parsed.accounts)) {
                         appData = { ...getInitialState(localStorage.getItem(AUTH_USER_KEY) || 'Sha'), ...parsed };
                         saveDatabase();
