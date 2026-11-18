@@ -14,8 +14,10 @@
     <link rel="icon" type="image/png" href="./logo.png">
     <link rel="apple-touch-icon" href="./logo.png">
 
-    <!-- Google Identity Services for Direct Drive Sync -->
+    <!-- Google Identity Services & jsPDF Executive Report Engine -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js" defer></script>
 
     <style>
         :root {
@@ -817,9 +819,9 @@
 
         .undo-toast {
             position: fixed;
-            bottom: 82px;
+            bottom: 84px;
             left: 50%;
-            transform: translateX(-50%) translateY(120px);
+            transform: translateX(-50%) translateY(30px);
             background: var(--surface-2);
             border: 1px solid var(--cyan);
             color: var(--text-high);
@@ -832,10 +834,16 @@
             z-index: 9500;
             font-size: 0.84rem;
             font-weight: 700;
-            transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
             max-width: 92vw;
         }
         .undo-toast.visible {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
             transform: translateX(-50%) translateY(0);
         }
         .btn-undo-toast {
@@ -1131,7 +1139,7 @@
                 <div style="display:flex; gap:6px; align-items:center;">
                     <span class="pill-action" id="reportRangeIndicator">This Month</span>
                     <button class="pill-action" style="background:var(--emerald-glow); color:var(--emerald); border-color:var(--emerald);" onclick="exportReportsCsv()">📥 CSV</button>
-                    <button class="pill-action" onclick="window.print()">🖨️ PDF</button>
+                    <button class="pill-action" style="background:var(--cyan-glow); color:var(--cyan); border-color:var(--cyan);" onclick="exportExecutivePdfReport()">📄 PDF</button>
                 </div>
             </div>
 
@@ -1395,6 +1403,7 @@
                 <select id="bAccountTypeSelect" class="input-box">
                     <option value="BANK">🏦 Bank Account</option>
                     <option value="CASH">💵 Cash in Hand</option>
+                    <option value="COMBINED">🏦+💵 Combined (Bank & Cash)</option>
                 </select>
             </div>
             <div class="form-row" style="display:flex; align-items:center; gap:10px; margin-top:8px;">
@@ -2918,7 +2927,7 @@
             saveDatabase();
         }
 
-        // ================= DUAL BALANCES + BANK/CASH DEDICATED BUDGETS + NET WORTH =================
+        // ================= DUAL BALANCES + BANK/CASH/COMBINED BUDGETS + NET WORTH =================
         function renderAccountsStrip() {
             const curr = appData.profile.currency || '₹';
             const totalBank = appData.accounts.bank || 0;
@@ -2928,6 +2937,8 @@
             let bankBalBudgets = 0;
             let cashAllocated = 0;
             let cashBalBudgets = 0;
+            let combinedAllocated = 0;
+            let combinedBalBudgets = 0;
 
             (appData.budgets || []).forEach(b => {
                 const accType = b.accountType || 'BANK';
@@ -2940,24 +2951,31 @@
                 if (accType === 'CASH') {
                     cashAllocated += (b.amount || 0);
                     cashBalBudgets += rem;
+                } else if (accType === 'COMBINED') {
+                    combinedAllocated += (b.amount || 0);
+                    combinedBalBudgets += rem;
                 } else {
                     bankAllocated += (b.amount || 0);
                     bankBalBudgets += rem;
                 }
             });
 
-            const unbudgetedFreeBank = totalBank - bankBalBudgets;
-            const unbudgetedFreeCash = totalCash - cashBalBudgets;
+            // Combined budgets draw from Bank first, overflow from Cash
+            const bankCombinedHold = Math.min(Math.max(0, totalBank - bankBalBudgets), combinedBalBudgets);
+            const cashCombinedHold = Math.max(0, combinedBalBudgets - bankCombinedHold);
+
+            const unbudgetedFreeBank = totalBank - bankBalBudgets - bankCombinedHold;
+            const unbudgetedFreeCash = totalCash - cashBalBudgets - cashCombinedHold;
 
             document.getElementById('dispBankBal').innerText = `${curr}${totalBank.toLocaleString('en-IN')}`;
             document.getElementById('dispBankUnbudgeted').innerText = `${curr}${unbudgetedFreeBank.toLocaleString('en-IN')}`;
-            document.getElementById('dispTotalBudgetBank').innerText = `${curr}${bankAllocated.toLocaleString('en-IN')}`;
-            document.getElementById('dispTotalBalBudgetBank').innerText = `${curr}${bankBalBudgets.toLocaleString('en-IN')}`;
+            document.getElementById('dispTotalBudgetBank').innerText = `${curr}${(bankAllocated + combinedAllocated).toLocaleString('en-IN')}`;
+            document.getElementById('dispTotalBalBudgetBank').innerText = `${curr}${(bankBalBudgets + combinedBalBudgets).toLocaleString('en-IN')}`;
             
             document.getElementById('dispCashBal').innerText = `${curr}${totalCash.toLocaleString('en-IN')}`;
             document.getElementById('dispCashSub').innerText = `${curr}${unbudgetedFreeCash.toLocaleString('en-IN')}`;
-            document.getElementById('dispTotalBudgetCash').innerText = `${curr}${cashAllocated.toLocaleString('en-IN')}`;
-            document.getElementById('dispTotalBalBudgetCash').innerText = `${curr}${cashBalBudgets.toLocaleString('en-IN')}`;
+            document.getElementById('dispTotalBudgetCash').innerText = `${curr}${(cashAllocated + combinedAllocated).toLocaleString('en-IN')}`;
+            document.getElementById('dispTotalBalBudgetCash').innerText = `${curr}${(cashBalBudgets + combinedBalBudgets).toLocaleString('en-IN')}`;
 
             // Net Worth Strip Calculation
             const totalLiquid = totalBank + totalCash;
@@ -3443,6 +3461,161 @@
             }, 200);
         }
 
+
+        // ================= EXECUTIVE FINANCIAL STATEMENT PDF GENERATOR =================
+        function getFilteredReportTransactions() {
+            const today = new Date().toISOString().split('T')[0];
+            let filtered = [...(appData.transactions || [])].sort((a, b) => new Date(b.date) - new Date(a.date));
+            let label = 'This Month';
+
+            if (currentReportTimeframe === 'TODAY') {
+                filtered = filtered.filter(t => t.date === today);
+                label = `Today (${today})`;
+            } else if (currentReportTimeframe === 'WEEK') {
+                const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0];
+                filtered = filtered.filter(t => t.date >= weekAgo);
+                label = `Last 7 Days (${weekAgo} to ${today})`;
+            } else if (currentReportTimeframe === 'MONTH') {
+                const curMonth = today.substring(0, 7);
+                filtered = filtered.filter(t => t.date.startsWith(curMonth));
+                label = `Monthly Statement (${curMonth})`;
+            } else if (currentReportTimeframe === 'CUSTOM') {
+                const fromD = document.getElementById('repFromDate').value;
+                const toD = document.getElementById('repToDate').value;
+                if (fromD && toD) {
+                    filtered = filtered.filter(t => t.date >= fromD && t.date <= toD);
+                    label = `Custom Range (${fromD} to ${toD})`;
+                }
+            }
+            return { filtered, label };
+        }
+
+        function exportExecutivePdfReport() {
+            const { filtered, label } = getFilteredReportTransactions();
+            const activeUser = localStorage.getItem(AUTH_USER_KEY) || 'Sha';
+            const currSym = (appData.profile.currency === '₹') ? 'Rs. ' : (appData.profile.currency || 'Rs. ');
+
+            let totalInc = 0, totalExp = 0;
+            const catMap = {};
+            filtered.forEach(t => {
+                if (t.type === 'INCOME') totalInc += t.amount;
+                else if (t.type === 'EXPENSE') {
+                    totalExp += t.amount;
+                    catMap[t.categoryName] = (catMap[t.categoryName] || 0) + t.amount;
+                }
+            });
+
+            const bankBal = appData.accounts.bank || 0;
+            const cashBal = appData.accounts.cash || 0;
+            const totalDebt = (appData.loans || []).reduce((s, l) => s + Math.max(0, l.currentBalance || 0), 0);
+            const netWorth = (bankBal + cashBal) - totalDebt;
+
+            if (window.jspdf && window.jspdf.jsPDF) {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF('p', 'mm', 'a4');
+
+                // Header Banner
+                doc.setFillColor(15, 23, 42);
+                doc.rect(0, 0, 210, 34, 'F');
+                doc.setTextColor(6, 182, 212);
+                doc.setFontSize(18);
+                doc.setFont('helvetica', 'bold');
+                doc.text('SHAFIN FINANCIAL STATEMENT', 14, 15);
+
+                doc.setTextColor(226, 232, 240);
+                doc.setFontSize(9.5);
+                doc.setFont('helvetica', 'normal');
+                doc.text(`Account Holder: ${activeUser}   |   Period: ${label}`, 14, 23);
+                doc.text(`Generated: ${new Date().toLocaleString('en-IN')}`, 14, 29);
+
+                // KPI Summary Cards Row
+                doc.setFillColor(241, 245, 249);
+                doc.roundedRect(14, 40, 182, 24, 3, 3, 'F');
+                doc.setTextColor(15, 23, 42);
+                doc.setFontSize(8.5);
+                doc.setFont('helvetica', 'bold');
+
+                doc.text('PERIOD INFLOW', 20, 48);
+                doc.setTextColor(5, 150, 105);
+                doc.setFontSize(11);
+                doc.text(`${currSym}${totalInc.toLocaleString('en-IN')}`, 20, 56);
+
+                doc.setTextColor(15, 23, 42);
+                doc.setFontSize(8.5);
+                doc.text('PERIOD OUTFLOW', 68, 48);
+                doc.setTextColor(225, 29, 72);
+                doc.setFontSize(11);
+                doc.text(`${currSym}${totalExp.toLocaleString('en-IN')}`, 68, 56);
+
+                doc.setTextColor(15, 23, 42);
+                doc.setFontSize(8.5);
+                doc.text('NET SAVINGS', 116, 48);
+                doc.setTextColor(2, 132, 199);
+                doc.setFontSize(11);
+                doc.text(`${currSym}${(totalInc - totalExp).toLocaleString('en-IN')}`, 116, 56);
+
+                doc.setTextColor(15, 23, 42);
+                doc.setFontSize(8.5);
+                doc.text('NET WORTH', 160, 48);
+                doc.setFontSize(11);
+                doc.text(`${currSym}${Math.round(netWorth).toLocaleString('en-IN')}`, 160, 56);
+
+                // Liquidity & Budgets Snapshot
+                doc.setFontSize(10);
+                doc.setTextColor(15, 23, 42);
+                doc.text(`Closing Balances:  Bank: ${currSym}${bankBal.toLocaleString('en-IN')}   |   Cash: ${currSym}${cashBal.toLocaleString('en-IN')}   |   Loan Debt: ${currSym}${Math.round(totalDebt).toLocaleString('en-IN')}`, 14, 73);
+
+                let currentY = 80;
+
+                // Category Breakdown Table
+                const catEntries = Object.entries(catMap).sort((a, b) => b[1] - a[1]);
+                if (catEntries.length > 0 && doc.autoTable) {
+                    doc.setFontSize(11);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('1. Category-Wise Expense Summary', 14, currentY);
+                    doc.autoTable({
+                        startY: currentY + 3,
+                        head: [['Category', 'Total Spent', 'Share (%)']],
+                        body: catEntries.map(([k, v]) => [
+                            k,
+                            `${currSym}${v.toLocaleString('en-IN')}`,
+                            `${totalExp > 0 ? ((v / totalExp) * 100).toFixed(1) : '0.0'}%`
+                        ]),
+                        theme: 'grid',
+                        headStyles: { fillColor: [15, 23, 42], textColor: [255, 255, 255] },
+                        styles: { fontSize: 9, cellPadding: 2.5 }
+                    });
+                    currentY = doc.lastAutoTable.finalY + 10;
+                }
+
+                // Detailed Ledger Table
+                if (doc.autoTable) {
+                    doc.setFontSize(11);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('2. Detailed Transaction Ledger', 14, currentY);
+                    doc.autoTable({
+                        startY: currentY + 3,
+                        head: [['Date', 'Type', 'Category', 'Account', 'Amount', 'Remarks']],
+                        body: filtered.length > 0 ? filtered.map(t => [
+                            t.date || '',
+                            t.type || '',
+                            t.categoryName || '',
+                            t.account || '',
+                            `${t.type === 'EXPENSE' ? '-' : (t.type === 'INCOME' ? '+' : '')}${currSym}${(t.amount || 0).toLocaleString('en-IN')}`,
+                            t.note || '-'
+                        ]) : [['-', '-', 'No transactions in selected period', '-', '-', '-']],
+                        theme: 'striped',
+                        headStyles: { fillColor: [2, 132, 199], textColor: [255, 255, 255] },
+                        styles: { fontSize: 8.5, cellPadding: 2.5 }
+                    });
+                }
+
+                doc.save(`ShaFin_Report_${activeUser}_${new Date().toISOString().split('T')[0]}.pdf`);
+            } else {
+                alert('PDF generator is still loading. Please wait 2 seconds and tap PDF again.');
+            }
+        }
+
         function renderMainHeroBudget() {
             const heroArea = document.getElementById('heroBudgetArea');
             const curr = appData.profile.currency || '₹';
@@ -3639,7 +3812,7 @@
                             <div class="progress-bar" style="width:${pct}%; background:var(--cyan);"></div>
                         </div>
                         <div class="card-row-foot">
-                            <span>Allocated: ${curr}${b.amount.toLocaleString('en-IN')} (${b.duration || 'Custom'})</span>
+                            <span>Allocated: ${curr}${b.amount.toLocaleString('en-IN')} • <b>${b.accountType === 'CASH' ? '💵 Cash' : (b.accountType === 'COMBINED' ? '🏦+💵 Both' : '🏦 Bank')}</b></span>
                             <div>
                                 <button class="chip-btn" onclick="event.stopPropagation(); openEditBudgetModal(${b.id})">Re-Edit ✎</button>
                                 <button class="chip-btn chip-btn-danger" onclick="event.stopPropagation(); deleteBudget(${b.id})">Delete 🗑</button>
