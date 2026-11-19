@@ -890,6 +890,178 @@
             }
         }
 
+
+        /* ================= JARVIS iOS 10/10 LUXURY FINTECH OVERHAUL ================= */
+        :root {
+            --gold: #f59e0b;
+            --gold-light: #fbbf24;
+            --gold-glow: rgba(245, 158, 11, 0.22);
+            --ios-spring: cubic-bezier(0.22, 1, 0.36, 1);
+            --ios-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        [data-theme="light"] {
+            --bg-base: #f2f4f8;
+            --surface-1: rgba(255, 255, 255, 0.92);
+            --surface-2: #e9eef5;
+            --surface-3: #dce3ee;
+            --border-subtle: rgba(15, 23, 42, 0.09);
+            --border-glow: rgba(217, 119, 6, 0.32);
+            --text-high: #090d16;
+            --text-med: #334155;
+            --text-dim: #64748b;
+            --gold: #d97706;
+            --gold-light: #f59e0b;
+            --gold-glow: rgba(217, 119, 6, 0.16);
+        }
+
+        [data-theme="light"] .card-row,
+        [data-theme="light"] .account-card,
+        [data-theme="light"] .tx-item,
+        [data-theme="light"] .networth-strip {
+            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05) !important;
+        }
+
+        /* Crisp SVG Icon Utility */
+        .svg-ico {
+            width: 17px;
+            height: 17px;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+            display: inline-block;
+            vertical-align: middle;
+            flex-shrink: 0;
+        }
+        .dock-icon .svg-ico {
+            width: 22px;
+            height: 22px;
+            stroke-width: 1.9;
+            transition: transform 0.28s var(--ios-bounce);
+        }
+        .dock-item.active .dock-icon .svg-ico {
+            transform: translateY(-2px) scale(1.1);
+            stroke: var(--gold-light);
+        }
+        .dock-item.active {
+            color: var(--gold-light) !important;
+        }
+        [data-theme="light"] .dock-item.active,
+        [data-theme="light"] .dock-item.active .dock-icon .svg-ico {
+            color: var(--gold) !important;
+            stroke: var(--gold) !important;
+        }
+
+        /* Smooth View Tab Fade & Rise Animation */
+        .view-panel {
+            display: none;
+            opacity: 0;
+        }
+        .view-panel.active {
+            display: block;
+            animation: iosViewEnter 0.34s var(--ios-spring) forwards;
+        }
+        @keyframes iosViewEnter {
+            from {
+                opacity: 0;
+                transform: translateY(10px) scale(0.992);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* iOS Spring Modal Slide-Up & Center Pop */
+        .modal {
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        .modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        .modal.active .modal-body {
+            animation: iosSheetUp 0.36s var(--ios-spring) forwards;
+        }
+        .modal.modal-center.active .modal-body {
+            animation: iosCenterPop 0.32s var(--ios-bounce) forwards;
+        }
+        @keyframes iosSheetUp {
+            from { transform: translateY(48px); opacity: 0.4; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes iosCenterPop {
+            from { transform: scale(0.92); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* Elevated Luxury Cards & Gold Signature Accents */
+        .hero-budget-card {
+            border: 1px solid rgba(245, 158, 11, 0.35) !important;
+            box-shadow: 0 16px 38px rgba(0, 0, 0, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+            transition: transform 0.22s var(--ios-spring), box-shadow 0.22s ease !important;
+        }
+        .hero-budget-card:hover {
+            transform: translateY(-2px);
+        }
+        .hero-pill {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.22), rgba(6, 182, 212, 0.15)) !important;
+            border: 1px solid rgba(245, 158, 11, 0.48) !important;
+            color: var(--gold-light) !important;
+        }
+        [data-theme="light"] .hero-pill {
+            color: var(--gold) !important;
+        }
+
+        .networth-strip {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.09), rgba(6, 182, 212, 0.08)) !important;
+            border: 1px solid rgba(245, 158, 11, 0.22) !important;
+            backdrop-filter: blur(12px);
+        }
+
+        .account-card, .card-row, .tx-item {
+            transition: transform 0.2s var(--ios-spring), border-color 0.2s ease !important;
+        }
+        .account-card:hover, .card-row:hover {
+            border-color: rgba(245, 158, 11, 0.32) !important;
+        }
+
+        .btn-action, .btn-submit, .pill-action, .chip-btn, .btn-icon {
+            transition: transform 0.18s var(--ios-spring), opacity 0.18s ease, box-shadow 0.18s ease !important;
+        }
+        .btn-submit {
+            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 52%, #8b5cf6 100%) !important;
+            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.28) !important;
+        }
+        .btn-action {
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+        }
+
+        /* iOS Frosted Glass Bottom Dock */
+        .dock {
+            background: rgba(11, 17, 32, 0.84) !important;
+            backdrop-filter: blur(24px) saturate(180%) !important;
+            -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+        [data-theme="light"] .dock {
+            background: rgba(255, 255, 255, 0.86) !important;
+            border-top: 1px solid rgba(15, 23, 42, 0.08) !important;
+        }
+
+        /* Smooth Staggered List Item Reveal */
+        .tx-item, .card-row {
+            animation: iosCardFade 0.28s var(--ios-spring) both;
+        }
+        @keyframes iosCardFade {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
     </style>
 </head>
 <body>
@@ -979,8 +1151,8 @@
             </div>
         </div>
         <div class="header-actions">
-            <button class="btn-icon" onclick="toggleTheme()" title="Toggle Theme">🌓</button>
-            <button class="btn-icon" onclick="manualLockNow()" title="Lock App">🔒</button>
+            <button class="btn-icon" onclick="toggleTheme()" title="Toggle Theme"><svg class="svg-ico" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+            <button class="btn-icon" onclick="manualLockNow()" title="Lock App" style="color:var(--gold-light);"><svg class="svg-ico" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></button>
         </div>
     </header>
 
@@ -1010,7 +1182,7 @@
                     <div class="accounts-overview-strip">
                         <div class="account-card" onclick="openBalanceAdjustModal('BANK')">
                             <div class="acc-top">
-                                <span>🏦 Bank Balance</span>
+                                <span style="display:flex;align-items:center;gap:5px;"><svg class="svg-ico" style="width:14px;height:14px;color:var(--cyan);" viewBox="0 0 24 24"><polygon points="12 2 2 7 22 7 12 2"/><line x1="6" y1="10" x2="6" y2="18"/><line x1="10" y1="10" x2="10" y2="18"/><line x1="14" y1="10" x2="14" y2="18"/><line x1="18" y1="10" x2="18" y2="18"/><line x1="3" y1="21" x2="21" y2="21"/></svg> Bank Balance</span>
                                 <span style="font-size:0.7rem; color:var(--cyan);">✎ Edit</span>
                             </div>
                             <div class="acc-val acc-bank-val" id="dispBankBal">₹0</div>
@@ -1022,7 +1194,7 @@
                         </div>
                         <div class="account-card" onclick="openBalanceAdjustModal('CASH')">
                             <div class="acc-top">
-                                <span>💵 Cash in Hand</span>
+                                <span style="display:flex;align-items:center;gap:5px;"><svg class="svg-ico" style="width:14px;height:14px;color:var(--emerald);" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg> Cash in Hand</span>
                                 <span style="font-size:0.7rem; color:var(--emerald);">✎ Edit</span>
                             </div>
                             <div class="acc-val acc-cash-val" id="dispCashBal">₹0</div>
@@ -1037,16 +1209,16 @@
                     <!-- Hero Budget Card -->
                     <div id="heroBudgetArea" onclick="openBudgetLedgerFromHero()"></div>
 
-                    <!-- 3-Way Quick Action Bar -->
+                    <!-- 3-Way Quick Action Bar (iOS Vector Icons) -->
                     <div class="actions-grid-3">
                         <button class="btn-action btn-exp" onclick="openEntryModal('EXPENSE')">
-                            <span>➖</span> Expense
+                            <svg class="svg-ico" viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg> Expense
                         </button>
                         <button class="btn-action btn-inc" onclick="openEntryModal('INCOME')">
-                            <span>➕</span> Income
+                            <svg class="svg-ico" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg> Income
                         </button>
                         <button class="btn-action btn-xfer" onclick="openSelfTransferModal()">
-                            <span>🔄</span> Transfer
+                            <svg class="svg-ico" viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg> Transfer
                         </button>
                     </div>
 
@@ -1315,30 +1487,30 @@
         </div>
     </main>
 
-    <!-- Bottom Dock Navigation -->
+    <!-- Bottom Dock Navigation (iOS Crisp SVG Icons) -->
     <nav class="dock">
         <button class="dock-item active" id="tabNavDash" onclick="switchTab('tabDash')">
-            <span class="dock-icon">⚡</span>
+            <span class="dock-icon"><svg class="svg-ico" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg></span>
             <span>Dashboard</span>
         </button>
         <button class="dock-item" id="tabNavBudgets" onclick="switchTab('tabBudgets')">
-            <span class="dock-icon">🎯</span>
+            <span class="dock-icon"><svg class="svg-ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg></span>
             <span>Budgets</span>
         </button>
         <button class="dock-item" id="tabNavLedger" onclick="switchTab('tabLedger')">
-            <span class="dock-icon">📑</span>
+            <span class="dock-icon"><svg class="svg-ico" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg></span>
             <span>Ledger</span>
         </button>
         <button class="dock-item" id="tabNavLoans" onclick="switchTab('tabLoans')">
-            <span class="dock-icon">💳</span>
+            <span class="dock-icon"><svg class="svg-ico" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="3"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="15" x2="10" y2="15"/></svg></span>
             <span>Loans</span>
         </button>
         <button class="dock-item" id="tabNavReports" onclick="switchTab('tabReports')">
-            <span class="dock-icon">📊</span>
+            <span class="dock-icon"><svg class="svg-ico" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
             <span>Reports</span>
         </button>
         <button class="dock-item" id="tabNavSettings" onclick="switchTab('tabSettings')">
-            <span class="dock-icon">⚙️</span>
+            <span class="dock-icon"><svg class="svg-ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
             <span>Settings</span>
         </button>
     </nav>
@@ -2951,6 +3123,31 @@
         }
 
         // ================= DUAL BALANCES + BANK/CASH/COMBINED BUDGETS + NET WORTH =================
+
+        // ================= iOS SMOOTH NUMBER ANIMATOR =================
+        function animateValueDisplay(elId, targetNum, prefix = '₹', roundInt = false) {
+            const el = document.getElementById(elId);
+            if (!el) return;
+            const prev = parseFloat(el.dataset.numVal || '0');
+            el.dataset.numVal = String(targetNum);
+            if (Math.abs(targetNum - prev) < 0.01) {
+                el.innerText = `${prefix}${(roundInt ? Math.round(targetNum) : targetNum).toLocaleString('en-IN')}`;
+                return;
+            }
+            const duration = 380;
+            const startTime = performance.now();
+            function step(now) {
+                const p = Math.min(1, (now - startTime) / duration);
+                const ease = 1 - Math.pow(1 - p, 3);
+                const cur = prev + (targetNum - prev) * ease;
+                const val = roundInt ? Math.round(cur) : Number(cur.toFixed(2));
+                el.innerText = `${prefix}${val.toLocaleString('en-IN')}`;
+                if (p < 1) requestAnimationFrame(step);
+                else el.innerText = `${prefix}${(roundInt ? Math.round(targetNum) : targetNum).toLocaleString('en-IN')}`;
+            }
+            requestAnimationFrame(step);
+        }
+
         function renderAccountsStrip() {
             const curr = appData.profile.currency || '₹';
             const totalBank = appData.accounts.bank || 0;
@@ -2990,12 +3187,12 @@
             const unbudgetedFreeBank = totalBank - bankBalBudgets - bankCombinedHold;
             const unbudgetedFreeCash = totalCash - cashBalBudgets - cashCombinedHold;
 
-            document.getElementById('dispBankBal').innerText = `${curr}${totalBank.toLocaleString('en-IN')}`;
+            animateValueDisplay('dispBankBal', totalBank, curr, false);
             document.getElementById('dispBankUnbudgeted').innerText = `${curr}${unbudgetedFreeBank.toLocaleString('en-IN')}`;
             document.getElementById('dispTotalBudgetBank').innerText = `${curr}${(bankAllocated + combinedAllocated).toLocaleString('en-IN')}`;
             document.getElementById('dispTotalBalBudgetBank').innerText = `${curr}${(bankBalBudgets + combinedBalBudgets).toLocaleString('en-IN')}`;
             
-            document.getElementById('dispCashBal').innerText = `${curr}${totalCash.toLocaleString('en-IN')}`;
+            animateValueDisplay('dispCashBal', totalCash, curr, false);
             document.getElementById('dispCashSub').innerText = `${curr}${unbudgetedFreeCash.toLocaleString('en-IN')}`;
             document.getElementById('dispTotalBudgetCash').innerText = `${curr}${(cashAllocated + combinedAllocated).toLocaleString('en-IN')}`;
             document.getElementById('dispTotalBalBudgetCash').innerText = `${curr}${(cashBalBudgets + combinedBalBudgets).toLocaleString('en-IN')}`;
@@ -3008,10 +3205,10 @@
             const nwLiq = document.getElementById('nwLiquidVal');
             const nwDebt = document.getElementById('nwDebtVal');
             const nwNet = document.getElementById('nwNetVal');
-            if (nwLiq) nwLiq.innerText = `${curr}${totalLiquid.toLocaleString('en-IN')}`;
+            if (nwLiq) animateValueDisplay('nwLiquidVal', totalLiquid, curr, false);
             if (nwDebt) nwDebt.innerText = `${curr}${Math.round(totalDebt).toLocaleString('en-IN')}`;
             if (nwNet) {
-                nwNet.innerText = `${curr}${Math.round(netWorth).toLocaleString('en-IN')}`;
+                animateValueDisplay('nwNetVal', netWorth, curr, true);
                 nwNet.style.color = netWorth < 0 ? 'var(--rose)' : 'var(--cyan)';
             }
         }
