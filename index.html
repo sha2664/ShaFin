@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ShaFin - Luxury Finance & Multi-Budget Engine</title>
     
-    <meta name="theme-color" content="#070b14">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="#090b10">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1178,6 +1181,340 @@
             }
         }
 
+
+        /* ================= MASTER DESIGNER TYPOGRAPHY & REFINED CONTRAST SYSTEM ================= */
+        :root {
+            --bg-base: #090b10;
+            --surface-1: #11151f;
+            --surface-2: #181e2c;
+            --surface-3: #21293c;
+            --border-subtle: rgba(255, 255, 255, 0.075);
+            --border-glow: rgba(234, 179, 8, 0.25);
+            --text-high: #f1f5f9;
+            --text-med: #94a3b8;
+            --text-dim: #64748b;
+            --emerald: #10b981;
+            --cyan: #38bdf8;
+            --rose: #f43f5e;
+            --violet: #a78bfa;
+            --amber: #f59e0b;
+            --accent-luxury: #eab308;
+            --accent-luxury-soft: rgba(234, 179, 8, 0.13);
+            --accent-luxury-border: rgba(234, 179, 8, 0.30);
+            --dock-active-color: #facc15;
+        }
+
+        [data-theme="light"] {
+            --bg-base: #f4f6f9;
+            --surface-1: #ffffff;
+            --surface-2: #eef1f6;
+            --surface-3: #e2e7f0;
+            --border-subtle: rgba(15, 23, 42, 0.08);
+            --border-glow: rgba(15, 23, 42, 0.16);
+            --text-high: #0f172a;
+            --text-med: #475569;
+            --text-dim: #64748b;
+            --emerald: #059669;
+            --cyan: #0284c7;
+            --rose: #e11d48;
+            --violet: #7c3aed;
+            --amber: #d97706;
+            --accent-luxury: #0f172a;
+            --accent-luxury-soft: rgba(15, 23, 42, 0.07);
+            --accent-luxury-border: rgba(15, 23, 42, 0.18);
+            --dock-active-color: #0f172a;
+        }
+
+        *, *::before, *::after {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif !important;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Display Headings & Financial Numerals */
+        .hero-amount, .acc-val, .tx-amount, .card-row-val, .nw-item b, .submetric-box b, .modal-head, .section-header > span:first-child {
+            font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif !important;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -0.02em;
+        }
+
+        /* Tame Over-Bold Clutter: Clean Hierarchy (400 / 500 / 600 / 700) */
+        body {
+            font-weight: 400;
+            line-height: 1.45;
+            padding-bottom: 104px !important;
+        }
+        .user-title {
+            font-weight: 700 !important;
+            font-size: 0.96rem !important;
+            letter-spacing: -0.01em;
+        }
+        .live-clock-badge {
+            font-weight: 500 !important;
+            font-size: 0.71rem !important;
+        }
+        .section-header {
+            font-weight: 600 !important;
+            font-size: 0.95rem !important;
+            letter-spacing: -0.01em;
+        }
+        .hero-title {
+            font-weight: 600 !important;
+            font-size: 1.08rem !important;
+            letter-spacing: -0.015em;
+        }
+        .hero-amount {
+            font-weight: 700 !important;
+            font-size: 2.15rem !important;
+            letter-spacing: -0.03em !important;
+        }
+        .hero-amount span {
+            font-weight: 500 !important;
+            font-size: 0.92rem !important;
+            letter-spacing: 0 !important;
+        }
+        .acc-val {
+            font-weight: 700 !important;
+            font-size: 1.12rem !important;
+        }
+        .acc-top {
+            font-weight: 500 !important;
+        }
+        .acc-sub-unbudgeted b {
+            font-weight: 600 !important;
+            font-variant-numeric: tabular-nums;
+        }
+        .nw-item span {
+            font-weight: 600 !important;
+            font-size: 0.65rem !important;
+            letter-spacing: 0.04em;
+        }
+        .nw-item b {
+            font-weight: 700 !important;
+            font-size: 0.92rem !important;
+        }
+        .submetric-box {
+            font-weight: 500 !important;
+        }
+        .submetric-box b {
+            font-weight: 600 !important;
+            font-size: 0.96rem !important;
+        }
+        .card-row-title, .tx-title {
+            font-weight: 600 !important;
+            font-size: 0.93rem !important;
+        }
+        .card-row-val, .tx-amount {
+            font-weight: 700 !important;
+            font-size: 1rem !important;
+        }
+        .btn-action, .btn-submit {
+            font-weight: 600 !important;
+            font-size: 0.9rem !important;
+            letter-spacing: -0.01em;
+        }
+        .pill-action, .chip-btn, .filter-chip {
+            font-weight: 600 !important;
+        }
+        .dock-item {
+            font-weight: 500 !important;
+            font-size: 0.68rem !important;
+        }
+        .dock-item.active {
+            font-weight: 600 !important;
+            color: var(--dock-active-color) !important;
+            background: var(--accent-luxury-soft) !important;
+        }
+        .dock-item.active .dock-icon .svg-ico {
+            stroke: var(--dock-active-color) !important;
+        }
+
+        /* Select Dropdown Chevron & Ellipsis Prevention */
+        select.input-box {
+            padding-right: 34px !important;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 14px;
+        }
+
+        /* Subtle Bottom Edge Gradient Shield Below Floating Curvy Dock */
+        .dock-bottom-shield {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 26px;
+            background: linear-gradient(to top, var(--bg-base) 45%, transparent 100%);
+            pointer-events: none;
+            z-index: 75;
+        }
+
+        /* Refined Dark & Light Card Surfaces */
+        [data-theme="dark"] .hero-budget-card {
+            background: linear-gradient(155deg, #141a29 0%, #0d111b 100%) !important;
+            border: 1px solid rgba(234, 179, 8, 0.28) !important;
+            box-shadow: 0 14px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+        }
+        [data-theme="light"] .hero-budget-card {
+            background: #ffffff !important;
+            border: 1px solid rgba(15, 23, 42, 0.10) !important;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06) !important;
+        }
+        [data-theme="light"] .networth-strip {
+            background: #ffffff !important;
+            border: 1px solid rgba(15, 23, 42, 0.09) !important;
+        }
+        [data-theme="light"] .filter-chip.active {
+            background: #0f172a !important;
+            color: #ffffff !important;
+            border-color: #0f172a !important;
+        }
+        .btn-submit {
+            background: linear-gradient(135deg, #0284c7 0%, #2563eb 55%, #7c3aed 100%) !important;
+            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.25) !important;
+        }
+
+
+        /* ================= PLATINUM & ICE-CYAN DARK MODE (ZERO YELLOW-GRAY MUD) ================= */
+        :root {
+            --bg-base: #07090e;
+            --surface-1: #0e131d;
+            --surface-2: #151c2b;
+            --surface-3: #1d2638;
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-glow: rgba(56, 189, 248, 0.25);
+            --text-high: #f8fafc;
+            --text-med: #94a3b8;
+            --text-dim: #64748b;
+            --emerald: #10b981;
+            --cyan: #38bdf8;
+            --rose: #f43f5e;
+            --violet: #a78bfa;
+            --amber: #f59e0b;
+            --accent-luxury: #38bdf8;
+            --accent-luxury-soft: rgba(56, 189, 248, 0.14);
+            --accent-luxury-border: rgba(56, 189, 248, 0.28);
+            --dock-active-color: #38bdf8;
+        }
+
+        [data-theme="dark"] .hero-budget-card {
+            background: linear-gradient(155deg, #121927 0%, #0b0f18 100%) !important;
+            border: 1px solid rgba(56, 189, 248, 0.24) !important;
+            box-shadow: 0 14px 34px rgba(0, 0, 0, 0.50), inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+        }
+
+        [data-theme="dark"] .networth-strip {
+            background: linear-gradient(135deg, #101724 0%, #0d131e 100%) !important;
+            border: 1px solid rgba(56, 189, 248, 0.20) !important;
+        }
+
+        [data-theme="dark"] .hero-pill {
+            background: rgba(56, 189, 248, 0.14) !important;
+            border: 1px solid rgba(56, 189, 248, 0.32) !important;
+            color: #38bdf8 !important;
+        }
+
+        [data-theme="dark"] .dock {
+            background: rgba(11, 15, 24, 0.90) !important;
+            border: 1px solid rgba(255, 255, 255, 0.10) !important;
+        }
+
+        [data-theme="dark"] .dock-item.active {
+            color: #38bdf8 !important;
+            background: rgba(56, 189, 248, 0.14) !important;
+        }
+
+        [data-theme="dark"] .dock-item.active .dock-icon .svg-ico {
+            stroke: #38bdf8 !important;
+        }
+
+        [data-theme="dark"] .account-card:hover,
+        [data-theme="dark"] .card-row:hover {
+            border-color: rgba(56, 189, 248, 0.32) !important;
+        }
+
+
+        /* ================= APPLE / STRIPE SOLID LUXURY SURFACES (ZERO CHEAP GRADIENTS) ================= */
+        .btn-submit {
+            background: #2563eb !important;
+            color: #ffffff !important;
+            border: 1px solid rgba(255, 255, 255, 0.12) !important;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.28) !important;
+        }
+        [data-theme="dark"] .btn-submit {
+            background: #38bdf8 !important;
+            color: #060911 !important;
+            font-weight: 700 !important;
+            border: none !important;
+            box-shadow: 0 4px 16px rgba(56, 189, 248, 0.25) !important;
+        }
+        .btn-submit:hover {
+            opacity: 0.94;
+        }
+
+        /* Clean Flat Tinted Action Buttons (Expense, Income, Transfer) */
+        .btn-exp {
+            background: rgba(244, 63, 94, 0.11) !important;
+            border: 1px solid rgba(244, 63, 94, 0.32) !important;
+            color: var(--rose) !important;
+            box-shadow: none !important;
+        }
+        .btn-inc {
+            background: rgba(16, 185, 129, 0.11) !important;
+            border: 1px solid rgba(16, 185, 129, 0.32) !important;
+            color: var(--emerald) !important;
+            box-shadow: none !important;
+        }
+        .btn-xfer {
+            background: rgba(56, 189, 248, 0.11) !important;
+            border: 1px solid rgba(56, 189, 248, 0.32) !important;
+            color: var(--cyan) !important;
+            box-shadow: none !important;
+        }
+        [data-theme="light"] .btn-exp {
+            background: #fff1f2 !important;
+            border: 1px solid #fecdd3 !important;
+            color: #be123c !important;
+        }
+        [data-theme="light"] .btn-inc {
+            background: #ecfdf5 !important;
+            border: 1px solid #a7f3d0 !important;
+            color: #047857 !important;
+        }
+        [data-theme="light"] .btn-xfer {
+            background: #eff6ff !important;
+            border: 1px solid #bfdbfe !important;
+            color: #1d4ed8 !important;
+        }
+
+        /* Solid Elevated Surfaces for Hero Card, Net Worth Bar & Alerts */
+        [data-theme="dark"] .hero-budget-card {
+            background: #0f1522 !important;
+            border: 1px solid rgba(255, 255, 255, 0.10) !important;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45) !important;
+        }
+        [data-theme="light"] .hero-budget-card {
+            background: #ffffff !important;
+            border: 1px solid rgba(15, 23, 42, 0.10) !important;
+            box-shadow: 0 6px 20px rgba(15, 23, 42, 0.05) !important;
+        }
+        [data-theme="dark"] .networth-strip {
+            background: #0e131d !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        }
+        [data-theme="light"] .networth-strip {
+            background: #ffffff !important;
+            border: 1px solid rgba(15, 23, 42, 0.09) !important;
+        }
+        .emi-alert-banner {
+            background: rgba(245, 158, 11, 0.10) !important;
+            border: 1px solid rgba(245, 158, 11, 0.35) !important;
+        }
+
     </style>
 </head>
 <body>
@@ -1202,7 +1539,7 @@
                     + Register Friend User
                 </button>
                 <button type="button" style="background:transparent; border:none; color:var(--cyan); font-size:0.75rem; font-weight:700; cursor:pointer;" onclick="openForgotPasswordModal()">
-                    Forgot Password? 🔑
+                    Forgot Password?
                 </button>
             </div>
 
@@ -1210,10 +1547,10 @@
             
             <div style="margin-top:16px; border-top:1px solid var(--border-subtle); padding-top:12px; display:flex; flex-direction:column; gap:10px;">
                 <button type="button" style="background:var(--surface-2); border:1px solid var(--cyan); color:var(--cyan); font-size:0.78rem; font-weight:800; padding:9px 12px; border-radius:10px; cursor:pointer;" onclick="restoreFromGoogleDriveLogin()">
-                    ☁️ Restore from Google Drive
+                    Restore from Google Drive
                 </button>
                 <button type="button" style="background:transparent; border:none; color:var(--text-med); font-size:0.75rem; font-weight:700; cursor:pointer;" onclick="forceCleanAppReload()">
-                    🔄 Check & Fetch Latest App Update
+                    Check & Fetch Latest App Update
                 </button>
             </div>
         </div>
@@ -1221,7 +1558,7 @@
 
     <!-- 2. PIN LOCK SCREEN -->
     <div id="lockScreen">
-        <h2 style="margin-bottom: 6px;">🔐 Security Lock</h2>
+        <h2 style="margin-bottom: 6px; font-weight:700;">Security Lock</h2>
         <p style="color: var(--text-med); font-size: 0.85rem;" id="lockPromptText">Enter 4-Digit Security PIN</p>
         <div class="pin-dots">
             <div class="pin-dot" id="dot1"></div>
@@ -1244,14 +1581,14 @@
             <button class="num-btn" style="font-size: 1.1rem; color:var(--rose);" onclick="clearPin()">⌫</button>
         </div>
         <button type="button" style="margin-top:24px; background:transparent; border:none; color:var(--cyan); font-size:0.8rem; font-weight:700; cursor:pointer;" onclick="openPinModal(true)">
-            Forgot PIN? Reset with Master Key 🔑
+            Forgot PIN? Reset with Master Key
         </button>
     </div>
 
     <!-- 3. TOP APP BAR -->
     <header>
         <div class="header-left">
-            <div class="user-avatar" id="headerAvatar" onclick="switchTab('tabSettings')">
+            <div class="user-avatar" id="headerAvatar" onclick="toggleHeaderAvatarRoute()" title="Toggle Settings / Dashboard">
                 <img id="headerLogoImg" src="./logo.png" alt="S">
             </div>
             <div class="header-meta">
@@ -1268,7 +1605,7 @@
         </div>
         <div class="header-actions">
             <button class="btn-icon" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle Theme"></button>
-            <button class="btn-icon" onclick="manualLockNow()" title="Lock App" style="color:var(--gold-light);"><svg class="svg-ico" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></button>
+            <button class="btn-icon" onclick="manualLockNow()" title="Lock App" style="color:var(--cyan);"><svg class="svg-ico" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></button>
         </div>
     </header>
 
@@ -1486,20 +1823,20 @@
 
         <!-- TAB 6: SETTINGS -->
         <div class="view-panel" id="viewSettings">
-            <div class="card-row" style="cursor:default; border: 1px solid var(--border-glow); background: linear-gradient(135deg, rgba(6,182,212,0.12), rgba(139,92,246,0.08));">
+            <div class="card-row" style="cursor:default; border: 1px solid var(--border-subtle); background: var(--surface-1);">
                 <div style="font-size:1rem; font-weight:800; margin-bottom:6px; color:var(--cyan); display:flex; align-items:center; gap:8px;">
-                    <span>📲 Install App to Home Screen</span>
+                    <span style="display:inline-flex;align-items:center;gap:7px;"><svg class="svg-ico" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg> Install App to Home Screen</span>
                 </div>
                 <p style="font-size:0.78rem; color:var(--text-med); margin-bottom:12px; line-height:1.4;">
                     Install as a standalone app with the 3D Gold Logo icon without browser URL bars.
                 </p>
                 <button class="btn-submit" style="width:100%;" onclick="triggerAddToHomeScreen()">
-                    📲 Add to Home Screen / Install
+                    <svg class="svg-ico" style="margin-right:6px;" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Add to Home Screen / Install
                 </button>
             </div>
 
             <div class="card-row" style="cursor:default;">
-                <div style="font-size:1rem; font-weight:800; margin-bottom:10px; color:var(--cyan);">👤 Account & Profile</div>
+                <div style="font-size:0.96rem; font-weight:600; margin-bottom:10px; color:var(--cyan); display:flex; align-items:center; gap:7px;"><svg class="svg-ico" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Account & Profile</div>
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:0.88rem;">
                     <span>Logged User</span>
                     <div style="display:flex; align-items:center; gap:8px;">
@@ -1509,11 +1846,11 @@
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; padding-top:10px; border-top:1px solid var(--border-subtle);">
                     <span>Login Password</span>
-                    <button class="pill-action" onclick="openChangePasswordModal()">Change Password 🔑</button>
+                    <button class="pill-action" onclick="openChangePasswordModal()">Change Password</button>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; padding-top:10px; border-top:1px solid var(--border-subtle);">
                     <span>Share App with Friends</span>
-                    <button class="pill-action" onclick="shareShaFinLink()">Copy Link 🔗</button>
+                    <button class="pill-action" onclick="shareShaFinLink()">Copy Link</button>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.88rem; margin-top:10px;">
                     <span>Primary Currency</span>
@@ -1528,7 +1865,7 @@
 
             <!-- PIN LOCK SETTINGS & REMOVE OPTION -->
             <div class="card-row" style="cursor:default;">
-                <div style="font-size:1rem; font-weight:800; margin-bottom:10px; color:var(--violet);">🔐 Security & PIN Lock</div>
+                <div style="font-size:0.96rem; font-weight:600; margin-bottom:10px; color:var(--violet); display:flex; align-items:center; gap:7px;"><svg class="svg-ico" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Security & PIN Lock</div>
                 <div style="margin-bottom:12px;">
                     <label style="display:block; font-size:0.8rem; color:var(--text-med); margin-bottom:4px;">When to Lock App?</label>
                     <select id="lockFrequencySelect" class="input-box" onchange="updateLockFrequency(this.value)">
@@ -1540,26 +1877,26 @@
                 </div>
                 <div style="display:flex; gap:8px; margin-bottom:8px;">
                     <button class="pill-action" id="btnSetChangePin" style="flex:1;" onclick="openPinModal(false)">Set PIN</button>
-                    <button class="pill-action" style="flex:1;" onclick="manualLockNow()">Lock App Now 🔒</button>
+                    <button class="pill-action" style="flex:1;" onclick="manualLockNow()">Lock App Now</button>
                 </div>
                 <div id="removePinRow" style="display:none; margin-bottom:10px;">
                     <button class="pill-action" style="width:100%; color:var(--rose); border-color:rgba(244,63,94,0.3);" onclick="removePinCompletely()">
-                        🚫 Remove PIN Lock (Turn Off)
+                        Remove PIN Lock (Turn Off)
                     </button>
                 </div>
                 <div style="border-top:1px solid var(--border-subtle); padding-top:10px; display:flex; justify-content:space-between; align-items:center;">
                     <div>
-                        <div style="font-size:0.82rem; font-weight:800; color:var(--cyan);">🔔 Phone Alert Notifications</div>
+                        <div style="font-size:0.84rem; font-weight:600; color:var(--cyan); display:flex; align-items:center; gap:6px;"><svg class="svg-ico" style="width:14px;height:14px;" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> Phone Alert Notifications</div>
                         <div style="font-size:0.7rem; color:var(--text-dim);" id="notifPermStatusText">Get EMI & Bill due alerts in phone notification bar</div>
                     </div>
-                    <button class="pill-action" id="btnEnableNotifs" onclick="requestPhoneNotificationPermission()">Enable 🔔</button>
+                    <button class="pill-action" id="btnEnableNotifs" onclick="requestPhoneNotificationPermission()">Enable</button>
                 </div>
             </div>
 
             <!-- GOOGLE DRIVE AUTO-SYNC CARD + AES-256 ENCRYPTION SHIELD -->
             <div class="card-row" style="cursor:default; border: 1px solid var(--border-glow);">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                    <div style="font-size:1rem; font-weight:800; color:var(--emerald);">☁️ Google Drive Cloud Auto-Sync</div>
+                    <div style="font-size:0.96rem; font-weight:600; color:var(--emerald); display:flex; align-items:center; gap:7px;"><svg class="svg-ico" viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg> Google Drive Cloud Auto-Sync</div>
                     <span id="driveSyncStatusPill" style="font-size:0.7rem; padding:2px 8px; border-radius:12px; background:var(--surface-2); color:var(--text-dim); font-weight:700;">Not Connected</span>
                 </div>
                 <p id="driveAccountInfoText" style="font-size:0.78rem; color:var(--text-med); margin-bottom:10px; line-height:1.4;">
@@ -1567,23 +1904,23 @@
                 </p>
                 <div style="background:var(--surface-2); padding:9px 12px; border-radius:var(--radius-md); border:1px solid var(--border-subtle); margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
                     <div>
-                        <div style="font-size:0.8rem; font-weight:800; color:var(--cyan);">🔐 AES-256 Cloud Encryption</div>
+                        <div style="font-size:0.82rem; font-weight:600; color:var(--cyan); display:flex; align-items:center; gap:6px;"><svg class="svg-ico" style="width:14px;height:14px;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> AES-256 Cloud Encryption</div>
                         <div style="font-size:0.7rem; color:var(--text-dim);">Auto-encrypts Drive JSON & auto-unlocks on restore (zero prompts)</div>
                     </div>
                     <input type="checkbox" id="driveEncryptToggle" style="width:18px; height:18px; cursor:pointer;" onchange="toggleDriveEncryption(this.checked)">
                 </div>
                 <div style="display:flex; gap:8px;">
                     <button class="btn-submit" id="btnConnectDrive" style="flex:1; padding:11px; font-size:0.85rem;" onclick="connectGoogleDriveFromSettings()">
-                        ☁️ Connect & Auto-Sync Drive
+                        Connect & Auto-Sync Drive
                     </button>
                     <button class="pill-action" id="btnSyncNowDrive" style="display:none; padding:10px 14px;" onclick="syncToGoogleDriveNow(true)">
-                        Sync Now 🔄
+                        Sync Now
                     </button>
                 </div>
             </div>
 
             <div class="card-row" style="cursor:default;">
-                <div style="font-size:1rem; font-weight:800; margin-bottom:8px;">💾 Backup & Data Portability</div>
+                <div style="font-size:0.96rem; font-weight:600; margin-bottom:8px; display:flex; align-items:center; gap:7px;"><svg class="svg-ico" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Backup & Data Portability</div>
                 <p style="font-size:0.78rem; color:var(--text-dim); margin-bottom:12px;">Download a JSON backup to protect your financial records:</p>
                 <div style="display:flex; gap:10px;">
                     <button class="btn-action" style="flex:1; background:var(--surface-2); border:1px solid var(--cyan); color:var(--cyan);" onclick="exportJsonBackup()">Download Backup</button>
@@ -1597,12 +1934,13 @@
             <div class="card-row" style="cursor:default; border-color:rgba(244,63,94,0.3);">
                 <button class="btn-action btn-exp" style="width:100%; margin-bottom:10px;" onclick="logoutCurrentSession()">Logout Session</button>
                 <button class="btn-action" id="btnDeleteAccount" style="width:100%; background:transparent; border:1px solid rgba(244,63,94,0.35); color:var(--rose); font-size:0.82rem; padding:10px;" onclick="deleteCurrentAccountAndData()">
-                    🗑️ Delete Account & Wipe All Data
+                    Delete Account & Wipe All Data
                 </button>
             </div>
         </div>
     </main>
 
+    <div class="dock-bottom-shield"></div>
     <!-- Bottom Dock Navigation (iOS Crisp SVG Icons) -->
     <nav class="dock">
         <button class="dock-item active" id="tabNavDash" onclick="switchTab('tabDash')">
@@ -1705,14 +2043,14 @@
             <div class="form-row">
                 <label>Linked Account</label>
                 <select id="bAccountTypeSelect" class="input-box">
-                    <option value="BANK">🏦 Bank Account</option>
-                    <option value="CASH">💵 Cash in Hand</option>
-                    <option value="COMBINED">🏦+💵 Combined (Bank & Cash)</option>
+                    <option value="BANK">Bank Account</option>
+                    <option value="CASH">Cash in Hand</option>
+                    <option value="COMBINED">Combined (Bank & Cash)</option>
                 </select>
             </div>
             <div class="form-row" style="display:flex; align-items:center; gap:10px; margin-top:8px;">
                 <input type="checkbox" id="bIsMainCheck" style="width:18px; height:18px;">
-                <label for="bIsMainCheck" style="margin-bottom:0; cursor:pointer;">Set as Main Dashboard Budget ⭐</label>
+                <label for="bIsMainCheck" style="margin-bottom:0; cursor:pointer;">Set as Main Dashboard Budget</label>
             </div>
             <div class="modal-foot">
                 <button class="btn-cancel" onclick="closeModal('budgetModal')">Cancel</button>
@@ -1786,7 +2124,7 @@
     <div class="modal" id="loanPrepayModal">
         <div class="modal-body">
             <div class="modal-head">
-                <span>💰 Loan Prepayment / Part-Payment</span>
+                <span>Loan Prepayment / Part-Payment</span>
                 <span style="cursor:pointer;" onclick="closeModal('loanPrepayModal')">✕</span>
             </div>
             <input type="hidden" id="prepayLoanId">
@@ -1838,7 +2176,7 @@
     <div class="modal modal-center" id="renameUserIdModal">
         <div class="modal-body">
             <div class="modal-head">
-                <span>✏️ Change User ID</span>
+                <span>Change User ID</span>
                 <span style="cursor:pointer;" onclick="closeModal('renameUserIdModal')">✕</span>
             </div>
             <p style="font-size:0.8rem; color:var(--text-med); margin-bottom:14px;">
@@ -1863,7 +2201,7 @@
     <div class="modal" id="changePasswordModal">
         <div class="modal-body">
             <div class="modal-head">
-                <span>🔑 Change Login Password</span>
+                <span>Change Login Password</span>
                 <span style="cursor:pointer;" onclick="closeModal('changePasswordModal')">✕</span>
             </div>
             <div class="form-row">
@@ -1889,7 +2227,7 @@
     <div class="modal modal-center" id="forgotPasswordModal">
         <div class="modal-body">
             <div class="modal-head">
-                <span>🔑 Reset Login Password</span>
+                <span>Reset Login Password</span>
                 <span style="cursor:pointer;" onclick="closeModal('forgotPasswordModal')">✕</span>
             </div>
             <p style="font-size:0.8rem; color:var(--text-med); margin-bottom:14px;">
@@ -1922,7 +2260,7 @@
     <div class="modal modal-center" id="pinManageModal">
         <div class="modal-body">
             <div class="modal-head">
-                <span id="pinModalTitle">🔐 Set 4-Digit PIN</span>
+                <span id="pinModalTitle">Set 4-Digit PIN</span>
                 <span style="cursor:pointer;" onclick="closeModal('pinManageModal')">✕</span>
             </div>
 
@@ -1948,7 +2286,7 @@
 
             <div id="forgotPinToggleRow" style="text-align:right; margin-top:-6px; margin-bottom:10px; display:none;">
                 <button type="button" style="background:transparent; border:none; color:var(--cyan); font-size:0.75rem; font-weight:700; cursor:pointer;" onclick="switchToForgotPinMode()">
-                    Forgot Old PIN? Use Master Key 🔑
+                    Forgot Old PIN? Use Master Key
                 </button>
             </div>
 
@@ -1963,7 +2301,7 @@
     <div class="modal modal-center" id="registerFriendModal">
         <div class="modal-body">
             <div class="modal-head">
-                <span>👥 Register Friend Account</span>
+                <span>Register Friend Account</span>
                 <span style="cursor:pointer;" onclick="closeModal('registerFriendModal')">✕</span>
             </div>
             <p style="font-size:0.8rem; color:var(--text-med); margin-bottom:14px;">
@@ -1987,7 +2325,7 @@
                     <span id="regDriveStatusBadge" style="font-size:0.72rem; color:var(--cyan); font-weight:700;">Not Linked</span>
                 </div>
                 <button type="button" class="pill-action" style="width:100%; margin-top:8px; text-align:center;" onclick="linkDriveDuringRegistration()">
-                    ☁️ Connect Gmail Drive for Auto-Sync
+                    Connect Gmail Drive for Auto-Sync
                 </button>
             </div>
             <div class="modal-foot">
@@ -2002,7 +2340,7 @@
     <div class="modal modal-center" id="selfTransferModal">
         <div class="modal-body">
             <div class="modal-head">
-                <span>🔄 Self Transfer (Bank ⇄ Cash)</span>
+                <span>Self Transfer (Bank ⇄ Cash)</span>
                 <span style="cursor:pointer;" onclick="closeModal('selfTransferModal')">✕</span>
             </div>
             <p style="font-size:0.78rem; color:var(--text-med); margin-bottom:14px;">
@@ -2011,8 +2349,8 @@
             <div class="form-row">
                 <label>Transfer Direction</label>
                 <select id="xferDirectionSelect" class="input-box">
-                    <option value="BANK_TO_CASH">🏦 Bank ➔ 💵 Cash (ATM Withdrawal)</option>
-                    <option value="CASH_TO_BANK">💵 Cash ➔ 🏦 Bank (Cash Deposit)</option>
+                    <option value="BANK_TO_CASH">Bank ➔ Cash (ATM Withdrawal)</option>
+                    <option value="CASH_TO_BANK">Cash ➔ Bank (Cash Deposit)</option>
                 </select>
             </div>
             <div class="form-row">
@@ -2038,7 +2376,7 @@
     <div class="modal modal-center" id="recurringBillModal">
         <div class="modal-body">
             <div class="modal-head">
-                <span id="recBillModalHeading">🔔 Add Recurring Bill</span>
+                <span id="recBillModalHeading">Add Recurring Bill</span>
                 <span style="cursor:pointer;" onclick="closeModal('recurringBillModal')">✕</span>
             </div>
             <input type="hidden" id="editRecBillId">
@@ -2060,8 +2398,8 @@
                 <div>
                     <label>Pay From Account</label>
                     <select id="recBillAccSelect" class="input-box">
-                        <option value="BANK">🏦 Bank Account</option>
-                        <option value="CASH">💵 Cash in Hand</option>
+                        <option value="BANK">Bank Account</option>
+                        <option value="CASH">Cash in Hand</option>
                     </select>
                 </div>
                 <div>
@@ -2205,7 +2543,7 @@
 
             const delBtn = document.getElementById('btnDeleteAccount');
             if (delBtn) {
-                delBtn.innerText = isAdmin ? '🗑️ Reset & Wipe Admin Data' : '🗑️ Delete Account & Wipe All Data';
+                delBtn.innerText = isAdmin ? 'Reset & Wipe Admin Data' : 'Delete Account & Wipe All Data';
             }
 
             document.getElementById('settingsCurrencySelect').value = appData.profile.currency || '₹';
@@ -2731,7 +3069,7 @@
                     pill.style.background = isPending ? 'var(--amber-glow)' : 'var(--emerald-glow)';
                     pill.style.color = isPending ? 'var(--amber)' : 'var(--emerald)';
                 }
-                if (btnConnect) btnConnect.innerText = '🔄 Switch / Reconnect Gmail';
+                if (btnConnect) btnConnect.innerText = 'Switch / Reconnect Gmail';
                 if (btnSyncNow) btnSyncNow.style.display = 'inline-block';
                 setCloudBadgeState(isPending ? 'EXPIRED' : 'SYNCED');
             } else {
@@ -2740,7 +3078,7 @@
                     pill.style.background = 'var(--surface-2)';
                     pill.style.color = 'var(--text-dim)';
                 }
-                if (btnConnect) btnConnect.innerText = '☁️ Connect & Auto-Sync Drive';
+                if (btnConnect) btnConnect.innerText = 'Connect & Auto-Sync Drive';
                 if (btnSyncNow) btnSyncNow.style.display = 'none';
                 setCloudBadgeState('HIDDEN');
             }
@@ -3154,19 +3492,19 @@
 
             if (forceForgot) {
                 pinModalMode = 'FORGOT';
-                document.getElementById('pinModalTitle').innerText = '🔑 Reset PIN with Master Key';
+                document.getElementById('pinModalTitle').innerText = 'Reset PIN with Master Key';
                 document.getElementById('oldPinRow').style.display = 'none';
                 document.getElementById('pinMasterKeyRow').style.display = 'block';
                 document.getElementById('forgotPinToggleRow').style.display = 'none';
             } else if (hasPin) {
                 pinModalMode = 'CHANGE';
-                document.getElementById('pinModalTitle').innerText = '🔐 Change 4-Digit PIN';
+                document.getElementById('pinModalTitle').innerText = 'Change 4-Digit PIN';
                 document.getElementById('oldPinRow').style.display = 'block';
                 document.getElementById('pinMasterKeyRow').style.display = 'none';
                 document.getElementById('forgotPinToggleRow').style.display = 'block';
             } else {
                 pinModalMode = 'SET';
-                document.getElementById('pinModalTitle').innerText = '🔐 Set New 4-Digit PIN';
+                document.getElementById('pinModalTitle').innerText = 'Set New 4-Digit PIN';
                 document.getElementById('oldPinRow').style.display = 'none';
                 document.getElementById('pinMasterKeyRow').style.display = 'none';
                 document.getElementById('forgotPinToggleRow').style.display = 'none';
@@ -3578,7 +3916,7 @@
                 btn.style.color = 'var(--rose)';
                 txt.innerText = 'Blocked in browser site settings';
             } else {
-                btn.innerText = 'Enable 🔔';
+                btn.innerText = 'Enable';
             }
         }
 
@@ -3712,7 +4050,7 @@
 
         // ================= RECURRING BILLS & SUBSCRIPTIONS (COUNT, RE-EDIT, STATEMENT & NOTIFICATIONS) =================
         function openRecurringBillModal() {
-            document.getElementById('recBillModalHeading').innerText = '🔔 Add Recurring Bill';
+            document.getElementById('recBillModalHeading').innerText = 'Add Recurring Bill';
             document.getElementById('editRecBillId').value = '';
             document.getElementById('recBillNameInput').value = '';
             document.getElementById('recBillAmountInput').value = '';
@@ -3727,7 +4065,7 @@
         function openEditRecurringBillModal(billId) {
             const bill = (appData.recurringBills || []).find(b => b.id === billId);
             if (!bill) return;
-            document.getElementById('recBillModalHeading').innerText = '✏️ Re-Edit Recurring Bill';
+            document.getElementById('recBillModalHeading').innerText = 'Edit Recurring Bill';
             document.getElementById('editRecBillId').value = bill.id;
             document.getElementById('recBillNameInput').value = bill.name;
             document.getElementById('recBillAmountInput').value = bill.amount;
@@ -3982,7 +4320,7 @@
                     const d = dueSoonItem.diff;
                     const countdownTxt = d < 0 ? `Overdue by ${Math.abs(d)} day(s)! 🚨` : (d === 0 ? 'Due Today! 🚨' : (d === 1 ? 'Due Tomorrow! ⚠️' : `Due in ${d} days! 🔔`));
                     alertWidget.innerHTML = `
-                        <div class="emi-alert-banner" style="border-color:var(--cyan); background:linear-gradient(135deg, rgba(6,182,212,0.14), rgba(6,182,212,0.05));">
+                        <div class="emi-alert-banner" style="border-color:rgba(56,189,248,0.35); background:rgba(56,189,248,0.10);">
                             <div>
                                 <div class="emi-alert-title" style="color:var(--cyan);display:flex;align-items:center;gap:5px;">${ico('bell')} ${b.name}: ${countdownTxt}</div>
                                 <div class="emi-alert-desc">Due on ${b.dueDay}th • Amount: <b>${curr}${b.amount.toLocaleString('en-IN')}</b> (From ${b.account})</div>
@@ -4449,7 +4787,7 @@
                             <div class="progress-bar" style="width:${pct}%; background:var(--cyan);"></div>
                         </div>
                         <div class="card-row-foot">
-                            <span>Allocated: ${curr}${b.amount.toLocaleString('en-IN')} • <b>${b.accountType === 'CASH' ? '💵 Cash' : (b.accountType === 'COMBINED' ? '🏦+💵 Both' : '🏦 Bank')}</b></span>
+                            <span>Allocated: ${curr}${b.amount.toLocaleString('en-IN')} • <b>${b.accountType === 'CASH' ? 'Cash' : (b.accountType === 'COMBINED' ? 'Bank + Cash' : 'Bank')}</b></span>
                             <div>
                                 <button class="chip-btn" onclick="event.stopPropagation(); openEditBudgetModal(${b.id})">${ico('edit')} Edit</button>
                                 <button class="chip-btn chip-btn-danger" onclick="event.stopPropagation(); deleteBudget(${b.id})">${ico('trash')} Delete</button>
@@ -4538,7 +4876,7 @@
                             <div>Total Payable: <b>${curr}${Math.round(totalRepayment).toLocaleString('en-IN')}</b></div>
                         </div>
                         <div class="card-row-foot">
-                            <button class="chip-btn" style="background:var(--emerald-glow); color:var(--emerald);" onclick="event.stopPropagation(); openLoanPrepayModal(${loan.id})">💰 Part-Payment / Prepay</button>
+                            <button class="chip-btn" style="background:var(--emerald-glow); color:var(--emerald);" onclick="event.stopPropagation(); openLoanPrepayModal(${loan.id})">Part-Payment / Prepay</button>
                             <div>
                                 <button class="chip-btn" onclick="event.stopPropagation(); openEditLoanModal(${loan.id})">${ico('edit')} Edit</button>
                                 <button class="chip-btn chip-btn-danger" onclick="event.stopPropagation(); deleteLoan(${loan.id})">${ico('trash')} Delete</button>
@@ -5297,6 +5635,16 @@
         }
 
         // ================= NAVIGATION & UTILS =================
+
+        function toggleHeaderAvatarRoute() {
+            const settingsPanel = document.getElementById('viewSettings');
+            if (settingsPanel && settingsPanel.classList.contains('active')) {
+                switchTab('tabDash');
+            } else {
+                switchTab('tabSettings');
+            }
+        }
+
         function switchTab(tabId) {
             document.querySelectorAll('.dock-item').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.view-panel').forEach(el => el.classList.remove('active'));
@@ -5338,7 +5686,7 @@
                 btn.title = 'Switch to Dark Mode';
             } else {
                 btn.innerHTML = ico('sun');
-                btn.style.color = '#facc15';
+                btn.style.color = '#38bdf8';
                 btn.title = 'Switch to Bright Light Mode';
             }
         }
