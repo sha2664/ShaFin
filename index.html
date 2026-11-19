@@ -1060,7 +1060,15 @@
                         <span>Recurring Bills & Alerts</span>
                         <span class="pill-action" onclick="openRecurringBillModal()">+ Add Bill</span>
                     </div>
+                    <div id="recurringBillsSummaryBar" class="networth-strip" style="margin-bottom:10px;"></div>
                     <div id="recurringBillsListContainer"></div>
+                    <div id="billSpecificLedgerView" style="display:none; margin-top:12px; margin-bottom:16px; background:var(--surface-1); border:1px solid var(--border-glow); border-radius:var(--radius-lg); padding:12px;">
+                        <div class="section-header" style="margin-top:0;">
+                            <span id="selectedBillNameTitle" style="font-size:0.9rem;">Bill Statement</span>
+                            <span class="pill-action" onclick="closeBillSpecificLedger()">✕ Close</span>
+                        </div>
+                        <div id="billSpecificTxList"></div>
+                    </div>
 
                     <div class="section-header">
                         <span>Other Budgets</span>
@@ -1083,6 +1091,7 @@
                 <span>Multi-Budget Central</span>
                 <span class="pill-action" onclick="openCreateBudgetModal()">+ Create Budget</span>
             </div>
+            <div id="budgetsTabSummaryBar" class="networth-strip" style="margin-bottom:14px;"></div>
             <div id="allBudgetsDetailList" class="budgets-desktop-grid"></div>
 
             <div id="budgetSpecificLedgerView" style="display:none; margin-top:20px;">
@@ -1245,10 +1254,17 @@
                     <button class="pill-action" id="btnSetChangePin" style="flex:1;" onclick="openPinModal(false)">Set PIN</button>
                     <button class="pill-action" style="flex:1;" onclick="manualLockNow()">Lock App Now 🔒</button>
                 </div>
-                <div id="removePinRow" style="display:none;">
+                <div id="removePinRow" style="display:none; margin-bottom:10px;">
                     <button class="pill-action" style="width:100%; color:var(--rose); border-color:rgba(244,63,94,0.3);" onclick="removePinCompletely()">
                         🚫 Remove PIN Lock (Turn Off)
                     </button>
+                </div>
+                <div style="border-top:1px solid var(--border-subtle); padding-top:10px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div style="font-size:0.82rem; font-weight:800; color:var(--cyan);">🔔 Phone Alert Notifications</div>
+                        <div style="font-size:0.7rem; color:var(--text-dim);" id="notifPermStatusText">Get EMI & Bill due alerts in phone notification bar</div>
+                    </div>
+                    <button class="pill-action" id="btnEnableNotifs" onclick="requestPhoneNotificationPermission()">Enable 🔔</button>
                 </div>
             </div>
 
@@ -1730,13 +1746,14 @@
         </div>
     </div>
 
-    <!-- RECURRING BILL / SUBSCRIPTION MODAL -->
+    <!-- RECURRING BILL / SUBSCRIPTION MODAL (CREATE + RE-EDIT + REMIND DAYS) -->
     <div class="modal modal-center" id="recurringBillModal">
         <div class="modal-body">
             <div class="modal-head">
-                <span>🔔 Add Recurring Bill / Subscription</span>
+                <span id="recBillModalHeading">🔔 Add Recurring Bill</span>
                 <span style="cursor:pointer;" onclick="closeModal('recurringBillModal')">✕</span>
             </div>
+            <input type="hidden" id="editRecBillId">
             <div class="form-row">
                 <label>Bill / Subscription Name</label>
                 <input type="text" id="recBillNameInput" class="input-box" placeholder="e.g. Wi-Fi, Mobile Recharge, Rent">
@@ -1760,9 +1777,13 @@
                     </select>
                 </div>
                 <div>
-                    <label>Link to Budget</label>
-                    <select id="recBillBudgetSelect" class="input-box"></select>
+                    <label>Remind Days Before</label>
+                    <input type="number" min="0" max="15" id="recBillRemindDaysInput" class="input-box" value="3">
                 </div>
+            </div>
+            <div class="form-row">
+                <label>Link to Budget</label>
+                <select id="recBillBudgetSelect" class="input-box"></select>
             </div>
             <div class="modal-foot">
                 <button class="btn-cancel" onclick="closeModal('recurringBillModal')">Cancel</button>
@@ -1905,7 +1926,9 @@
 
             document.getElementById('txDateInput').value = new Date().toISOString().split('T')[0];
 
+            refreshNotificationSettingsUI();
             renderAll();
+            checkAndDispatchDueNotifications(false);
 
             // Flush any pending cloud sync on app open
             if (localStorage.getItem(getDrivePendingSyncKeyForUser(activeUser)) === 'true') {
@@ -3199,6 +3222,98 @@
         }
 
         // ================= RENDERING ENGINES =================
+
+        // ================= PHONE SYSTEM NOTIFICATION ENGINE (EMI & RECURRING BILLS) =================
+        function refreshNotificationSettingsUI() {
+            const btn = document.getElementById('btnEnableNotifs');
+            const txt = document.getElementById('notifPermStatusText');
+            if (!btn || !txt) return;
+            if (!('Notification' in window)) {
+                txt.innerText = 'Not supported on this browser';
+                btn.style.display = 'none';
+                return;
+            }
+            if (Notification.permission === 'granted') {
+                btn.innerText = 'Active ✓';
+                btn.style.color = 'var(--emerald)';
+                txt.innerText = 'Phone notifications enabled for due EMIs & Bills';
+            } else if (Notification.permission === 'denied') {
+                btn.innerText = 'Blocked';
+                btn.style.color = 'var(--rose)';
+                txt.innerText = 'Blocked in browser site settings';
+            } else {
+                btn.innerText = 'Enable 🔔';
+            }
+        }
+
+        function requestPhoneNotificationPermission() {
+            if (!('Notification' in window)) {
+                alert('Your browser does not support system notifications.');
+                return;
+            }
+            Notification.requestPermission().then((perm) => {
+                refreshNotificationSettingsUI();
+                if (perm === 'granted') {
+                    new Notification('ShaFin Alerts Active 🔔', {
+                        body: 'You will now receive alerts for upcoming Loan EMIs & Recurring Bills!',
+                        icon: './logo.png'
+                    });
+                    checkAndDispatchDueNotifications(true);
+                }
+            });
+        }
+
+        function checkAndDispatchDueNotifications(forceNow = false) {
+            if (!('Notification' in window) || Notification.permission !== 'granted') return;
+            const todayStr = new Date().toISOString().split('T')[0];
+            const sentKey = `shafin_notif_sent_${todayStr}`;
+            if (!forceNow && localStorage.getItem(sentKey) === 'true') return;
+
+            const curr = appData.profile.currency || '₹';
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            const curMonth = todayStr.substring(0, 7);
+            const curDay = today.getDate();
+            let alerts = [];
+
+            // Check Recurring Bills
+            (appData.recurringBills || []).forEach(b => {
+                if (b.lastPaidMonth === curMonth) return;
+                const diff = b.dueDay - curDay;
+                const remDays = b.remindDays !== undefined ? b.remindDays : 3;
+                if (diff >= -2 && diff <= remDays) {
+                    const when = diff === 0 ? 'Today' : (diff === 1 ? 'Tomorrow' : (diff < 0 ? 'Overdue' : `in ${diff} days`));
+                    alerts.push(`Bill: ${b.name} (${curr}${b.amount}) due ${when}`);
+                }
+            });
+
+            // Check Loan EMIs
+            (appData.loans || []).forEach(loan => {
+                if (loan.currentBalance <= 0) return;
+                const paid = loan.paidInstallments || [];
+                let nextM = 1;
+                for (let m = 1; m <= loan.tenureMonths; m++) {
+                    if (!paid.includes(m)) { nextM = m; break; }
+                }
+                const start = loan.startDate ? new Date(loan.startDate) : new Date();
+                const dueD = new Date(start.getFullYear(), start.getMonth() + (nextM - 1), loan.dueDay || 5);
+                dueD.setHours(0,0,0,0);
+                const daysLeft = Math.ceil((dueD.getTime() - today.getTime()) / 86400000);
+                if (daysLeft >= 0 && daysLeft <= (loan.remindDays || 3)) {
+                    const when = daysLeft === 0 ? 'Today' : (daysLeft === 1 ? 'Tomorrow' : `in ${daysLeft} days`);
+                    alerts.push(`EMI: ${loan.name} (${curr}${loan.emiAmount}) due ${when}`);
+                }
+            });
+
+            if (alerts.length > 0) {
+                new Notification('ShaFin Payment Reminder 🔔', {
+                    body: alerts.join(' • '),
+                    icon: './logo.png'
+                });
+                localStorage.setItem(sentKey, 'true');
+            }
+        }
+
         function renderAll() {
             renderAccountsStrip();
             renderMainHeroBudget();
@@ -3259,20 +3374,43 @@
             showUndoToast(txId, `🔄 Transferred ${curr}${amt.toLocaleString('en-IN')}`);
         }
 
-        // ================= RECURRING BILLS & SUBSCRIPTIONS =================
+        // ================= RECURRING BILLS & SUBSCRIPTIONS (COUNT, RE-EDIT, STATEMENT & NOTIFICATIONS) =================
         function openRecurringBillModal() {
+            document.getElementById('recBillModalHeading').innerText = '🔔 Add Recurring Bill';
+            document.getElementById('editRecBillId').value = '';
             document.getElementById('recBillNameInput').value = '';
             document.getElementById('recBillAmountInput').value = '';
             document.getElementById('recBillDueDayInput').value = '10';
+            document.getElementById('recBillRemindDaysInput').value = '3';
+            document.getElementById('recBillAccSelect').value = 'BANK';
             const bSel = document.getElementById('recBillBudgetSelect');
             bSel.innerHTML = appData.budgets.map(b => `<option value="${b.id}">${b.name}</option>`).join('') + `<option value="">-- No Budget --</option>`;
             document.getElementById('recurringBillModal').classList.add('active');
         }
 
+        function openEditRecurringBillModal(billId) {
+            const bill = (appData.recurringBills || []).find(b => b.id === billId);
+            if (!bill) return;
+            document.getElementById('recBillModalHeading').innerText = '✏️ Re-Edit Recurring Bill';
+            document.getElementById('editRecBillId').value = bill.id;
+            document.getElementById('recBillNameInput').value = bill.name;
+            document.getElementById('recBillAmountInput').value = bill.amount;
+            document.getElementById('recBillDueDayInput').value = bill.dueDay || 10;
+            document.getElementById('recBillRemindDaysInput').value = bill.remindDays !== undefined ? bill.remindDays : 3;
+            document.getElementById('recBillAccSelect').value = bill.account || 'BANK';
+            const bSel = document.getElementById('recBillBudgetSelect');
+            bSel.innerHTML = appData.budgets.map(b => `<option value="${b.id}">${b.name}</option>`).join('') + `<option value="">-- No Budget --</option>`;
+            bSel.value = bill.budgetId ? String(bill.budgetId) : '';
+            document.getElementById('recurringBillModal').classList.add('active');
+        }
+
         function saveRecurringBill() {
+            const editId = document.getElementById('editRecBillId').value;
             const name = (document.getElementById('recBillNameInput').value || '').trim();
             const amt = parseFloat(document.getElementById('recBillAmountInput').value);
             const dueDay = parseInt(document.getElementById('recBillDueDayInput').value) || 10;
+            const remindDays = parseInt(document.getElementById('recBillRemindDaysInput').value);
+            const safeRemind = isNaN(remindDays) ? 3 : remindDays;
             const acc = document.getElementById('recBillAccSelect').value || 'BANK';
             const budgetId = parseInt(document.getElementById('recBillBudgetSelect').value) || null;
 
@@ -3281,15 +3419,30 @@
                 return;
             }
             if (!appData.recurringBills) appData.recurringBills = [];
-            appData.recurringBills.push({
-                id: Date.now(),
-                name,
-                amount: amt,
-                dueDay,
-                account: acc,
-                budgetId,
-                lastPaidMonth: ''
-            });
+
+            if (editId) {
+                const existing = appData.recurringBills.find(b => b.id === parseInt(editId));
+                if (existing) {
+                    existing.name = name;
+                    existing.amount = amt;
+                    existing.dueDay = dueDay;
+                    existing.remindDays = safeRemind;
+                    existing.account = acc;
+                    existing.budgetId = budgetId;
+                }
+            } else {
+                appData.recurringBills.push({
+                    id: Date.now(),
+                    name,
+                    amount: amt,
+                    dueDay,
+                    remindDays: safeRemind,
+                    account: acc,
+                    budgetId,
+                    lastPaidMonth: '',
+                    paidHistory: []
+                });
+            }
             saveDatabase();
             closeModal('recurringBillModal');
             renderAll();
@@ -3305,7 +3458,16 @@
             else appData.accounts.cash -= bill.amount;
 
             bill.lastPaidMonth = curMonth;
+            if (!bill.paidHistory) bill.paidHistory = [];
             const txId = Date.now();
+            bill.paidHistory.unshift({
+                month: curMonth,
+                txId: txId,
+                amount: bill.amount,
+                date: new Date().toISOString().split('T')[0],
+                account: bill.account
+            });
+
             appData.transactions.unshift({
                 id: txId,
                 type: 'EXPENSE',
@@ -3313,8 +3475,9 @@
                 account: bill.account,
                 categoryName: bill.name,
                 date: new Date().toISOString().split('T')[0],
-                note: 'Recurring Monthly Bill Paid',
+                note: `Recurring Bill (${curMonth})`,
                 budgetId: bill.budgetId,
+                recurringBillId: bill.id,
                 isLoanPayment: false
             });
 
@@ -3323,16 +3486,98 @@
             showUndoToast(txId, `✅ Paid ${bill.name} (${curr}${bill.amount})`);
         }
 
+        function undoRecurringBillMonth(billId, monthStr) {
+            const bill = (appData.recurringBills || []).find(b => b.id === billId);
+            if (!bill) return;
+            if (!confirm(`Undo ${monthStr} payment for '${bill.name}'? Amount will be refunded.`)) return;
+
+            const histItem = (bill.paidHistory || []).find(h => h.month === monthStr);
+            const refundAmt = histItem ? histItem.amount : bill.amount;
+            const refundAcc = histItem ? histItem.account : bill.account;
+
+            if (refundAcc === 'BANK') appData.accounts.bank += refundAmt;
+            else appData.accounts.cash += refundAmt;
+
+            bill.paidHistory = (bill.paidHistory || []).filter(h => h.month !== monthStr);
+            if (bill.lastPaidMonth === monthStr) {
+                bill.lastPaidMonth = bill.paidHistory.length > 0 ? bill.paidHistory[0].month : '';
+            }
+            if (histItem && histItem.txId) {
+                appData.transactions = appData.transactions.filter(t => t.id !== histItem.txId);
+            }
+
+            saveDatabase();
+            renderAll();
+            openBillLedger(billId);
+        }
+
+        function openBillLedger(billId) {
+            const bill = (appData.recurringBills || []).find(b => b.id === billId);
+            if (!bill) return;
+            const view = document.getElementById('billSpecificLedgerView');
+            const title = document.getElementById('selectedBillNameTitle');
+            const list = document.getElementById('billSpecificTxList');
+            const curr = appData.profile.currency || '₹';
+
+            view.style.display = 'block';
+            title.innerText = `📑 Bill Statement: ${bill.name}`;
+
+            // Combine explicit paidHistory + matching transactions by name/id
+            const history = bill.paidHistory || [];
+            const matchingTxs = (appData.transactions || []).filter(t =>
+                t.recurringBillId === bill.id || (t.type === 'EXPENSE' && t.categoryName && t.categoryName.toLowerCase() === bill.name.toLowerCase())
+            );
+
+            if (history.length === 0 && matchingTxs.length === 0) {
+                list.innerHTML = `<p style="font-size:0.78rem; color:var(--text-dim); text-align:center; padding:10px;">No payment records for this bill yet.</p>`;
+                return;
+            }
+
+            if (history.length > 0) {
+                list.innerHTML = history.map(h => `
+                    <div class="tx-item" style="padding:8px 10px; margin-bottom:6px;">
+                        <div class="tx-left">
+                            <span class="tx-title">Month: ${h.month}</span>
+                            <span class="tx-sub">Paid on ${h.date} • Via ${h.account}</span>
+                        </div>
+                        <div class="tx-right">
+                            <span class="tx-amount val-neg" style="font-size:0.92rem;">-${curr}${(h.amount || 0).toLocaleString('en-IN')}</span>
+                            <button class="btn-mini-del" onclick="undoRecurringBillMonth(${bill.id}, '${h.month}')">Undo ↺</button>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                list.innerHTML = matchingTxs.map(t => `
+                    <div class="tx-item" style="padding:8px 10px; margin-bottom:6px;">
+                        <div class="tx-left">
+                            <span class="tx-title">${t.categoryName}</span>
+                            <span class="tx-sub">${t.date} • Via ${t.account}</span>
+                        </div>
+                        <div class="tx-right">
+                            <span class="tx-amount val-neg" style="font-size:0.92rem;">-${curr}${t.amount.toLocaleString('en-IN')}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function closeBillSpecificLedger() {
+            const view = document.getElementById('billSpecificLedgerView');
+            if (view) view.style.display = 'none';
+        }
+
         function deleteRecurringBill(billId) {
             if (confirm('Remove this recurring bill reminder?')) {
                 appData.recurringBills = (appData.recurringBills || []).filter(b => b.id !== billId);
                 saveDatabase();
+                closeBillSpecificLedger();
                 renderAll();
             }
         }
 
         function renderRecurringBills() {
             const listContainer = document.getElementById('recurringBillsListContainer');
+            const summaryBar = document.getElementById('recurringBillsSummaryBar');
             const alertWidget = document.getElementById('dashboardRecurringWidget');
             if (!listContainer) return;
 
@@ -3342,30 +3587,53 @@
             const curMonth = today.toISOString().substring(0, 7);
             const curDay = today.getDate();
 
+            const totalMonthlyBills = bills.reduce((sum, b) => sum + (b.amount || 0), 0);
+            const paidBillsAmt = bills.filter(b => b.lastPaidMonth === curMonth).reduce((sum, b) => sum + (b.amount || 0), 0);
+            const pendingBillsAmt = Math.max(0, totalMonthlyBills - paidBillsAmt);
+
+            if (summaryBar) {
+                summaryBar.innerHTML = `
+                    <div class="nw-item">
+                        <span>Total Bills</span>
+                        <b style="color:var(--cyan);">${bills.length} Active</b>
+                    </div>
+                    <div class="nw-item" style="text-align:center;">
+                        <span>Monthly Total</span>
+                        <b style="color:var(--text-high);">${curr}${totalMonthlyBills.toLocaleString('en-IN')}</b>
+                    </div>
+                    <div class="nw-item" style="text-align:right;">
+                        <span>Pending This Mo</span>
+                        <b style="color:${pendingBillsAmt > 0 ? 'var(--amber)' : 'var(--emerald)'};">${curr}${pendingBillsAmt.toLocaleString('en-IN')}</b>
+                    </div>
+                `;
+            }
+
             if (bills.length === 0) {
                 listContainer.innerHTML = `<p style="font-size:0.78rem; color:var(--text-dim); text-align:center; padding:8px;">No recurring bills set. Tap '+ Add Bill' for Wi-Fi, Rent, or Recharge alerts.</p>`;
                 if (alertWidget) alertWidget.innerHTML = '';
                 return;
             }
 
-            let dueSoonBill = null;
+            let dueSoonItem = null;
             listContainer.innerHTML = bills.map(b => {
                 const isPaidThisMonth = b.lastPaidMonth === curMonth;
                 const diff = b.dueDay - curDay;
-                if (!isPaidThisMonth && diff >= -2 && diff <= 3 && !dueSoonBill) {
-                    dueSoonBill = b;
+                const remDays = b.remindDays !== undefined ? b.remindDays : 3;
+                if (!isPaidThisMonth && diff >= -2 && diff <= remDays && !dueSoonItem) {
+                    dueSoonItem = { bill: b, diff };
                 }
                 return `
-                    <div class="tx-item" style="padding:10px 12px;">
+                    <div class="tx-item" style="padding:10px 12px; cursor:pointer;" onclick="openBillLedger(${b.id})">
                         <div class="tx-left">
                             <span class="tx-title">🔔 ${b.name} ${isPaidThisMonth ? '<span style="color:var(--emerald); font-size:0.72rem;">(Paid ✓)</span>' : ''}</span>
-                            <span class="tx-sub">Due: ${b.dueDay}th of month • Via ${b.account}</span>
+                            <span class="tx-sub">Due: ${b.dueDay}th • Via ${b.account} • Tap for History</span>
                         </div>
                         <div class="tx-right">
                             <span class="tx-amount" style="font-size:0.95rem;">${curr}${b.amount.toLocaleString('en-IN')}</span>
                             <div class="tx-actions-row">
-                                ${!isPaidThisMonth ? `<button class="btn-mini-edit" style="color:var(--emerald);" onclick="payRecurringBillNow(${b.id})">Pay Now ✓</button>` : ''}
-                                <button class="btn-mini-del" onclick="deleteRecurringBill(${b.id})">✕</button>
+                                ${!isPaidThisMonth ? `<button class="btn-mini-edit" style="color:var(--emerald);" onclick="event.stopPropagation(); payRecurringBillNow(${b.id})">Pay ✓</button>` : ''}
+                                <button class="btn-mini-edit" onclick="event.stopPropagation(); openEditRecurringBillModal(${b.id})">Edit ✎</button>
+                                <button class="btn-mini-del" onclick="event.stopPropagation(); deleteRecurringBill(${b.id})">✕</button>
                             </div>
                         </div>
                     </div>
@@ -3373,14 +3641,17 @@
             }).join('');
 
             if (alertWidget) {
-                if (dueSoonBill) {
+                if (dueSoonItem) {
+                    const b = dueSoonItem.bill;
+                    const d = dueSoonItem.diff;
+                    const countdownTxt = d < 0 ? `Overdue by ${Math.abs(d)} day(s)! 🚨` : (d === 0 ? 'Due Today! 🚨' : (d === 1 ? 'Due Tomorrow! ⚠️' : `Due in ${d} days! 🔔`));
                     alertWidget.innerHTML = `
                         <div class="emi-alert-banner" style="border-color:var(--cyan); background:linear-gradient(135deg, rgba(6,182,212,0.14), rgba(6,182,212,0.05));">
                             <div>
-                                <div class="emi-alert-title" style="color:var(--cyan);">🔔 Bill Alert: ${dueSoonBill.name}</div>
-                                <div class="emi-alert-desc">Due on ${dueSoonBill.dueDay}th • Amount: <b>${curr}${dueSoonBill.amount.toLocaleString('en-IN')}</b></div>
+                                <div class="emi-alert-title" style="color:var(--cyan);">🔔 ${b.name}: ${countdownTxt}</div>
+                                <div class="emi-alert-desc">Due on ${b.dueDay}th • Amount: <b>${curr}${b.amount.toLocaleString('en-IN')}</b> (From ${b.account})</div>
                             </div>
-                            <button class="btn-emi-pay" style="background:var(--cyan);" onclick="payRecurringBillNow(${dueSoonBill.id})">Pay Bill ✓</button>
+                            <button class="btn-emi-pay" style="background:var(--cyan);" onclick="payRecurringBillNow(${b.id})">Pay Bill ✓</button>
                         </div>
                     `;
                 } else {
@@ -3709,7 +3980,7 @@
                 const color = pct < 20 ? 'var(--rose)' : (pct < 50 ? 'var(--amber)' : 'var(--emerald)');
 
                 return `
-                    <div class="card-row" onclick="openBudgetLedger(${b.id})">
+                    <div class="card-row" onclick="switchTab('tabBudgets'); openBudgetLedger(${b.id})">
                         <div class="card-row-head">
                             <span class="card-row-title">${b.name}</span>
                             <span class="card-row-val" style="color:${color};">${curr}${bal.toLocaleString('en-IN')}</span>
@@ -3792,7 +4063,37 @@
 
         function renderBudgetsTab() {
             const container = document.getElementById('allBudgetsDetailList');
+            const summaryBar = document.getElementById('budgetsTabSummaryBar');
             const curr = appData.profile.currency || '₹';
+
+            let totalBudgetsCount = (appData.budgets || []).length;
+            let totalAllocatedAmt = 0;
+            let totalSpentAmt = 0;
+
+            (appData.budgets || []).forEach(b => {
+                totalAllocatedAmt += (b.amount || 0);
+                appData.transactions.forEach(t => {
+                    if (t.type === 'EXPENSE' && t.budgetId === b.id) totalSpentAmt += t.amount;
+                });
+            });
+            const totalRemainingAmt = Math.max(0, totalAllocatedAmt - totalSpentAmt);
+
+            if (summaryBar) {
+                summaryBar.innerHTML = `
+                    <div class="nw-item">
+                        <span>Total Budgets</span>
+                        <b style="color:var(--cyan);">${totalBudgetsCount} Active</b>
+                    </div>
+                    <div class="nw-item" style="text-align:center;">
+                        <span>Total Budget</span>
+                        <b style="color:var(--text-high);">${curr}${totalAllocatedAmt.toLocaleString('en-IN')}</b>
+                    </div>
+                    <div class="nw-item" style="text-align:right;">
+                        <span>Total Remaining</span>
+                        <b style="color:var(--emerald);">${curr}${totalRemainingAmt.toLocaleString('en-IN')}</b>
+                    </div>
+                `;
+            }
 
             container.innerHTML = appData.budgets.map(b => {
                 let spent = 0;
